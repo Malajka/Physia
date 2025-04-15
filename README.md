@@ -1,56 +1,98 @@
-# Astro Starter
+# Physia
+
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D22.14.0-brightgreen)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Astro](https://img.shields.io/badge/Astro-5.5.5-purple)](https://astro.build/)
+
+## Project Description
+
+Physia is a web application designed to help users suffering from overload-related muscle pain create personalized exercise plans. The application allows users to select affected body parts, assess pain intensity, and receive tailored exercise recommendations based on pre-developed sets by physiotherapists. the physiotherapist first feeds the database with their expertise and specific instructions, and then the LLM generates a personalized exercise plan for each user based on this context and selected by user information.
+
+### Problem Statement
+
+The project addresses the challenges of accessing physiotherapists and managing overload-related muscle pain, which often requires multiple visits and modifications based on pain intensity.
 
 ## Tech Stack
-- Astro (v5.5.5): A next-generation web framework optimized for building fast, content-driven websites.
-- [React](https://react.dev/) v19.0.0 - A popular JavaScript library for creating dynamic and interactive user interfaces.
-- TypeScript (v5): A superset of JavaScript that adds static typing to improve code quality and maintainability.
-- Tailwind CSS (v4.0.17): A utility-first CSS framework that simplifies styling by providing pre-designed classes.
 
-## Requirements
-Before starting, ensure your system meets the following prerequisites:
- - Node.js v22.14.0: The required version is specified in the .nvmrc file for consistency across environments.
- - npm: The package manager bundled with Node.js is used to install dependencies and run scripts.
+### Frontend
+- [Astro 5](https://astro.build/) - Modern static site builder
+- [React 19](https://react.dev/) - Interactive UI components
+- [TypeScript 5](https://www.typescriptlang.org/) - Type-safe development
+- [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS framework
+- [Shadcn/ui](https://ui.shadcn.com/) - Reusable UI components
 
-## How to Get Started
-Follow these steps to set up and begin working with the project:
- - Clone the repository
- - Download the project files to your local machine using Git.
- - Install dependencies: npm install
- - Start the development server: npm run dev
- - Build the project for production: npm run build
+### Backend
+- [Supabase](https://supabase.com/) - Backend-as-a-Service with PostgreSQL
+  - Authentication
+  - Database
+  - Real-time capabilities
 
-## Available Scripts
-    - npm run dev - Starts the development server with live reloading.
-    - npm run build - Produces a production-ready build of your application.
-    - npm run preview - Previews the production build locally.
-    - npm run lint - Runs ESLint to identify code issues.
-    - npm run lint:fix - Automatically fixes ESLint-detected problems.
+### AI Integration
+- [Openrouter.ai](https://openrouter.ai/) - AI model communication service
 
-## Project Structure
-The directory structure is organized for clarity and scalability
-```md
-.
-├── src/
-│   ├── layouts/    # Astro layouts
-│   ├── pages/      # Astro pages
-│   │   └── api/    # API endpoints
-│   ├── components/ # UI components (Astro & React)
-│   └── assets/     # Static assets
-├── public/         # Public assets
+### Development Tools
+- ESLint - Code linting
+- Prettier - Code formatting
+- Husky - Git hooks
+- TypeScript - Static typing
+
+## Getting Started
+
+### Prerequisites
+- Node.js >= 22.14.0
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/physia.git
+cd physia
 ```
 
-## AI Development Support
- - This project integrates AI tools to enhance productivity and enforce best practices during development:
- - The project includes AI-driven rules for:
- - Structuring files and folders.
- - Writing clean, maintainable code.
- - Styling efficiently with Tailwind CSS.
- - Ensuring accessibility compliance.
- - Optimizing workflows for Astro and React development.
+2. Install dependencies:
+```bash
+npm install
+```
 
+3. Start the development server:
+```bash
+npm run dev
+```
 
-## Cursor IDE Integration
-Special configuration files located in .cursor/rules/ help Cursor IDE understand the project's structure, enabling intelligent code suggestions tailored to this template.
+The application will be available at `http://localhost:3000`
+
+## Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build production version
+- `npm run preview` - Preview production build
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+
+## Project Scope
+
+### Core Features
+- Body part selection (6 areas)
+- Pain intensity assessment (1-10 scale)
+- Personalized exercise plans
+- User feedback system
+- Account management
+
+### Project Boundaries
+- Web-only application
+- No medical consultation replacement
+- No gamification features
+- No mobile applications
+- No public API
+
+## Project Status
+
+The project is currently in active development. Future plans include:
+- Enhanced exercise recommendations
+- Improved user feedback system
+- Additional body part support
+- Performance optimizations
 
 ## License
 This project is proprietary and not open-source. All rights are reserved by the author. Unauthorized copying, distribution, modification, or use of any part of this repository is strictly prohibited without explicit written permission from the author.

@@ -1,7 +1,7 @@
 # The Product Requirements Document (PRD) – Physia
 
 ## 1. Product overview
-The purpose of Project D is to enable users with overload-related muscle pain to quickly 
+The purpose of Project Physia is to enable users with overload-related muscle pain to quickly 
 create a personalized exercise plan based on the selected body part and the intensity of the pain. 
 The exercise sets have been previously developed by a physiotherapist.
 
