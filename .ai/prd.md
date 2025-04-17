@@ -1,37 +1,37 @@
 # The Product Requirements Document (PRD) – Physia
 
 ## 1. Product overview
-The purpose of Project Physia is to enable users with overload-related muscle pain to quickly 
-create a personalized exercise plan based on the selected body part and the intensity of the pain. 
-The exercise sets have been previously developed by a physiotherapist.
+The purpose of Project Physia is to enable users with overload-related muscle pain to quickly
+create a personalized exercise plan based on the selected body part and the intensity of the pain.
+The exercise database was originally developed by a licensed physiotherapist. It includes detailed exercise descriptions and accompanying images,  muscle pain assessment tests linked to specific 6 body parts (Neck and upper back, Lower back, Wrists and forearms, Hips).
 
 ## 2.User problem
 Difficulties with access to physiotherapists. Dealing with overload-related muscle pain requires
 many visits and needs modifications depending on intensity.
 
 ## 3. Functional requirements
-1. 6 body parts (Neck and upper back,  Lower back , Wrists and forearms, Hips) selector with a limit of 1 selections per session:
+1. 6 body parts (Neck and upper back, Lower back, Wrists and forearms, Hips) selector with a limit of    selections per session:
    - Mandatory medical disclaimer before first session.
    - After reading and accepting the disclaimer, the user selects 1 of the 6 body parts that are affected by muscle strain pain.
-   - User sets pain intensity for selected muscle tests.
+   - User sets pain intensity for selected muscle tests (1-10).
    - The application sends data to the LLM model via API.
-   - The LLM model offers a set of exercises.
+   - The LLM model offers a set of exercises generated on previously created data.
    - The user can evaluate the helpfulness of the generated exercises.
 
 2. Manual creation and management of pain data:
-    - buttons for body part selection and a slider for setting pain intensity.
+    - buttons for body part selection and a range slider for setting pain intensity for each symptom.
     - Options to edit and delete existing data.
-    - Manual creation and display within a list view "My pain data"
+    - Manual creation and display within a list view "My pain data".
 
 3. Basic authentication and user accounts system:
    - Registration and login.
    - Ability to delete the account and associated medical data upon request.
 
 4. Storage and scalability:
-   - Pain location and user data stored in a manner ensuring scalability and security.
+   - Pain location and other user data stored in a manner ensuring scalability and security.
 
 5. Exercise Feedback Statistics:
-   - Collecting information on how many exercises were rated positively (thumbs up/down feedback system after each session)
+   - Collecting information on how many exercises were rated positively (thumbs up/down feedback system after each session).
 
 6. Legal requirements and constraints:
    - User personal data and their health data stored in compliance with GDPR.
@@ -39,7 +39,7 @@ many visits and needs modifications depending on intensity.
 
 ## 4. Product Boundaries
 1. Out of MVP scope:
-   - Does not replace medical consultation
+   - Does not replace medical consultation.
    - Advanced, custom algorithm for creating and modifying exercises (we use pre-prepared data).
    - Gamification mechanisms.
    - Mobile applications (currently web version only).
@@ -75,8 +75,17 @@ many visits and needs modifications depending on intensity.
 
 ### ID: US-005
 Title: Account Registration
-**Description**:: As a new user, I want to register an account to access my own data and be able to view/delete it.
+**Description**: As a new user, I want to register an account to access my own data and be able to view/delete it.
 **Acceptance Criteria**:
 - The registration form includes fields for email address and password.
 - After successful form submission and data verification, the account is activated.
 - The user receives confirmation of successful registration and is logged in.
+
+### ID: US-006
+Title: Application Login
+**Description**: As a user can be located to have access to my data and origin history.
+**Acceptance Criteria**:
+- After entering the user login details, to which the exercise results lead.
+- Incorrect login details, displaying messages about data disclosure.
+- Data regarding the input is safe in the way.
+

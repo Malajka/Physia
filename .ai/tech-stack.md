@@ -1,20 +1,20 @@
-Frontend - Astro z React dla komponentów interaktywnych:
-- Astro 5 pozwala na tworzenie szybkich, wydajnych stron i aplikacji z minimalną ilością JavaScript
-- React 19 zapewni interaktywność tam, gdzie jest potrzebna
-- TypeScript 5 dla statycznego typowania kodu i lepszego wsparcia IDE
-- Tailwind 4 pozwala na wygodne stylowanie aplikacji
-- Shadcn/ui zapewnia bibliotekę dostępnych komponentów React, na których oprzemy UI
+- Frontend – Astro with React for interactive components
+  - Astro 5 enables building fast, efficient websites and applications with minimal JavaScript
+  - React 19 provides interactivity where needed
+  - TypeScript 5 for static code typing and better IDE support
+  - Tailwind 4 allows for convenient application styling
+  - Shadcn/ui offers a library of accessible React components to build the UI
 
-Backend - Supabase jako kompleksowe rozwiązanie backendowe:
-- Zapewnia bazę danych PostgreSQL
-- Zapewnia SDK w wielu językach, które posłużą jako Backend-as-a-Service
-- Jest rozwiązaniem open source, które można hostować lokalnie lub na własnym serwerze
-- Posiada wbudowaną autentykację użytkowników
+- Backend – Supabase as a comprehensive backend solution
+  - Provides a PostgreSQL database
+  - Offers SDKs in multiple languages to serve as Backend-as-a-Service
+  - Is an open-source solution that can be hosted locally or on your own server
+  - Includes built-in user authentication
 
-AI - Komunikacja z modelami przez usługę Openrouter.ai:
-- Dostęp do szerokiej gamy modeli (OpenAI, Anthropic, Google i wiele innych), które pozwolą nam znaleźć rozwiązanie zapewniające wysoką efektywność i niskie koszta
-- Pozwala na ustawianie limitów finansowych na klucze API
+- AI – Communication with models via the Openrouter.ai service
+  - Access to a wide range of models (OpenAI, Anthropic, Google, and many others), allowing us to find a solution that ensures high efficiency and low costs
+  - Allows setting financial limits on API keys
 
-CI/CD i Hosting:
-- Github Actions do tworzenia pipeline’ów CI/CD
-- DigitalOcean do hostowania aplikacji za pośrednictwem obrazu docker
+- CI/CD and Hosting
+  - Github Actions for creating CI/CD pipelines
+  - DigitalOcean for hosting the application via a Docker image
