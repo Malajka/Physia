@@ -11,7 +11,7 @@ many visits and needs modifications depending on intensity.
 
 ## 3. Functional requirements
 1. Body area selection and session generation:
-   - Mandatory medical disclaimer before each session.
+   - Mandatory medical disclaimer before first session.
    - After accepting the disclaimer, the user selects one of the four body areas affected by muscle strain pain (Neck and upper back, Lower back, Wrists and forearms, Hips and Knees).
    - The application displays up to three muscle tests associated with the selected body area.
    - The user sets pain intensity for each muscle test using a slider (scale 1–10).
