@@ -96,4 +96,7 @@ Niektóre popularne komponenty to:
 
 ## Component Styling
 
-Ten projekt wykorzystuje wariant stylu „new-york” z kolorem bazowym "neutral" i zmiennymi CSS do tworzenia motywów, zgodnie z konfiguracją w sekcji `components.json`.
+Ten projekt wykorzystuje wariant stylu "new-york" z kolorem bazowym "neutral" i zmiennymi CSS do tworzenia motywów, zgodnie z konfiguracją w sekcji `components.json`.
+```
+
+</rewritten_file>
