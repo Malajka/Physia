@@ -6,7 +6,6 @@ import MuscleTestForm from "../../components/muscle-test-selection/MuscleTestFor
 import EmptyState from "../../components/ui/EmptyState.astro";
 import ErrorAlert from "../../components/ui/ErrorAlert.astro";
 import MainLayout from "../../layouts/MainLayout.astro";
-import { loadTestsAndName } from "../../lib/services/bodyPartsService";
 import type { MuscleTestDto } from "../../types";
 
 const { params } = Astro;
@@ -18,9 +17,27 @@ let fetchError: string | null = null;
 let bodyPartName = "";
 
 try {
-  const { muscleTests: tests, bodyPartName: name } = await loadTestsAndName(params.body_part_id ?? "", origin);
-  muscleTests = tests;
-  bodyPartName = name;
+  // Fetch muscle tests for this body part
+  const res = await fetch(`${origin}/api/body_parts/${bodyPartId}/muscle_tests`);
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || "Failed to fetch muscle tests");
+  }
+  muscleTests = await res.json();
+
+  // Also fetch the body part name if possible
+  try {
+    const bodyPartRes = await fetch(`${origin}/api/body_parts`);
+    if (bodyPartRes.ok) {
+      const bodyParts = await bodyPartRes.json();
+      const bodyPart = bodyParts.find((bp: { id: number; name: string }) => bp.id === bodyPartId);
+      if (bodyPart) {
+        bodyPartName = bodyPart.name;
+      }
+    }
+  } catch {
+    // Silently fail - we'll use the ID if we can't get the name
+  }
 } catch (e) {
   fetchError = e instanceof Error ? e.message : String(e);
 }
