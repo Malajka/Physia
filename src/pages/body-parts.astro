@@ -1,0 +1,13 @@
+---
+import BodyPartSelector from "../components/body-part-selection/BodyPartSelector";
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout title="Select Body Area - Physia">
+  <div class="container mx-auto py-8">
+    <h1 class="text-2xl font-bold mb-6">Select Body Area</h1>
+    <p class="mb-6">Please select the body area where you experience overload-related muscle pain:</p>
+
+    <BodyPartSelector client:load />
+  </div>
+</MainLayout>

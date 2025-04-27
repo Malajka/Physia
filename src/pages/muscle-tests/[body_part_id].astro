@@ -1,0 +1,48 @@
+---
+export const prerender = false;
+
+import PageHeader from "../../components/common/PageHeader.astro";
+import MuscleTestForm from "../../components/muscle-test-selection/MuscleTestForm";
+import EmptyState from "../../components/ui/EmptyState.astro";
+import ErrorAlert from "../../components/ui/ErrorAlert.astro";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { loadTestsAndName } from "../../lib/services/bodyPartsService";
+import type { MuscleTestDto } from "../../types";
+
+const { params } = Astro;
+const origin = new URL(Astro.request.url).origin;
+const bodyPartId = parseInt(params.body_part_id ?? "", 10);
+
+let muscleTests: MuscleTestDto[] = [];
+let fetchError: string | null = null;
+let bodyPartName = "";
+
+try {
+  const { muscleTests: tests, bodyPartName: name } = await loadTestsAndName(params.body_part_id ?? "", origin);
+  muscleTests = tests;
+  bodyPartName = name;
+} catch (e) {
+  fetchError = e instanceof Error ? e.message : String(e);
+}
+
+const pageTitle = bodyPartName ? `Muscle Tests for ${bodyPartName}` : `Muscle Tests for Body Part ${bodyPartId}`;
+---
+
+<MainLayout title={pageTitle}>
+  <div class="container mx-auto py-8">
+    <PageHeader
+      title={pageTitle}
+      subtitle="Please rate the pain intensity for each test on a scale from 0 (no pain) to 10 (severe pain that prevents work)."
+    />
+
+    {
+      fetchError ? (
+        <ErrorAlert message={fetchError} href="/body-parts" label="← Go back to body parts selection" />
+      ) : muscleTests.length > 0 ? (
+        <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
+      ) : (
+        <EmptyState message="No muscle tests available for this body part." href="/body-parts" label="← Go back to body parts selection" />
+      )
+    }
+  </div>
+</MainLayout>

@@ -1,0 +1,14 @@
+---
+export interface Props {
+  message: string;
+  href: string;
+  label: string;
+}
+const { message, href, label } = Astro.props;
+---
+<div class="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4">
+  <p>{message}</p>
+  <a href={href} class="text-blue-600 hover:underline mt-2 inline-block">
+    {label}
+  </a>
+</div> 
