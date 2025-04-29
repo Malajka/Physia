@@ -5,47 +5,14 @@ import PageHeader from "../../components/common/PageHeader.astro";
 import MuscleTestForm from "../../components/muscle-test-selection/MuscleTestForm";
 import EmptyState from "../../components/ui/EmptyState.astro";
 import ErrorAlert from "../../components/ui/ErrorAlert.astro";
-import MainLayout from "../../layouts/MainLayout.astro";
-import type { MuscleTestDto } from "../../types";
+import Layout from "../../layouts/Layout.astro";
+import { getMuscleTestsPageData } from "../../lib/services/muscleTestPageDataService";
 
-const { params } = Astro;
-const origin = new URL(Astro.request.url).origin;
-const bodyPartId = parseInt(params.body_part_id ?? "", 10);
-
-let muscleTests: MuscleTestDto[] = [];
-let fetchError: string | null = null;
-let bodyPartName = "";
-
-try {
-  // Fetch muscle tests for this body part
-  const res = await fetch(`${origin}/api/body_parts/${bodyPartId}/muscle_tests`);
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error || "Failed to fetch muscle tests");
-  }
-  muscleTests = await res.json();
-
-  // Also fetch the body part name if possible
-  try {
-    const bodyPartRes = await fetch(`${origin}/api/body_parts`);
-    if (bodyPartRes.ok) {
-      const bodyParts = await bodyPartRes.json();
-      const bodyPart = bodyParts.find((bp: { id: number; name: string }) => bp.id === bodyPartId);
-      if (bodyPart) {
-        bodyPartName = bodyPart.name;
-      }
-    }
-  } catch {
-    // Silently fail - we'll use the ID if we can't get the name
-  }
-} catch (e) {
-  fetchError = e instanceof Error ? e.message : String(e);
-}
-
-const pageTitle = bodyPartName ? `Muscle Tests for ${bodyPartName}` : `Muscle Tests for Body Part ${bodyPartId}`;
+// Load all data for the page (fetch tests, title, backLink, etc.)
+const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Astro);
 ---
 
-<MainLayout title={pageTitle}>
+<Layout title={pageTitle}>
   <div class="container mx-auto py-8">
     <PageHeader
       title={pageTitle}
@@ -54,12 +21,15 @@ const pageTitle = bodyPartName ? `Muscle Tests for ${bodyPartName}` : `Muscle Te
 
     {
       fetchError ? (
-        <ErrorAlert message={fetchError} href="/body-parts" label="← Go back to body parts selection" />
+        <ErrorAlert message={fetchError} {...backLink} />
       ) : muscleTests.length > 0 ? (
         <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
       ) : (
-        <EmptyState message="No muscle tests available for this body part." href="/body-parts" label="← Go back to body parts selection" />
+        <EmptyState message="No muscle tests available for this body part." {...backLink} />
       )
     }
+    <div class="mt-6">
+      <a href={backLink.href} class="inline-flex items-center text-sm text-blue-600 hover:underline">{backLink.label}</a>
+    </div>
   </div>
-</MainLayout>
+</Layout>

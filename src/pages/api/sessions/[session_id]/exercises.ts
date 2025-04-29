@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { DEFAULT_USER_ID } from "../../../../db/supabase.client";
+// import { DEFAULT_USER_ID } from "../../../../db/supabase.client"; // no longer used
 import { getExercisesForSession } from "../../../../lib/services/exerciseService";
 
 // Definiuję kody błędów bezpośrednio w pliku, żeby uniknąć problemu z importem
@@ -13,9 +13,16 @@ enum ErrorCode {
 export const prerender = false; // Dynamic API endpoint
 
 export const POST: APIRoute = async ({ params, locals }) => {
-  // 1. Używamy supabase z locals i DEFAULT_USER_ID zamiast user
   const supabase = locals.supabase;
-  const userId = DEFAULT_USER_ID; // Używamy stałego ID na potrzeby MVP
+  // Get authenticated user
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    return new Response(
+      JSON.stringify({ error: { code: ErrorCode.AUTHENTICATION_REQUIRED, message: "Authentication required" } }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
+  }
+  const userId = session.user.id;
 
   // 2. Validate session_id parameter
   const { session_id } = params;

@@ -72,28 +72,11 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
       // Filter out tests with zero pain intensity
       const testsToSubmit = selections.filter((selection) => selection.painIntensity > 0);
 
-      const response = await fetch("/api/sessions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          body_part_id: bodyPartId,
-          tests: testsToSubmit.map((selection) => ({
-            muscle_test_id: selection.muscleTestId,
-            pain_intensity: selection.painIntensity,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create session");
-      }
-
-      const session = await response.json();
-      // Redirect to session details page
-      window.location.href = `/sessions/${session.id}`;
+      // Redirect to loading view which handles API call and shows skeleton
+      const redirectUrl = `/session/generate?bodyPartId=${bodyPartId}&tests=${encodeURIComponent(
+        JSON.stringify(testsToSubmit.map((s) => ({ muscle_test_id: s.muscleTestId, pain_intensity: s.painIntensity })))
+      )}`;
+      window.location.href = redirectUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -181,14 +164,8 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
       </div>
 
       <div className="flex justify-end">
-        <Button
-          type="submit"
-          disabled={isSubmitting || !isFormValid()}
-          className={`px-6 py-2 rounded-md font-medium ${
-            isSubmitting || !isFormValid() ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-        >
-          {isSubmitting ? "Creating session..." : "Create Session"}
+        <Button type="submit" disabled={isSubmitting || !isFormValid()}>
+          {isSubmitting ? "Redirecting..." : "Create Session"}
         </Button>
       </div>
     </form>

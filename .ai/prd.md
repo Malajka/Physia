@@ -91,3 +91,21 @@ Title: Application Login
 - Incorrect login details, displaying messages about data disclosure.
 - Data regarding the input is safe in the way.
 
+### US-007: Session deletion
+**Description**: As a user, I want to delete my sessions so that I can manage my session history.
+**Acceptance Criteria**:
+- The user can delete their own sessions.
+- The session history view is not available without logging in to the system (US-006).
+
+### US-008: Secure access and authentication
+**Description**: As a user, I want to register and log into the system in a way that ensures the security of my data.
+**Acceptance Criteria**:
+- Registration and login occur on dedicated pages.
+- Login requires providing an email address and password.
+- Registration requires providing an email address, password, and password confirmation.
+- The user CAN create ad-hoc rules without logging into the system (US-006).
+- The user CANNOT view session history without logging into the system (US-006).
+- The user can log in via a button in the top-right corner.
+- The user can log out via a button in the top-right corner in the main @Layout.astro.
+- External login services are not used (e.g., Google, GitHub).
+- Password recovery must be possible.

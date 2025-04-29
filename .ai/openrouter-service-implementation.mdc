@@ -1,0 +1,222 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# OpenRouter Service Implementation Plan
+
+## 1. Service Description
+OpenRouterService is a TypeScript module that integrates with the OpenRouter LLM API to generate personalized training sessions. It:
+1. Loads configuration (API key, base URL, default model) from environment variables.
+2. Constructs requests including:
+   - **System message** (e.g., "You are a physiotherapy assistant generating structured training plans.")
+   - **User message** (structured JSON payload with body part, muscle tests, and pain intensities)
+   - **response_format**: JSON Schema that defines the structure of the returned `training_plan`
+   - **modelName** and **model parameters** (e.g., temperature, max_tokens)
+3. Sends HTTP requests to the OpenRouter endpoint.
+4. Parses and validates the JSON response against the provided schema.
+5. Emits custom errors and logs key events.
+
+---
+
+## 2. Constructor
+```ts
+class OpenRouterService {
+  private readonly apiKey: string
+  private readonly baseUrl: string
+  private readonly defaultModel: string
+
+  constructor(options: { apiKey: string; baseUrl?: string; defaultModel?: string }) {
+    if (!options.apiKey) {
+      throw new ConfigurationError("OpenRouter API key is required")
+    }
+    this.apiKey = options.apiKey
+    this.baseUrl = options.baseUrl ?? process.env.OPENROUTER_BASE_URL!
+    this.defaultModel = options.defaultModel ?? "gpt-3.5-turbo"
+  }
+}
+```
+
+---
+
+## 3. Public Methods and Fields
+```ts
+interface ChatMessage {
+  role: 'system' | 'user' | 'assistant'
+  content: string
+}
+
+interface ResponseFormatSchema {
+  type: 'json_schema'
+  json_schema: { name: string; strict: boolean; schema: Record<string, unknown> }
+}
+
+class OpenRouterService {
+  // ... constructor omitted for brevity ...
+
+  /**
+   * Sends a chat request and returns parsed JSON according to schema.
+   */
+  public async chat(
+    messages: ChatMessage[],
+    overrides?: {
+      modelName?: string
+      modelParams?: Record<string, unknown>
+      responseFormat?: ResponseFormatSchema
+    }
+  ): Promise<any> {
+    const model = overrides?.modelName ?? this.defaultModel
+    const params = overrides?.modelParams ?? {}
+    const format = overrides?.responseFormat
+
+    const payload = this.buildPayload(messages, model, params, format)
+    const raw = await this.sendRequest(payload)
+    return this.parseResponse(raw, format?.json_schema)
+  }
+}
+```
+
+---
+
+## 4. Private Methods and Fields
+```ts
+class OpenRouterService {
+  // Builds the OpenRouter API payload
+  private buildPayload(
+    messages: ChatMessage[],
+    modelName: string,
+    modelParams: Record<string, unknown>,
+    responseFormat?: ResponseFormatSchema
+  ): Record<string, unknown> {
+    return {
+      model: modelName,
+      messages: messages.map(m => ({ role: m.role, content: m.content })),
+      parameters: modelParams,
+      ...(responseFormat && { response_format: responseFormat })
+    }
+  }
+
+  // Sends the HTTP POST to OpenRouter
+  private async sendRequest(payload: Record<string, unknown>): Promise<any> {
+    const response = await axios.post(
+      `${this.baseUrl}/chat/completions`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 60_000
+      }
+    )
+    if (response.status === 429) {
+      throw new RateLimitError('Rate limit exceeded')
+    }
+    if (response.status >= 400) {
+      throw new ApiError(response.status, response.statusText)
+    }
+    return response.data
+  }
+
+  // Parses and validates the JSON response
+  private parseResponse(raw: any, schemaDef?: Record<string, unknown>): any {
+    if (schemaDef) {
+      const valid = ajv.validate(schemaDef, raw)
+      if (!valid) {
+        throw new ValidationError(ajv.errors)
+      }
+    }
+    return raw
+  }
+}
+```
+
+---
+
+## 5. Error Handling
+1. **ConfigurationError** – missing or invalid constructor options
+2. **NetworkError** – connectivity issues, timeouts
+3. **RateLimitError** – HTTP 429 from OpenRouter
+4. **AuthenticationError** – HTTP 401/403
+5. **ValidationError** – response fails JSON Schema validation
+6. **ApiError** – other HTTP 4xx/5xx statuses
+7. **UnexpectedError** – parsing or unknown runtime exceptions
+
+> Use guard clauses, clear error messages, and custom error classes.
+
+---
+
+## 6. Security Considerations
+- Store API key in environment variables (`process.env.OPENROUTER_API_KEY`)
+- Do not log sensitive payload or user content
+---
+
+## 7. Deployment Steps
+1. Install dependencies:
+   ```bash
+   npm install axios ajv
+   ```
+2. Create a `.env` file:
+   ```env
+   OPENROUTER_API_KEY=your_api_key_here
+   OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+   ```
+3. Add the service implementation in `/src/lib/OpenRouterService.ts`.
+4. Declare shared types in `/src/types.ts`:
+   ```ts
+   export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
+   export type ResponseFormatSchema = {
+     type: 'json_schema'
+     json_schema: { name: string; strict: boolean; schema: Record<string, unknown> }
+   }
+   ```
+5. **Integrate in API endpoint** `/src/pages/api/sessions/index.ts`:
+   ```ts
+   import { OpenRouterService } from '~/lib/OpenRouterService'
+   import { ChatMessage, ResponseFormatSchema } from '~/types'
+
+   // inside your handler:
+   const service = new OpenRouterService({ apiKey: process.env.OPENROUTER_API_KEY! })
+
+   // Build the messages array
+   const messages: ChatMessage[] = [
+     { role: 'system', content: 'You are a physiotherapy assistant generating a structured JSON training plan.' },
+     { role: 'user', content: JSON.stringify({ bodyPartId, tests }) }
+   ]
+
+   const format: ResponseFormatSchema = {
+     type: 'json_schema',
+     json_schema: {
+       name: 'training_plan_schema',
+       strict: true,
+       schema: {
+         exercises: {
+           type: 'array',
+           items: {
+             type: 'object',
+             properties: {
+               name: { type: 'string' },
+               sets: { type: 'integer' },
+               reps: { type: 'integer' }
+             },
+             required: ['name', 'sets', 'reps']
+           }
+         }
+       }
+     }
+   }
+
+   // Model selection and parameters
+   const overrides = {
+     modelName: 'gpt-4o-mini',
+     modelParams: { temperature: 0.2, top_p: 0.9, max_tokens: 500 },
+     responseFormat: format
+   }
+
+   const trainingPlan = await service.chat(messages, overrides)
+   ```
+6. Test locally by calling the `/api/sessions` endpoint and verifying the returned JSON matches your schema.
+
+
+
+

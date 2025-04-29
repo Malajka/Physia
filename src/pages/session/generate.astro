@@ -1,0 +1,45 @@
+---
+import { SessionGenerationLoading } from "../../components/session/SessionGenerationLoading";
+import Layout from "../../layouts/Layout.astro";
+
+// Parse query parameters
+const { searchParams } = new URL(Astro.request.url);
+const bodyPartIdParam = searchParams.get("bodyPartId");
+const testsParam = searchParams.get("tests");
+
+let bodyPartId: number | undefined;
+let tests: { muscle_test_id: number; pain_intensity: number }[] = [];
+
+try {
+  // Parse and validate the body part ID
+  if (bodyPartIdParam) {
+    bodyPartId = parseInt(bodyPartIdParam, 10);
+    if (isNaN(bodyPartId)) {
+      bodyPartId = undefined;
+    }
+  }
+
+  // Parse and validate the tests array
+  if (testsParam) {
+    const decodedTests = decodeURIComponent(testsParam);
+    const parsedTests = JSON.parse(decodedTests);
+    if (
+      Array.isArray(parsedTests) &&
+      parsedTests.every(
+        (test) =>
+          typeof test.muscle_test_id === "number" && typeof test.pain_intensity === "number" && test.pain_intensity >= 0 && test.pain_intensity <= 10
+      )
+    ) {
+      tests = parsedTests;
+    }
+  }
+} catch (error) {
+  console.error("Error parsing query parameters:", error);
+}
+
+const pageTitle = "Generating Training Plan";
+---
+
+<Layout title={pageTitle}>
+  <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} client:load />
+</Layout>

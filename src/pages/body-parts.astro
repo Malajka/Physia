@@ -1,13 +1,13 @@
 ---
 import BodyPartSelector from "../components/body-part-selection/BodyPartSelector";
 import PageHeader from "../components/common/PageHeader.astro";
-import MainLayout from "../layouts/MainLayout.astro";
+import Layout from "../layouts/Layout.astro";
 ---
 
-<MainLayout title="Select Body Area - Physia">
+<Layout title="Select Body Area - Physia">
   <div class="container mx-auto py-8">
     <PageHeader title="Select Body Area" subtitle="Please select the body area where you experience overload-related muscle pain:" />
 
     <BodyPartSelector client:load />
   </div>
-</MainLayout>
+</Layout>

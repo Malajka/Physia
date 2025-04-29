@@ -1,0 +1,50 @@
+---
+export const prerender = false;
+import { supabaseClient } from "../../db/supabase.client";
+import Layout from "../../layouts/Layout.astro";
+import type { TrainingPlan } from "../../lib/services/openrouter.service";
+
+// Grab the session_id from the route params
+const sessionId = Number(Astro.params.session_id);
+const pageTitle = `Session ${sessionId}`;
+
+// Fetch session details including training_plan
+let session: { training_plan: TrainingPlan } | null = null;
+let sessionError: string | null = null;
+const { data, error } = await supabaseClient.from("sessions").select("training_plan").eq("id", sessionId).single();
+if (error || !data) {
+  sessionError = "Session not found";
+} else {
+  session = { training_plan: data.training_plan as unknown as TrainingPlan };
+}
+---
+
+<Layout title={pageTitle}>
+  <div class="container mx-auto p-8 text-center">
+    <h2 class="text-2xl font-bold mb-4">Session {sessionId} generated successfully!</h2>
+    {sessionError && <p class="text-red-600">Error loading session: {sessionError}</p>}
+    {
+      session && (
+        <div class="mt-6 text-left">
+          <h3 class="text-xl font-semibold">{session.training_plan.title}</h3>
+          <p class="mb-4">{session.training_plan.description}</p>
+          {Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0 ? (
+            session.training_plan.exercises.map((ex) => (
+              <div class="mb-4 p-4 border rounded">
+                <h4 class="font-medium">{ex.name}</h4>
+                <p>{ex.description}</p>
+                <p>
+                  Sets: {ex.sets}, Reps: {ex.reps}, Rest: {ex.rest_time_seconds}s
+                </p>
+                {ex.notes && <p class="italic text-sm">{ex.notes}</p>}
+              </div>
+            ))
+          ) : (
+            <p class="text-red-600">No exercises found in the training plan.</p>
+          )}
+        </div>
+      )
+    }
+    <a href="/body-parts" class="mt-6 inline-block text-blue-600 hover:underline">← Back to start</a>
+  </div>
+</Layout>

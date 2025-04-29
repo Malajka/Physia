@@ -1,11 +1,16 @@
 ---
+import { LogoutButton } from "../components/auth/LogoutButton";
 import "../styles/global.css";
 
 interface Props {
   title?: string;
 }
 
-const { title = "Astro Starter" } = Astro.props;
+const { title = "Physia - Exercise Plans" } = Astro.props;
+
+// Check if user is authenticated
+const { data: { session } } = await Astro.locals.supabase.auth.getSession();
+const isAuthenticated = !!session;
 ---
 
 <!doctype html>
@@ -17,8 +22,39 @@ const { title = "Astro Starter" } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body>
-    <slot />
+  <body class="min-h-screen bg-slate-50">
+    <header class="bg-white shadow-sm">
+      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold text-blue-700">Physia</a>
+        
+        <nav>
+          <ul class="flex space-x-6">
+            {!isAuthenticated ? (
+              <>
+                <li><a href="/login" class="text-gray-700 hover:text-blue-600 hover:underline">Log in</a></li>
+                <li><a href="/register" class="text-gray-700 hover:text-blue-600 hover:underline">Register</a></li>
+              </>
+            ) : (
+              <>
+                <li><a href="/sessions" class="text-gray-700 hover:text-blue-600 hover:underline">My Sessions</a></li>
+                <li><a href="/body-parts" class="text-gray-700 hover:text-blue-600 hover:underline">New Session</a></li>
+                <li><LogoutButton client:load /></li>
+              </>
+            )}
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+    <main>
+      <slot />
+    </main>
+    
+    <footer class="mt-8 py-6 bg-gray-100 text-center text-sm text-slate-500">
+      <div class="container mx-auto px-4">
+        <p>&copy; {new Date().getFullYear()} Physia. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>
 
