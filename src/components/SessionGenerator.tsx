@@ -38,12 +38,12 @@ export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, 
   };
 
   return (
-    <div className="mt-6 text-center">
-      {error && <p className="text-red-600 mb-4">{error}</p>}
+    <div className="bg-white p-6 rounded-xl shadow-lg mt-10 max-w-md mx-auto text-center">
+      {error && <p className="text-[#F4A261] mb-4 font-semibold">{error}</p>}
       <button
         onClick={handleGenerate}
         disabled={loading}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+        className="px-6 py-3 bg-[#1B9B6B] text-white rounded-xl shadow-md hover:bg-[#156F53] disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
       >
         {loading ? 'Generating...' : 'Generate Training Session'}
       </button>

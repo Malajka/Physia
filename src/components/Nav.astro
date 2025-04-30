@@ -1,0 +1,118 @@
+---
+import { LogoutButton } from "./auth/LogoutButton";
+const { isAuthenticated } = Astro.props;
+---
+
+<nav class="flex items-center w-full">
+  <!-- Desktop nav -->
+  <ul class="hidden lg:flex flex-1 justify-center items-center space-x-6">
+    <li><a href="#about" class="text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">About</a></li>
+    <li><a href="#services" class="text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">Services</a></li>
+    <li><a href="#benefits" class="text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">Benefits</a></li>
+  </ul>
+  <!-- Mobile burger -->
+  <details class="lg:hidden ml-auto relative">
+    <summary class="list-none p-2 cursor-pointer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 text-[var(--primary)]"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </summary>
+    <ul class="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 rounded-xl shadow-md space-y-2 text-right">
+      <li><a href="#about" class="block text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">About</a></li>
+      <li><a href="#services" class="block text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">Services</a></li>
+      <li><a href="#benefits" class="block text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">Benefits</a></li>
+      {
+        !isAuthenticated ? (
+          <>
+            <li>
+              <a
+                href="/login"
+                class="block px-6 py-3 bg-[var(--primary)] hover:bg-[var(--dark-green)] text-[var(--primary-foreground)] font-bold text-lg rounded-xl shadow-md text-center"
+              >
+                Log in
+              </a>
+            </li>
+            <li>
+              <a
+                href="/register"
+                class="block px-6 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-bold text-lg rounded-xl shadow-md text-center"
+              >
+                Register
+              </a>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <a href="/sessions" class="block px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">
+                My Sessions
+              </a>
+            </li>
+            <li>
+              <a href="/body-parts" class="block px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">
+                Create New Session
+              </a>
+            </li>
+            <li>
+              <LogoutButton
+                client:load
+                className="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+              />
+            </li>
+          </>
+        )
+      }
+    </ul>
+  </details>
+  <!-- Auth links desktop -->
+  <ul class="hidden lg:flex items-center space-x-6">
+    {
+      !isAuthenticated ? (
+        <>
+          <li>
+            <a
+              href="/login"
+              class="px-6 py-3 bg-[var(--primary)] hover:bg-[var(--dark-green)] text-[var(--primary-foreground)] font-bold text-lg rounded-xl shadow-md transition-colors"
+            >
+              Log in
+            </a>
+          </li>
+          <li>
+            <a
+              href="/register"
+              class="px-6 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-bold text-lg rounded-xl shadow-md transition-colors"
+            >
+              Register
+            </a>
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <a href="/sessions" class="px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">
+              My Sessions
+            </a>
+          </li>
+          <li>
+            <a href="/body-parts" class="px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold">
+              Create New Session
+            </a>
+          </li>
+          <li>
+            <LogoutButton
+              client:load
+              className="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+            />
+          </li>
+        </>
+      )
+    }
+  </ul>
+</nav>

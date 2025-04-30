@@ -1,5 +1,5 @@
 ---
-import { LogoutButton } from "../components/auth/LogoutButton";
+import Nav from "../components/Nav.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -9,7 +9,9 @@ interface Props {
 const { title = "Physia - Exercise Plans" } = Astro.props;
 
 // Check if user is authenticated
-const { data: { session } } = await Astro.locals.supabase.auth.getSession();
+const {
+  data: { session },
+} = await Astro.locals.supabase.auth.getSession();
 const isAuthenticated = !!session;
 ---
 
@@ -22,35 +24,24 @@ const isAuthenticated = !!session;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-slate-50">
-    <header class="bg-white shadow-sm">
-      <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-        <a href="/" class="text-2xl font-bold text-blue-700">Physia</a>
-        
-        <nav>
-          <ul class="flex space-x-6">
-            {!isAuthenticated ? (
-              <>
-                <li><a href="/login" class="text-gray-700 hover:text-blue-600 hover:underline">Log in</a></li>
-                <li><a href="/register" class="text-gray-700 hover:text-blue-600 hover:underline">Register</a></li>
-              </>
-            ) : (
-              <>
-                <li><a href="/sessions" class="text-gray-700 hover:text-blue-600 hover:underline">My Sessions</a></li>
-                <li><a href="/body-parts" class="text-gray-700 hover:text-blue-600 hover:underline">New Session</a></li>
-                <li><LogoutButton client:load /></li>
-              </>
-            )}
-          </ul>
-        </nav>
+  <body class="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+    <header class="bg-[var(--card)] shadow-md">
+      <div class="container mx-auto px-4 py-3 flex items-center">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/favicon.ico" alt="Physia logo" class="h-8 w-auto" />
+          <span class="text-2xl font-bold text-[var(--primary)]">Physia</span>
+        </a>
+        <div class="flex-1 flex items-center">
+          <Nav isAuthenticated={isAuthenticated} />
+        </div>
       </div>
     </header>
-    
+
     <main>
       <slot />
     </main>
-    
-    <footer class="mt-8 py-6 bg-gray-100 text-center text-sm text-slate-500">
+
+    <footer class="mt-8 py-6 bg-[var(--muted)] text-center text-sm text-[var(--gray-text)]">
       <div class="container mx-auto px-4">
         <p>&copy; {new Date().getFullYear()} Physia. All rights reserved.</p>
       </div>

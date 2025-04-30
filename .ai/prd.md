@@ -72,7 +72,8 @@ many visits and needs modifications depending on intensity.
 ### US-004: Medical safety
 **Description**: As a lawyer, I want to ensure compliance with legal requirements.
 **Acceptance Criteria**:
-- Display of a disclaimer before interaction.
+- Display of a disclaimer before starting to initialize first session for user.
+- User has to accept dislaimer before starting to create first session.
 - Link to the full terms and conditions in the PDF footer.
 
 ### ID: US-005

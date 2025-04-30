@@ -1,5 +1,6 @@
 ---
 export const prerender = false;
+import { FeedbackRating } from "../../components/session/FeedbackRating";
 import { supabaseClient } from "../../db/supabase.client";
 import Layout from "../../layouts/Layout.astro";
 import type { TrainingPlan } from "../../lib/services/openrouter.service";
@@ -17,6 +18,25 @@ if (error || !data) {
 } else {
   session = { training_plan: data.training_plan as unknown as TrainingPlan };
 }
+
+// Add exercise image fetching
+let exerciseImagesMap: Record<number, { file_path: string; metadata: unknown }[]> = {};
+if (session && Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0) {
+  const exerciseIds = session.training_plan.exercises.map((ex) => ex.id);
+  const { data: exercisesData, error: exercisesError } = await supabaseClient
+    .from("exercises")
+    .select("id, exercise_images(file_path, metadata)")
+    .in("id", exerciseIds);
+  if (!exercisesError && exercisesData) {
+    exerciseImagesMap = exercisesData.reduce(
+      (acc, item) => {
+        acc[item.id] = item.exercise_images;
+        return acc;
+      },
+      {} as Record<number, { file_path: string; metadata: unknown }[]>
+    );
+  }
+}
 ---
 
 <Layout title={pageTitle}>
@@ -25,24 +45,34 @@ if (error || !data) {
     {sessionError && <p class="text-red-600">Error loading session: {sessionError}</p>}
     {
       session && (
-        <div class="mt-6 text-left">
-          <h3 class="text-xl font-semibold">{session.training_plan.title}</h3>
-          <p class="mb-4">{session.training_plan.description}</p>
-          {Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0 ? (
-            session.training_plan.exercises.map((ex) => (
-              <div class="mb-4 p-4 border rounded">
-                <h4 class="font-medium">{ex.name}</h4>
-                <p>{ex.description}</p>
-                <p>
-                  Sets: {ex.sets}, Reps: {ex.reps}, Rest: {ex.rest_time_seconds}s
-                </p>
-                {ex.notes && <p class="italic text-sm">{ex.notes}</p>}
-              </div>
-            ))
-          ) : (
-            <p class="text-red-600">No exercises found in the training plan.</p>
-          )}
-        </div>
+        <>
+          <div class="mt-6 text-left">
+            <h3 class="text-xl font-semibold">{session.training_plan.title}</h3>
+            <p class="mb-4">{session.training_plan.description}</p>
+            {Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0 ? (
+              session.training_plan.exercises.map((ex) => (
+                <div class="mb-4 p-4 border rounded">
+                  <h4 class="font-medium">{ex.name}</h4>
+                  <p>{ex.description}</p>
+                  <p>
+                    Sets: {ex.sets}, Reps: {ex.reps}, Rest: {ex.rest_time_seconds}s
+                  </p>
+                  {ex.notes && <p class="italic text-sm">{ex.notes}</p>}
+                  {exerciseImagesMap[ex.id] && exerciseImagesMap[ex.id].length > 0 && (
+                    <div class="mt-2 flex flex-wrap">
+                      {exerciseImagesMap[ex.id].map((img) => (
+                        <img src={img.file_path} alt={ex.name} class="w-32 h-32 object-cover m-1" />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p class="text-red-600">No exercises found in the training plan.</p>
+            )}
+          </div>
+          <FeedbackRating client:load sessionId={sessionId} />
+        </>
       )
     }
     <a href="/body-parts" class="mt-6 inline-block text-blue-600 hover:underline">← Back to start</a>
