@@ -1,5 +1,5 @@
+import { ErrorAlert } from "@/components/auth/ErrorAlert";
 import { useState } from "react";
-import { ErrorAlert } from "./ErrorAlert";
 
 interface AuthFormProps {
   title: string;

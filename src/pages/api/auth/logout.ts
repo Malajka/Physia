@@ -1,34 +1,25 @@
+import { jsonResponse } from "@/lib/utils/response";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ locals, redirect, cookies }) => {
+const ACCESS_TOKEN_COOKIE = "sb-access-token";
+const REFRESH_TOKEN_COOKIE = "sb-refresh-token";
+
+export const POST: APIRoute = async ({ locals, cookies }) => {
   try {
-    // Sign out from Supabase
-    const { error } = await locals.supabase.auth.signOut();
-    
-    if (error) {
-      console.error("Logout error:", error.message);
-      return new Response(
-        JSON.stringify({ error: "Failed to log out" }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
+    const { error: signOutError } = await locals.supabase.auth.signOut();
+
+    if (signOutError) {
+      return jsonResponse({ error: signOutError.message }, 500);
     }
-    
-    // Clear auth cookies
-    cookies.delete("sb-access-token", { path: "/" });
-    cookies.delete("sb-refresh-token", { path: "/" });
-    
-    // Return success response
-    return new Response(
-      JSON.stringify({ success: true }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
-  } catch (error) {
-    console.error("Unexpected error during logout:", error);
-    return new Response(
-      JSON.stringify({ error: "An unexpected error occurred" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+
+    // Clear authentication cookies
+    [ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE].forEach((name) => cookies.delete(name, { path: "/" }));
+
+    return jsonResponse({ success: true }, 200);
+  } catch (unexpectedError) {
+    const message = unexpectedError instanceof Error ? unexpectedError.message : "Failed to log out";
+    return jsonResponse({ error: message }, 500);
   }
-}; 
+};

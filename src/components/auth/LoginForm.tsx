@@ -1,8 +1,8 @@
+import { AuthForm } from "@/components/auth/AuthForm";
+import { InputField } from "@/components/auth/InputField";
+import { PasswordField } from "@/components/auth/PasswordField";
 import { useState } from "react";
 import { z } from "zod";
-import { AuthForm } from "./AuthForm";
-import { InputField } from "./InputField";
-import { PasswordField } from "./PasswordField";
 
 // Validation schema for login
 const loginSchema = z.object({

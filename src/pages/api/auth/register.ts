@@ -1,72 +1,59 @@
+import { jsonResponse } from "@/lib/utils/response";
+import type { RegisterCommandDto } from "@/types";
 import type { APIRoute } from "astro";
-import { z } from "zod";
+import { z, ZodError, type ZodType } from "zod";
 
 export const prerender = false;
 
-// Registration request schema
-const registerSchema = z.object({
+// Runtime validation schema matching the external DTO
+export const registerSchema: ZodType<RegisterCommandDto> = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters long")
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
-export const POST: APIRoute = async ({ request, redirect, cookies, locals }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
-    // Parse and validate the request body
-    const body = await request.json();
-    const result = registerSchema.safeParse(body);
-    
-    if (!result.success) {
-      return new Response(
-        JSON.stringify({ 
-          error: result.error.errors.map(e => e.message).join(", ") 
-        }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+    let data: RegisterCommandDto;
+    try {
+      data = registerSchema.parse(await request.json());
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return jsonResponse({ error: error.errors.map((e) => e.message).join(", ") }, 400);
+      }
+      return jsonResponse({ error: "Invalid JSON payload" }, 400);
     }
-    
-    const { email, password } = result.data;
-    
+    const { email, password } = data;
+
     // Attempt to sign up with Supabase
-    const { data, error } = await locals.supabase.auth.signUp({
+    const { data: registrationResult, error: signUpError } = await locals.supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${new URL(request.url).origin}/login`
-      }
+        emailRedirectTo: `${new URL(request.url).origin}/login`,
+      },
     });
-    
-    if (error) {
-      console.error("Registration error:", error.message);
-      
-      // Handle specific errors
-      if (error.message.includes("email already") || error.message.includes("already registered")) {
-        return new Response(
-          JSON.stringify({ 
-            error: "This email is already registered. If this is your account, please use the login page instead."
-          }),
-          { status: 409, headers: { "Content-Type": "application/json" } }
-        );
+
+    // Handle signup errors
+    if (signUpError) {
+      // Conflict: email already registered or unique constraint violation
+      const errorMessageLower = signUpError.message.toLowerCase();
+      const duplicateEmailPatterns = ["already registered", "duplicate", "unique constraint", "taken"];
+      if (duplicateEmailPatterns.some((pattern) => errorMessageLower.includes(pattern))) {
+        return jsonResponse({ error: "This email is already registered. Please log in instead." }, 409);
       }
-      
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
-      );
+      return jsonResponse({ error: signUpError.message }, 400);
     }
-    
+
     // Success - return user data
-    return new Response(
-      JSON.stringify({ 
-        user: data.user,
-        message: "Registration successful! Please check your email for confirmation."
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
+    return jsonResponse(
+      {
+        user: registrationResult.user,
+        message: "Registration successful! Please check your email for confirmation.",
+      },
+      200
     );
-  } catch (error) {
-    console.error("Unexpected error during registration:", error);
-    return new Response(
-      JSON.stringify({ error: "An unexpected error occurred" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+  } catch (unexpectedError) {
+    const message = unexpectedError instanceof Error ? unexpectedError.message : "An unexpected error occurred";
+    return jsonResponse({ error: message }, 500);
   }
-}; 
+};

@@ -2,6 +2,9 @@ import { Button } from "@/components/ui/button";
 import type { FeedbackRatingDto, SubmitFeedbackCommandDto } from "@/types";
 import React, { useEffect, useState } from "react";
 
+// Define API response type to avoid 'any'
+type FeedbackApiResponse = { data: FeedbackRatingDto; error?: string };
+
 interface FeedbackRatingProps {
   sessionId: number;
 }
@@ -16,11 +19,11 @@ export const FeedbackRating: React.FC<FeedbackRatingProps> = ({ sessionId }) => 
     async function fetchFeedback() {
       try {
         const response = await fetch(`/api/sessions/${sessionId}/feedback`);
-        const data: FeedbackRatingDto = await response.json();
+        const result = (await response.json()) as FeedbackApiResponse;
         if (!response.ok) {
-          throw new Error((data as any).error || "Failed to load feedback");
+          throw new Error(result.error || "Failed to load feedback");
         }
-        setFeedback(data);
+        setFeedback(result.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : String(err));
       } finally {
@@ -39,11 +42,11 @@ export const FeedbackRating: React.FC<FeedbackRatingProps> = ({ sessionId }) => 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ rating }),
       });
-      const data: FeedbackRatingDto = await response.json();
+      const result = (await response.json()) as FeedbackApiResponse;
       if (!response.ok) {
-        throw new Error((data as any).error || "Failed to submit feedback");
+        throw new Error(result.error || "Failed to submit feedback");
       }
-      setFeedback(data);
+      setFeedback(result.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
