@@ -172,3 +172,61 @@ export interface SubmitFeedbackCommandDto {
   /** Rating value (0 or 1) */
   rating: 0 | 1;
 }
+
+/**
+ * Command model for login requests.
+ * Corresponds to POST /api/auth/login request body.
+ */
+export interface LoginCommandDto {
+  /** User's email address */
+  email: string;
+  /** User's password */
+  password: string;
+}
+
+/**
+ * Command model for registration requests.
+ * Corresponds to POST /api/auth/register request body.
+ */
+export interface RegisterCommandDto {
+  /** User's email address */
+  email: string;
+  /** User's password */
+  password: string;
+}
+
+/**
+ * Shared error codes for API responses.
+ */
+export enum ErrorCode {
+  VALIDATION_FAILED = "validation_failed",
+  DISCLAIMER_REQUIRED = "disclaimer_required",
+  RESOURCE_NOT_FOUND = "resource_not_found",
+  SERVER_ERROR = "server_error",
+  AUTHENTICATION_REQUIRED = "authentication_required",
+}
+
+/**
+ * Generic API response wrapper for a single data payload
+ */
+export interface DataResponse<T> {
+  data: T;
+}
+
+/**
+ * Generic API response wrapper for an array of data payloads
+ */
+export interface DataArrayResponse<T> {
+  data: T[];
+}
+
+// 8. Service Result
+/**
+ * Generic wrapper for service-layer results, carrying either data or an error message.
+ */
+export interface ServiceResultDto<T> {
+  /** The payload returned on success */
+  data?: T;
+  /** The error message if the operation failed */
+  error?: string;
+}

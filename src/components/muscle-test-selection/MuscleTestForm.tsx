@@ -1,7 +1,7 @@
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import type { MuscleTestDto } from "@/types";
 import { useState } from "react";
-import type { MuscleTestDto } from "../../types";
-import { Button } from "../ui/button";
-import { Slider } from "../ui/slider";
 
 interface MuscleTestFormProps {
   bodyPartId: number;

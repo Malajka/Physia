@@ -1,131 +1,49 @@
+import { getExercisesForSession } from "@/lib/services/exercises";
+import { jsonResponse } from "@/lib/utils/response";
+import type { ExerciseDto } from "@/types";
 import type { APIRoute } from "astro";
-// import { DEFAULT_USER_ID } from "../../../../db/supabase.client"; // no longer used
-import { getExercisesForSession } from "../../../../lib/services/exerciseService";
+import { z } from "zod";
 
-// Definiuję kody błędów bezpośrednio w pliku, żeby uniknąć problemu z importem
-enum ErrorCode {
-  AUTHENTICATION_REQUIRED = "authentication_required",
-  VALIDATION_FAILED = "validation_failed",
-  RESOURCE_NOT_FOUND = "resource_not_found",
-  SERVER_ERROR = "server_error",
-}
+export const prerender = false;
 
-export const prerender = false; // Dynamic API endpoint
+// Schema to parse and validate route parameter
+const ParamsSchema = z.object({
+  session_id: z.coerce
+    .number({ required_error: "session_id is required", invalid_type_error: "session_id must be a number" })
+    .int()
+    .positive({ message: "session_id must be a positive integer" }),
+});
 
-export const POST: APIRoute = async ({ params, locals }) => {
+export const GET: APIRoute = async ({ locals, params }) => {
+  // Validate params
+  const parseResult = ParamsSchema.safeParse(params);
+  if (!parseResult.success) {
+    return jsonResponse({ error: "Invalid session_id", details: parseResult.error.flatten() }, 400);
+  }
+  const sessionId = parseResult.data.session_id;
+
+  // Authenticate user
   const supabase = locals.supabase;
-  // Get authenticated user
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) {
-    return new Response(
-      JSON.stringify({ error: { code: ErrorCode.AUTHENTICATION_REQUIRED, message: "Authentication required" } }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+  const { data, error: authError } = await supabase.auth.getSession();
+  const session = data.session;
+  if (authError || !session) {
+    return jsonResponse({ error: "Authentication required" }, 401);
   }
   const userId = session.user.id;
 
-  // 2. Validate session_id parameter
-  const { session_id } = params;
-
-  if (!session_id || isNaN(Number(session_id))) {
-    return new Response(
-      JSON.stringify({
-        error: {
-          code: ErrorCode.VALIDATION_FAILED,
-          message: "Invalid session ID format",
-        },
-      }),
-      {
-        status: 400,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-  }
-
-  // 3. Retrieve exercises for the session
   try {
-    const sessionId = Number(session_id);
+    // Fetch exercises
     const { exercises, error } = await getExercisesForSession(supabase, userId, sessionId);
-
     if (error) {
-      // Different error handling based on the type of error
-      if (error.includes("Session not found")) {
-        return new Response(
-          JSON.stringify({
-            error: {
-              code: ErrorCode.RESOURCE_NOT_FOUND,
-              message: "Session not found or access denied",
-            },
-          }),
-          {
-            status: 404,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
-
-      if (error.includes("No muscle tests found") || error.includes("No exercises found")) {
-        return new Response(
-          JSON.stringify({
-            error: {
-              code: ErrorCode.RESOURCE_NOT_FOUND,
-              message: error,
-            },
-          }),
-          {
-            status: 404,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
-
-      // Default to server error for other types of errors
-      return new Response(
-        JSON.stringify({
-          error: {
-            code: ErrorCode.SERVER_ERROR,
-            message: "An error occurred while retrieving exercises",
-            details: { reason: error },
-          },
-        }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const isNotFound = /not found|no /i.test(error);
+      const status = isNotFound ? 404 : 500;
+      return jsonResponse({ error }, status);
     }
 
-    // 4. Return the exercises
-    return new Response(JSON.stringify(exercises), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-  } catch (error) {
-    console.error("Error in exercises endpoint:", error);
-    return new Response(
-      JSON.stringify({
-        error: {
-          code: ErrorCode.SERVER_ERROR,
-          message: "An unexpected error occurred",
-          details: { reason: error instanceof Error ? error.message : String(error) },
-        },
-      }),
-      {
-        status: 500,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // Respond with data
+    return jsonResponse<{ data: ExerciseDto[] }>({ data: exercises }, 200);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return jsonResponse({ error: "Internal server error", details: message }, 500);
   }
 };

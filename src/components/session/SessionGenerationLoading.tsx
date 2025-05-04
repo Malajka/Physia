@@ -1,8 +1,8 @@
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Spinner } from "@/components/ui/spinner";
+import { useSessionGeneration } from "@/lib/hooks/useSessionGeneration";
 import { useEffect } from "react";
-import { useSessionGeneration } from "../../lib/hooks/useSessionGeneration";
-import { Button } from "../ui/button";
-import { Skeleton } from "../ui/skeleton";
-import { Spinner } from "../ui/spinner";
 
 interface SessionGenerationLoadingProps {
   bodyPartId: number;

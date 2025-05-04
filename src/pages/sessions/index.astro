@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
-import Layout from "../../layouts/Layout.astro";
-import type { TrainingPlan } from "../../lib/services/openrouter.service";
+import Layout from "@/layouts/Layout.astro";
+import type { TrainingPlan } from "@/lib/services/training-plan";
 
 // Get the current user session
 const { data: authData } = await Astro.locals.supabase.auth.getSession();

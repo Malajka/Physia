@@ -1,7 +1,6 @@
 ---
-import { LinkButton } from "../components/auth/LinkButton";
-import { RegisterForm } from "../components/auth/RegisterForm";
-import Layout from "../layouts/Layout.astro";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import Layout from "@/layouts/Layout.astro";
 
 export const prerender = false;
 
@@ -21,11 +20,6 @@ const errorMessage = error === "email_in_use" ? "This email is already registere
 
     <main class="bg-white rounded-lg shadow-md p-6 md:p-8">
       <RegisterForm initialError={errorMessage} client:load />
-
-      <div class="mt-6 text-center">
-        <p class="text-gray-600 mb-2">Already have an account?</p>
-        <LinkButton href="/login" variant="secondary" client:load> Log In </LinkButton>
-      </div>
     </main>
 
     <footer class="mt-8 text-center text-sm text-slate-500">

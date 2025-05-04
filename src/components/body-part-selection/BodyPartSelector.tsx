@@ -1,11 +1,10 @@
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/button";
+import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
+import { NavigationNextButton } from "@/components/common/NavigationNextButton";
+import { useBodyParts } from "@/components/hooks/useBodyParts";
+import { useSingleSelection } from "@/components/hooks/useSingleSelection";
+import { DisclaimerModal } from "@/components/ui/DisclaimerModal";
+import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";
 import { useEffect, useState } from "react";
-import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "../../types";
-import { NavigationNextButton } from "../common/NavigationNextButton";
-import { useBodyParts } from "../hooks/useBodyParts";
-import { useSingleSelection } from "../hooks/useSingleSelection";
-import { BodyPartButton } from "./BodyPartButton";
 
 export default function BodyPartSelector() {
   // Hooks must be called unconditionally
@@ -58,22 +57,7 @@ export default function BodyPartSelector() {
 
   // Show disclaimer modal until accepted
   if (!acceptedAt) {
-    return (
-      <Modal
-        open={true}
-        onClose={() => {
-          /* Prevent closing without acceptance */
-        }}
-        title="Medical Disclaimer"
-        footer={
-          <div className="flex justify-center w-full">
-            <Button onClick={handleAccept}>I Accept</Button>
-          </div>
-        }
-      >
-        <div className="whitespace-pre-line text-sm mb-4">{disclaimerText}</div>
-      </Modal>
-    );
+    return <DisclaimerModal open={true} onAccept={handleAccept} text={disclaimerText} />;
   }
 
   // After acceptance, show body part selection UI

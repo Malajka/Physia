@@ -1,29 +1,45 @@
 ---
+import { FeedbackRating } from "@/components/session/FeedbackRating";
+import Layout from "@/layouts/Layout.astro";
+import type { TrainingPlan } from "@/lib/services/training-plan";
+
 export const prerender = false;
-import { FeedbackRating } from "../../components/session/FeedbackRating";
-import { supabaseClient } from "../../db/supabase.client";
-import Layout from "../../layouts/Layout.astro";
-import type { TrainingPlan } from "../../lib/services/openrouter.service";
+// Server-side guard: require authenticated session and disclaimer acceptance
+const authRes = await Astro.locals.supabase.auth.getSession();
+const session = authRes.data.session;
+if (!session) {
+  return Astro.redirect("/login");
+}
+if (!session.user.user_metadata?.disclaimer_accepted_at) {
+  return Astro.redirect("/body-parts");
+}
 
 // Grab the session_id from the route params
 const sessionId = Number(Astro.params.session_id);
 const pageTitle = `Session ${sessionId}`;
-
-// Fetch session details including training_plan
-let session: { training_plan: TrainingPlan } | null = null;
+// Initialize session data variables
 let sessionError: string | null = null;
-const { data, error } = await supabaseClient.from("sessions").select("training_plan").eq("id", sessionId).single();
-if (error || !data) {
-  sessionError = "Session not found";
-} else {
-  session = { training_plan: data.training_plan as unknown as TrainingPlan };
+let trainingSession: { training_plan: TrainingPlan } | null = null;
+
+// Fetch session details for the authenticated user
+const supabase = Astro.locals.supabase;
+const { data: sessionRow, error: fetchError } = await supabase
+  .from("sessions")
+  .select("training_plan")
+  .eq("id", sessionId)
+  .eq("user_id", session.user.id)
+  .single();
+if (fetchError || !sessionRow) {
+  // Not found or not owned by user
+  return Astro.redirect("/sessions");
 }
+trainingSession = { training_plan: sessionRow.training_plan as TrainingPlan };
 
 // Add exercise image fetching
 let exerciseImagesMap: Record<number, { file_path: string; metadata: unknown }[]> = {};
-if (session && Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0) {
-  const exerciseIds = session.training_plan.exercises.map((ex) => ex.id);
-  const { data: exercisesData, error: exercisesError } = await supabaseClient
+if (trainingSession) {
+  const exerciseIds = trainingSession.training_plan.exercises.map((ex) => ex.id);
+  const { data: exercisesData, error: exercisesError } = await supabase
     .from("exercises")
     .select("id, exercise_images(file_path, metadata)")
     .in("id", exerciseIds);
@@ -44,13 +60,13 @@ if (session && Array.isArray(session.training_plan.exercises) && session.trainin
     <h2 class="text-2xl font-bold mb-4">Session {sessionId} generated successfully!</h2>
     {sessionError && <p class="text-red-600">Error loading session: {sessionError}</p>}
     {
-      session && (
+      trainingSession && (
         <>
           <div class="mt-6 text-left">
-            <h3 class="text-xl font-semibold">{session.training_plan.title}</h3>
-            <p class="mb-4">{session.training_plan.description}</p>
-            {Array.isArray(session.training_plan.exercises) && session.training_plan.exercises.length > 0 ? (
-              session.training_plan.exercises.map((ex) => (
+            <h3 class="text-xl font-semibold">{trainingSession.training_plan.title}</h3>
+            <p class="mb-4">{trainingSession.training_plan.description}</p>
+            {trainingSession.training_plan.exercises.length > 0 ? (
+              trainingSession.training_plan.exercises.map((ex: TrainingPlan["exercises"][number]) => (
                 <div class="mb-4 p-4 border rounded">
                   <h4 class="font-medium">{ex.name}</h4>
                   <p>{ex.description}</p>
@@ -58,7 +74,7 @@ if (session && Array.isArray(session.training_plan.exercises) && session.trainin
                     Sets: {ex.sets}, Reps: {ex.reps}, Rest: {ex.rest_time_seconds}s
                   </p>
                   {ex.notes && <p class="italic text-sm">{ex.notes}</p>}
-                  {exerciseImagesMap[ex.id] && exerciseImagesMap[ex.id].length > 0 && (
+                  {exerciseImagesMap[ex.id]?.length && (
                     <div class="mt-2 flex flex-wrap">
                       {exerciseImagesMap[ex.id].map((img) => (
                         <img src={img.file_path} alt={ex.name} class="w-32 h-32 object-cover m-1" />

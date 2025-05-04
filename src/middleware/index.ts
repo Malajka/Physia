@@ -19,6 +19,43 @@ export const onRequest = defineMiddleware(async (context, next) => {
     });
   }
   
+  // Page-level guard: protect session generation and session detail routes
+  const pathname = new URL(context.request.url).pathname;
+  if (
+    pathname.startsWith('/session/generate') ||
+    pathname.startsWith('/sessions') ||
+    pathname.startsWith('/muscle-tests')
+  ) {
+    // Ensure user is authenticated
+    const {
+      data: { session },
+    } = await supabaseClient.auth.getSession();
+    if (!session) {
+      return new Response(null, { status: 302, headers: { Location: '/login' } });
+    }
+    // Ensure disclaimer was accepted
+    const acceptedAt = session.user.user_metadata?.disclaimer_accepted_at;
+    if (!acceptedAt) {
+      return new Response(null, { status: 302, headers: { Location: '/body-parts' } });
+    }
+    // Ownership check: only allow access to own sessions
+    if (pathname.startsWith('/sessions/')) {
+      const parts = pathname.split('/').filter(Boolean);
+      const sessionId = parseInt(parts[1], 10);
+      if (!isNaN(sessionId)) {
+        // Query the session row to verify ownership
+        const { data: sessionRow, error: fetchError } = await context.locals.supabase
+          .from('sessions')
+          .select('user_id')
+          .eq('id', sessionId)
+          .single();
+        if (fetchError || !sessionRow || sessionRow.user_id !== session.user.id) {
+          return new Response(null, { status: 302, headers: { Location: '/sessions' } });
+        }
+      }
+    }
+  }
+  
   // Process the request
   const response = await next();
   

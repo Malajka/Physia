@@ -5,9 +5,11 @@ import * as React from "react";
 interface DisclaimerModalProps {
   open: boolean;
   onAccept: () => void;
+  /** The dynamic disclaimer text to display */
+  text: string;
 }
 
-export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept }) => (
+export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept, text }) => (
   <Modal
     open={open}
     onClose={() => {
@@ -20,10 +22,7 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept
       </div>
     }
   >
-    <p className="mb-4">
-      Please read and accept our medical disclaimer before proceeding. By accepting, you acknowledge that this service does not replace professional
-      medical advice and that you assume all responsibility for your actions.
-    </p>
+    <div className="whitespace-pre-line text-sm mb-4">{text}</div>
     <ul className="list-disc list-inside text-sm space-y-2">
       <li>Consult a healthcare professional before performing any exercises.</li>
       <li>Stop immediately if you experience pain or discomfort.</li>

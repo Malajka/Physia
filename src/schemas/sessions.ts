@@ -1,5 +1,4 @@
 import { z } from "zod";
-import type { SessionRatingConstraint } from "../db/database.types";
 
 /**
  * Schema for creating a new session
@@ -24,7 +23,10 @@ export const sessionRatingSchema = z.discriminatedUnion("rating", [
     rating: z.null(),
     rated_at: z.string().datetime().nullable().optional(),
   }),
-]) satisfies z.ZodType<SessionRatingConstraint>;
+]);
+
+// Define the constraint type locally
+export type SessionRatingConstraint = z.infer<typeof sessionRatingSchema>;
 
 /**
  * Validation helper to ensure rating constraint is enforced

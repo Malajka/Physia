@@ -1,22 +1,19 @@
-import { useEffect, useState } from 'react';
-import { loadTestsAndName } from '../../lib/services/bodyPartsService';
-import type { MuscleTestDto } from '../../types';
+import { fetchMuscleTestsAndBodyPartName } from "@/lib/services/body-parts";
+import { useEffect, useState } from "react";
+import type { MuscleTestDto } from "../../types";
 
-type TestsAndName = {
+interface TestsAndName {
   tests: MuscleTestDto[];
   name: string;
-};
+}
 
-type UseTestsAndNameResult = {
+interface UseTestsAndNameResult {
   data: TestsAndName | null;
   isLoading: boolean;
   error: string | null;
-};
+}
 
-export function useTestsAndName(
-  bodyPartId: number,
-  origin: string
-): UseTestsAndNameResult {
+export function useTestsAndName(bodyPartId: number, origin: string): UseTestsAndNameResult {
   const [data, setData] = useState<TestsAndName | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +23,7 @@ export function useTestsAndName(
     setLoading(true);
     setError(null);
 
-    loadTestsAndName(String(bodyPartId), origin)
+    fetchMuscleTestsAndBodyPartName(String(bodyPartId), origin)
       .then(({ muscleTests, bodyPartName }) => {
         if (!isMounted) return;
         setData({ tests: muscleTests, name: bodyPartName });
@@ -46,4 +43,4 @@ export function useTestsAndName(
   }, [bodyPartId, origin]);
 
   return { data, isLoading, error };
-} 
+}

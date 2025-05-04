@@ -1,12 +1,24 @@
 ---
+import PageHeader from "@/components/common/PageHeader.astro";
+import MuscleTestForm from "@/components/muscle-test-selection/MuscleTestForm";
+import EmptyState from "@/components/ui/EmptyState.astro";
+import ErrorAlert from "@/components/ui/ErrorAlert.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
+
+// Server-side guards
+// Prevent prerendering and require auth and disclaimer acceptance
 export const prerender = false;
 
-import PageHeader from "../../components/common/PageHeader.astro";
-import MuscleTestForm from "../../components/muscle-test-selection/MuscleTestForm";
-import EmptyState from "../../components/ui/EmptyState.astro";
-import ErrorAlert from "../../components/ui/ErrorAlert.astro";
-import Layout from "../../layouts/Layout.astro";
-import { getMuscleTestsPageData } from "../../lib/services/muscleTestPageDataService";
+// Server-side guard: require authenticated session and disclaimer acceptance
+const authRes = await Astro.locals.supabase.auth.getSession();
+const session = authRes.data.session;
+if (!session) {
+  return Astro.redirect('/login');
+}
+if (!session.user.user_metadata?.disclaimer_accepted_at) {
+  return Astro.redirect('/body-parts');
+}
 
 // Load all data for the page (fetch tests, title, backLink, etc.)
 const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Astro);
@@ -28,8 +40,5 @@ const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMu
         <EmptyState message="No muscle tests available for this body part." {...backLink} />
       )
     }
-    <div class="mt-6">
-      <a href={backLink.href} class="inline-flex items-center text-sm text-blue-600 hover:underline">{backLink.label}</a>
-    </div>
   </div>
 </Layout>

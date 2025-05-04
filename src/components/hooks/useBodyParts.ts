@@ -1,6 +1,6 @@
+import { fetchAllBodyParts } from "@/lib/services/body-parts";
+import type { BodyPartDto } from "@/types";
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
-import { loadBodyParts } from "../../lib/services/bodyPartsService";
-import type { BodyPartDto } from "../../types";
 
 interface UseBodyPartsOptions {
   baseUrl?: string;
@@ -49,8 +49,9 @@ export function useBodyParts({
     dispatch({ type: "FETCH_INIT" });
 
     try {
-      const data = await loadBodyParts(baseUrl, { signal: controller.signal });
-      dispatch({ type: "FETCH_SUCCESS", payload: data });
+      const result = await fetchAllBodyParts(baseUrl, { signal: controller.signal });
+      const payload = result;
+      dispatch({ type: "FETCH_SUCCESS", payload });
     } catch (error: unknown) {
       if (error instanceof DOMException && error.name === "AbortError") {
         // Silently ignore cancellations
