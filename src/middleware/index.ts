@@ -1,64 +1,74 @@
 import { defineMiddleware } from "astro:middleware";
+import type { SupabaseClient } from "@/db/supabase.client";
+import { supabaseClient } from "@/db/supabase.client";
 
-import { supabaseClient } from "../db/supabase.client";
+/**
+ * Extracts the pathname from a Request.
+ */
+function getPathname(request: Request): string {
+  return new URL(request.url).pathname;
+}
+
+/**
+ * Determines whether a pathname requires authentication.
+ */
+function isProtectedRoute(path: string): boolean {
+  return ["/session/generate", "/sessions", "/muscle-tests"].some((route) => path.startsWith(route));
+}
+
+/**
+ * Validates session ownership or returns a redirect.
+ */
+async function checkOwnership(supabase: SupabaseClient, userId: string, path: string): Promise<Response | undefined> {
+  if (!path.startsWith("/sessions/")) return;
+
+  const [, id] = path.split("/").filter(Boolean);
+  const sessionId = Number(id);
+  if (Number.isNaN(sessionId)) return;
+
+  const { data: row, error } = await supabase.from("sessions").select("user_id").eq("id", sessionId).single();
+
+  if (error || row?.user_id !== userId) {
+    return new Response(null, { status: 302, headers: { Location: "/sessions" } });
+  }
+}
+
+/**
+ * Issues a redirect response to the specified location.
+ */
+function redirectTo(location: string): Response {
+  return new Response(null, { status: 302, headers: { Location: location } });
+}
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  // Add supabase client to locals
-  context.locals.supabase = supabaseClient;
-  
-  // Get Supabase auth cookies from the request
-  const accessToken = context.cookies.get("sb-access-token");
-  const refreshToken = context.cookies.get("sb-refresh-token");
-  
-  // If we have auth cookies, set them for the current request
+  const supabase = (context.locals.supabase = supabaseClient);
+
+  const accessToken = context.cookies.get("sb-access-token")?.value;
+  const refreshToken = context.cookies.get("sb-refresh-token")?.value;
   if (accessToken && refreshToken) {
-    // Set the session for the supabase client
-    await supabaseClient.auth.setSession({
-      access_token: accessToken.value,
-      refresh_token: refreshToken.value
-    });
+    await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
   }
-  
-  // Page-level guard: protect session generation and session detail routes
-  const pathname = new URL(context.request.url).pathname;
-  if (
-    pathname.startsWith('/session/generate') ||
-    pathname.startsWith('/sessions') ||
-    pathname.startsWith('/muscle-tests')
-  ) {
-    // Ensure user is authenticated
-    const {
-      data: { session },
-    } = await supabaseClient.auth.getSession();
-    if (!session) {
-      return new Response(null, { status: 302, headers: { Location: '/login' } });
-    }
-    // Ensure disclaimer was accepted
-    const acceptedAt = session.user.user_metadata?.disclaimer_accepted_at;
-    if (!acceptedAt) {
-      return new Response(null, { status: 302, headers: { Location: '/body-parts' } });
-    }
-    // Ownership check: only allow access to own sessions
-    if (pathname.startsWith('/sessions/')) {
-      const parts = pathname.split('/').filter(Boolean);
-      const sessionId = parseInt(parts[1], 10);
-      if (!isNaN(sessionId)) {
-        // Query the session row to verify ownership
-        const { data: sessionRow, error: fetchError } = await context.locals.supabase
-          .from('sessions')
-          .select('user_id')
-          .eq('id', sessionId)
-          .single();
-        if (fetchError || !sessionRow || sessionRow.user_id !== session.user.id) {
-          return new Response(null, { status: 302, headers: { Location: '/sessions' } });
-        }
-      }
-    }
+
+  const pathname = getPathname(context.request);
+  if (!isProtectedRoute(pathname)) {
+    return next();
   }
-  
-  // Process the request
-  const response = await next();
-  
-  // Return response
-  return response;
+
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
+  if (sessionError || !session) {
+    return redirectTo("/login");
+  }
+  if (!session.user.user_metadata?.disclaimer_accepted_at) {
+    return redirectTo("/body-parts");
+  }
+
+  const ownershipRedirect = await checkOwnership(supabase, session.user.id, pathname);
+  if (ownershipRedirect) {
+    return ownershipRedirect;
+  }
+
+  return next();
 });

@@ -220,6 +220,11 @@ export interface DataArrayResponse<T> {
   data: T[];
 }
 
+// Adds a shared HTTP error response shape for fetch utilities
+export interface ErrorResponse {
+  error: string;
+}
+
 // 8. Service Result
 /**
  * Generic wrapper for service-layer results, carrying either data or an error message.

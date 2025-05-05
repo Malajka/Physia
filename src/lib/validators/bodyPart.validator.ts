@@ -25,6 +25,6 @@ export const BodyPartDtoArraySchema = z.array(BodyPartDtoSchema);
 /**
  * Validates and parses a raw response into an array of BodyPartDto objects.
  */
-export function validateBodyPartsDto(bodyParts: unknown): BodyPartDto[] {
+export function validateBodyPartsDto(bodyParts: BodyPartDto[]): BodyPartDto[] {
   return BodyPartDtoArraySchema.parse(bodyParts);
-} 
+}

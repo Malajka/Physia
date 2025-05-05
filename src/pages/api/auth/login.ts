@@ -11,7 +11,7 @@ export const loginSchema: ZodType<LoginCommandDto> = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
     let data: LoginCommandDto;
     try {
@@ -33,6 +33,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
     if (error) {
       return jsonResponse({ error: "Invalid login credentials" }, 401);
     }
+    // Success - set authentication cookies for SSR
+    cookies.set("sb-access-token", authData.session.access_token, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: authData.session.expires_in,
+    });
+    cookies.set("sb-refresh-token", authData.session.refresh_token, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
     // Success - return session data
     return jsonResponse({ user: authData.user, session: authData.session }, 200);
   } catch (unexpectedError) {
