@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/Button";
 import React from "react";
+import { Button } from "./Button";
 
 interface SubmitButtonProps extends React.ComponentProps<typeof Button> {
   loading?: boolean;

@@ -1,0 +1,120 @@
+---
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { LinkButton } from "@/components/ui/LinkButton";
+const { isAuthenticated } = Astro.props;
+---
+
+<nav class="flex items-center w-full">
+  <!-- Desktop nav -->
+  <ul class="hidden lg:flex flex-1 justify-center items-center space-x-6">
+    {
+      ["about", "services", "benefits"].map((section) => (
+        <li>
+          <LinkButton href={`#${section}`} variant="nav-link">
+            {section.charAt(0).toUpperCase() + section.slice(1)}
+          </LinkButton>
+        </li>
+      ))
+    }
+  </ul>
+  <!-- Mobile burger -->
+  <details class="lg:hidden ml-auto relative">
+    <summary class="list-none p-2 cursor-pointer" aria-label="Open navigation menu" aria-haspopup="true" aria-expanded="false">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-6 w-6 text-[var(--primary)]"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </summary>
+    <ul class="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 rounded-xl shadow-md space-y-2 text-right">
+      {
+        ["about", "services", "benefits"].map((section) => (
+          <li>
+            <LinkButton href={`#${section}`} variant="nav-link" className="block">
+              {section.charAt(0).toUpperCase() + section.slice(1)}
+            </LinkButton>
+          </li>
+        ))
+      }
+      {
+        !isAuthenticated ? (
+          <>
+            <li>
+              <LinkButton href="/login" variant="nav-primary" className="block w-full">
+                Log in
+              </LinkButton>
+            </li>
+            <li>
+              <LinkButton href="/register" variant="nav-secondary" className="block w-full">
+                Register
+              </LinkButton>
+            </li>
+          </>
+        ) : (
+          <>
+            <li>
+              <LinkButton href="/sessions" variant="nav-muted" className="block w-full">
+                My Sessions
+              </LinkButton>
+            </li>
+            <li>
+              <LinkButton href="/body-parts" variant="nav-muted" className="block w-full">
+                Create New Session
+              </LinkButton>
+            </li>
+            <li>
+              <LogoutButton
+                client:load
+                className="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+              />
+            </li>
+          </>
+        )
+      }
+    </ul>
+  </details>
+
+  <ul class="hidden lg:flex items-center space-x-6">
+    {
+      !isAuthenticated ? (
+        <>
+          <li>
+            <LinkButton href="/login" variant="nav-primary">
+              Log in
+            </LinkButton>
+          </li>
+          <li>
+            <LinkButton href="/register" variant="nav-secondary">
+              Register
+            </LinkButton>
+          </li>
+        </>
+      ) : (
+        <>
+          <li>
+            <LinkButton href="/sessions" variant="nav-muted">
+              My Sessions
+            </LinkButton>
+          </li>
+          <li>
+            <LinkButton href="/body-parts" variant="nav-muted">
+              Create New Session
+            </LinkButton>
+          </li>
+          <li>
+            <LogoutButton
+              client:load
+              className="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+            />
+          </li>
+        </>
+      )
+    }
+  </ul>
+</nav>

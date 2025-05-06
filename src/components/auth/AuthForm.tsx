@@ -22,7 +22,7 @@ export const AuthForm = React.memo(function AuthForm({ title, onSubmit, children
 
       <form onSubmit={handleSubmit}>
         {children}
-        <div className="mt-6">
+        <div className="mt-6 flex justify-center">
           <SubmitButton loading={loading}>{submitText}</SubmitButton>
         </div>
       </form>

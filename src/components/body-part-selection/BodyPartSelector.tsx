@@ -1,11 +1,11 @@
 import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
-import { NavigationNextButton } from "@/components/common/NavigationNextButton";
+import { DisclaimerModal } from "@/components/common/DisclaimerModal";
 import { useBodyParts } from "@/components/hooks/useBodyParts";
 import { useSingleSelection } from "@/components/hooks/useSingleSelection";
-import { DisclaimerModal } from "@/components/ui/DisclaimerModal";
 import { InfoBar } from "@/components/ui/InfoBar";
 import { useDisclaimer } from "@/lib/hooks/useDisclaimer";
 import { useCallback } from "react";
+import { NavigationNextButton } from "./NavigationNextButton";
 
 export default function BodyPartSelector() {
   const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();

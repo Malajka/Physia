@@ -174,21 +174,10 @@ export interface SubmitFeedbackCommandDto {
 }
 
 /**
- * Command model for login requests.
- * Corresponds to POST /api/auth/login request body.
+ * Command model for login and registration requests.
+ * Corresponds to POST /api/auth/login and /api/auth/register request body.
  */
-export interface LoginCommandDto {
-  /** User's email address */
-  email: string;
-  /** User's password */
-  password: string;
-}
-
-/**
- * Command model for registration requests.
- * Corresponds to POST /api/auth/register request body.
- */
-export interface RegisterCommandDto {
+export interface AuthCredentialsDto {
   /** User's email address */
   email: string;
   /** User's password */

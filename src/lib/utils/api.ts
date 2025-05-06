@@ -1,7 +1,7 @@
 import type { ErrorCode } from "@/types";
 
 // Common headers for JSON responses
-const JSON_HEADERS = { "Content-Type": "application/json" } as const;
+export const JSON_HEADERS = { "Content-Type": "application/json" } as const;
 
 /**
  * Build a JSON HTTP response with given body and status.

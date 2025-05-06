@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import type { CreateSessionCommandDto } from '../types';
+import { startSessionGeneration } from "@/lib/services/session/generation";
+import React, { useState } from "react";
 
-interface TestInput { muscle_test_id: number; pain_intensity: number; }
+interface TestInput {
+  muscle_test_id: number;
+  pain_intensity: number;
+}
 interface SessionGeneratorProps {
   bodyPartId: number;
   tests: TestInput[];
@@ -18,18 +21,16 @@ export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, 
     setLoading(true);
     setError(null);
     try {
-      const payload: CreateSessionCommandDto = { body_part_id: bodyPartId, tests };
-      const resp = await fetch('/api/sessions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const result = await resp.json();
-      if (!resp.ok) {
-        throw new Error(result.error?.message || 'Failed to create session');
+      const result = await startSessionGeneration(bodyPartId, tests);
+      if (result.error) {
+        throw new Error(result.error);
       }
       // Redirect to the new session details page
-      window.location.href = `/sessions/${result.id}`;
+      if (result.id) {
+        window.location.href = `/sessions/${result.id}`;
+      } else {
+        throw new Error("Failed to create session");
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -45,8 +46,8 @@ export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, 
         disabled={loading}
         className="px-6 py-3 bg-[#1B9B6B] text-white rounded-xl shadow-md hover:bg-[#156F53] disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
       >
-        {loading ? 'Generating...' : 'Generate Training Session'}
+        {loading ? "Generating..." : "Generate Training Session"}
       </button>
     </div>
   );
-}; 
+};
