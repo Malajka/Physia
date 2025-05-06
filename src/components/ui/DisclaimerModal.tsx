@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/button";
 import * as React from "react";
 
 interface DisclaimerModalProps {

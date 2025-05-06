@@ -14,10 +14,9 @@ export function NavigationNextButton({ selectedBodyPartId }: NavigationNextButto
       type="button"
       onClick={handleNext}
       disabled={selectedBodyPartId === null}
-      className={`
-        px-6 py-2 rounded-md font-medium
-        ${selectedBodyPartId === null ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"}
-      `}
+      className={`px-6 py-2 rounded-xl shadow-md transition-colors bg-[var(--primary)] border border-[var(--primary)] text-[var(--primary-foreground)] cursor-pointer ${
+        selectedBodyPartId === null ? "opacity-50" : ""
+      }`}
       aria-disabled={selectedBodyPartId === null}
     >
       Next

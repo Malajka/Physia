@@ -3,90 +3,35 @@ import { NavigationNextButton } from "@/components/common/NavigationNextButton";
 import { useBodyParts } from "@/components/hooks/useBodyParts";
 import { useSingleSelection } from "@/components/hooks/useSingleSelection";
 import { DisclaimerModal } from "@/components/ui/DisclaimerModal";
-import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";
-import { useEffect, useState } from "react";
+import { InfoBar } from "@/components/ui/InfoBar";
+import { useDisclaimer } from "@/lib/hooks/useDisclaimer";
+import { useCallback } from "react";
 
 export default function BodyPartSelector() {
-  // Hooks must be called unconditionally
-  const [disclaimerText, setDisclaimerText] = useState<string>("");
-  const [acceptedAt, setAcceptedAt] = useState<string | null>(null);
-  const [discLoading, setDiscLoading] = useState<boolean>(true);
-  const [discError, setDiscError] = useState<string | null>(null);
+  const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();
   const { bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts();
-  const { selected: selectedBodyPartId, toggle: handleSelect } = useSingleSelection<number>();
+  const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
 
-  // Fetch disclaimer text and acceptance status
-  useEffect(() => {
-    async function loadDisclaimer() {
-      try {
-        const res = await fetch("/api/disclaimers", { credentials: "same-origin" });
-        if (!res.ok) throw new Error(res.statusText);
-        const data = (await res.json()) as DisclaimersContentDto & { accepted_at?: string | null };
-        setDisclaimerText(data.text);
-        setAcceptedAt(data.accepted_at ?? null);
-      } catch (e) {
-        setDiscError(e instanceof Error ? e.message : String(e));
-      } finally {
-        setDiscLoading(false);
-      }
-    }
-    loadDisclaimer();
-  }, []);
+  const handleSelect = useCallback((id: number) => toggle(id), [toggle]);
 
-  // Handler to accept disclaimer via API
-  const handleAccept = async () => {
-    try {
-      const res = await fetch("/api/disclaimers", { method: "POST", credentials: "same-origin" });
-      if (!res.ok) throw new Error(res.statusText);
-      const data = (await res.json()) as AcceptDisclaimerResponseDto;
-      setAcceptedAt(data.accepted_at);
-    } catch (e) {
-      setDiscError(e instanceof Error ? e.message : String(e));
-    }
-  };
-
-  const handleRefresh = () => refetch();
-
-  // Show loading or error for disclaimer fetch
-  if (discLoading) {
-    return <div className="text-center py-8">Loading disclaimer...</div>;
-  }
-  if (discError) {
-    return <div className="text-center py-8 text-red-600">{discError}</div>;
-  }
-
-  // Show disclaimer modal until accepted
-  if (!acceptedAt) {
-    return <DisclaimerModal open={true} onAccept={handleAccept} text={disclaimerText} />;
-  }
-
-  // After acceptance, show body part selection UI
-  if (bpLoading) {
-    return <div className="text-center py-8">Loading body areas...</div>;
-  }
-
-  if (bpError) {
+  if (discLoading) return <StatusMessage text="Loading disclaimer..." />;
+  if (discError) return <StatusMessage text={discError} error />;
+  if (!acceptedAt) return <DisclaimerModal open onAccept={accept} text={disclaimerText} />;
+  if (bpLoading) return <StatusMessage text="Loading body areas..." />;
+  if (bpError)
     return (
-      <div className="text-center py-8">
-        <p className="text-red-500 mb-4">{bpError}</p>
-        <button onClick={handleRefresh} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      <StatusMessage text={bpError} error>
+        <button onClick={refetch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           Retry
         </button>
-      </div>
+      </StatusMessage>
     );
-  }
-
-  if (bodyParts.length === 0) {
-    return <div className="text-center py-8">No body areas available</div>;
-  }
+  if (bodyParts.length === 0) return <StatusMessage text="No body areas available" />;
 
   return (
     <div className="space-y-8">
-      <div className="p-4 bg-blue-50 border border-blue-200 text-blue-700 rounded mb-4">
-        Select max 1 area. Click a selected area again to deselect.
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+      <InfoBar>Select max 1 area. Click a selected area again to deselect.</InfoBar>
+      <div className="grid grid-cols-2 gap-[15px] justify-items-center">
         {bodyParts.map((bodyPart) => (
           <BodyPartButton
             key={bodyPart.id}
@@ -97,10 +42,18 @@ export default function BodyPartSelector() {
           />
         ))}
       </div>
-
       <div className="mt-8 flex justify-end">
         <NavigationNextButton selectedBodyPartId={selectedBodyPartId} />
       </div>
+    </div>
+  );
+}
+
+function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
+  return (
+    <div className={`text-center py-8 ${error ? "text-red-600" : ""}`}>
+      <p>{text}</p>
+      {children}
     </div>
   );
 }

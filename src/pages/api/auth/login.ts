@@ -1,19 +1,14 @@
 import { jsonResponse } from "@/lib/utils/response";
-import type { LoginCommandDto } from "@/types";
+import { loginSchema } from "@/lib/validators/auth.validator";
+import type { AuthCredentialsDto } from "@/types";
 import type { APIRoute } from "astro";
-import { z, ZodError, type ZodType } from "zod";
+import { ZodError } from "zod";
 
 export const prerender = false;
 
-// Runtime validation schema matching the external DTO
-export const loginSchema: ZodType<LoginCommandDto> = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-});
-
 export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
-    let data: LoginCommandDto;
+    let data: AuthCredentialsDto;
     try {
       data = loginSchema.parse(await request.json());
     } catch (error) {

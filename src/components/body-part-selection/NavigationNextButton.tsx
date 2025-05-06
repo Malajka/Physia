@@ -1,28 +1,36 @@
+import { Button } from "@/components/ui/Button";
 import { useCallback } from "react";
 
 interface NavigationNextButtonProps {
   selectedBodyPartId: number | null;
+  className?: string;
+  onNavigate?: (id: number) => void;
 }
 
-export function NavigationNextButton({ selectedBodyPartId }: NavigationNextButtonProps) {
+export function NavigationNextButton({ selectedBodyPartId, className = "", onNavigate }: NavigationNextButtonProps) {
   const isDisabled = selectedBodyPartId == null;
+
   const handleNext = useCallback(() => {
     if (selectedBodyPartId != null) {
-      // navigate to the muscle-tests page
-      window.location.pathname = `/muscle-tests/${selectedBodyPartId}`;
+      if (onNavigate) {
+        onNavigate(selectedBodyPartId);
+      } else {
+        window.location.pathname = `/muscle-tests/${selectedBodyPartId}`;
+      }
     }
-  }, [selectedBodyPartId]);
+  }, [selectedBodyPartId, onNavigate]);
 
   return (
-    <button
+    <Button
       type="button"
       onClick={handleNext}
       disabled={isDisabled}
-      className={`px-6 py-2 rounded-md font-medium ${
-        isDisabled ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
-      }`}
+      aria-disabled={isDisabled}
+      size="lg"
+      className={className}
+      title={isDisabled ? "Select a body part to continue" : "Go to muscle tests"}
     >
       Next
-    </button>
+    </Button>
   );
 }

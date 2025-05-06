@@ -1,3 +1,6 @@
+import { slugify } from "@/lib/utils/slugify";
+import { memo } from "react";
+
 interface BodyPartButtonProps {
   id: number;
   name: string;
@@ -5,32 +8,39 @@ interface BodyPartButtonProps {
   onSelect: (id: number) => void;
 }
 
-export function BodyPartButton({ id, name, selected, onSelect }: BodyPartButtonProps) {
-  const baseClasses =
-    "w-full p-6 rounded-lg border flex flex-col items-center justify-center gap-4 transition-colors duration-200 bg-gray-50 hover:bg-gray-100 border-gray-200";
+const baseClass =
+  "relative overflow-hidden w-full h-48 rounded-lg border flex items-end justify-center p-4 text-center font-medium text-lg uppercase drop-shadow-md transform transition-all ease-in-out duration-500 active:scale-[0.98] hover:scale-[1.02] cursor-pointer";
+const selectedClass = "bg-primary border-primary text-white hover:bg-light-green hover:text-primary";
+const unselectedClass = "bg-gray-50 border-gray-200 text-black hover:bg-white";
+
+function BodyPartButtonComponent({ id, name, selected, onSelect }: BodyPartButtonProps) {
+  if (!name) return null;
+
+  const slug = slugify(name);
+  const imageSrc = `/images/body-parts/${slug}.png`;
+
+  const style = {
+    backgroundImage: `url(${imageSrc})`,
+    backgroundSize: "contain",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+  };
+
   return (
-    <>
-      <style>{`
-        .body-part-button[aria-pressed="true"] {
-          background-color: #059669;
-          border-color: #047857;
-          color: #ffffff ;
-        }
-      `}</style>
-      <button type="button" onClick={() => onSelect(id)} className={`body-part-button ${baseClasses}`} aria-pressed={selected}>
-        {/* Placeholder icon - replace with actual SVG icons */}
-        <div className={selected ? "w-16 h-16 text-white" : "w-16 h-16 text-gray-400"}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-        </div>
-        <span className="font-medium text-lg">{name}</span>
-      </button>
-    </>
+    <button
+      type="button"
+      onClick={() => onSelect(id)}
+      aria-pressed={selected}
+      aria-label={`Select ${name}`}
+      style={style}
+      className={`${baseClass} ${selected ? selectedClass : unselectedClass}`}
+    >
+      {!selected && <div className="absolute inset-0 bg-[var(--background)] opacity-35" aria-hidden="true" />}
+      <span className={`relative z-10 px-2 py-1 rounded ${selected ? "bg-[var(--background)] text-primary" : "bg-[var(--primary)] text-white"}`}>
+        {name}
+      </span>
+    </button>
   );
 }
+
+export const BodyPartButton = memo(BodyPartButtonComponent);

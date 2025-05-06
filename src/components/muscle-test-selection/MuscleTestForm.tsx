@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Slider } from "@/components/ui/slider";
 import type { MuscleTestDto } from "@/types";
+import { ChevronLeft } from "lucide-react";
 import { useState } from "react";
 
 interface MuscleTestFormProps {
@@ -163,7 +164,11 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
         ))}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        <Button type="button" variant="link" onClick={() => window.history.back()} disabled={isSubmitting}>
+          <ChevronLeft />
+          Back
+        </Button>
         <Button type="submit" disabled={isSubmitting || !isFormValid()}>
           {isSubmitting ? "Redirecting..." : "Create Session"}
         </Button>
