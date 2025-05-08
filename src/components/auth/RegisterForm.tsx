@@ -1,6 +1,6 @@
 import { AuthForm } from "@/components/auth/AuthForm";
 import { PasswordField } from "@/components/auth/PasswordField";
-import { register } from "@/lib/services/auth/client";
+import { register } from "@/lib/services/auth";
 import React, { useCallback, useState } from "react";
 import { z } from "zod";
 import { InputField } from "../ui/InputField";

@@ -1,8 +1,8 @@
 ---
-import type { MuscleTestDto } from "@/../types";
-import EmptyState from "@/ui/EmptyState.astro";
-import ErrorAlert from "@/ui/ErrorAlert.astro";
-import MuscleTestForm from "@/MuscleTestForm";
+import type { MuscleTestDto } from "@/types";
+import EmptyState from "@/components/ui/EmptyState.astro";
+import ErrorAlert from "@/components/ui/ErrorAlert.astro";
+import MuscleTestForm from "@/components/muscle-test-selection/MuscleTestForm.tsx";
 
 export interface Props {
   muscleTests: MuscleTestDto[];

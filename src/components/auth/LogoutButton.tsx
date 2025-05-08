@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/Spinner";
 import { cn } from "@/lib/utils";
 import { JSON_HEADERS } from "@/lib/utils/api";
 import React, { useCallback, useState } from "react";

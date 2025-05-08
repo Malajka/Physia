@@ -3,7 +3,7 @@ import { PasswordField } from "@/components/auth/PasswordField";
 import { InputField } from "@/components/ui/InputField";
 import { LinkButton } from "@/components/ui/LinkButton";
 import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
-import { login } from "@/lib/services/auth/client";
+import { login } from "@/lib/services/auth";
 import React, { useCallback, useState } from "react";
 import { z } from "zod";
 

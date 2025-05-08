@@ -70,7 +70,7 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
           {error}
         </div>
       )}
-      <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+      <div className="p-4 border drop-shadow-md border-gray-200 rounded-lg bg-gray-50">
         <h3 className="font-bold mb-2 text-base mb-4">Pain Scale</h3>
         <div className="flex justify-between mb-4">
           <span className="text-sm text-emerald-500 font-bold">No pain</span>

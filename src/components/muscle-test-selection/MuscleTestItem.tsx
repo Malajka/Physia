@@ -1,4 +1,4 @@
-import { Slider } from "@/components/ui/slider";
+import { Slider } from "@/components/ui/Slider";
 import type { MuscleTestDto } from "@/types";
 
 interface MuscleTestItemProps {
@@ -16,12 +16,12 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
   };
 
   return (
-    <div className="p-6 border rounded-lg bg-white">
+    <div className="p-6 border drop-shadow-md rounded-lg bg-white">
       <h2 className="text-lg font-semibold mb-2">{test.name}</h2>
       <p className="mb-6 text-gray-700">{test.description}</p>
       <div className="flex flex-col space-y-4">
         <label htmlFor={`pain-${test.id}`} className="font-medium text-lg">
-          Poziom bólu:{" "}
+          Pain level:{" "}
           <span
             style={{
               color: getPainColor(value),
@@ -34,16 +34,8 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
             {value}
           </span>
         </label>
-        <Slider
-          id={`pain-${test.id}`}
-          min={0}
-          max={10}
-          step={1}
-          value={[value]}
-          onValueChange={([v]) => onChange(v)}
-          aria-label="Intensywność bólu"
-        />
+        <Slider id={`pain-${test.id}`} min={0} max={10} step={1} value={[value]} onValueChange={([v]) => onChange(v)} aria-label="Pain intensity" />
       </div>
     </div>
   );
-} 
+}
