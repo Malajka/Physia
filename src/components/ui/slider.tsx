@@ -3,6 +3,15 @@ import * as React from "react";
 
 const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>>(
   (props, ref) => {
+    const getThumbColor = (value: number) => {
+      if (value <= 3) return "#10b981";
+      if (value <= 6) return "#fbbf24";
+      return "#ef4444";
+    };
+
+    const currentValue = props.value?.[0] ?? 0;
+    const thumbColor = getThumbColor(currentValue);
+
     return (
       <div style={{ padding: "15px 0" }}>
         <style>
@@ -35,20 +44,18 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
             display: block;
             width: 28px;
             height: 28px;
-            background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             border-radius: 50%;
-            border: 2px solid #3b82f6;
             cursor: pointer;
+            transition: all 0.3s ease;
           }
           
           .slider-thumb:hover {
-            background-color: #f5f5f5;
+            filter: brightness(0.95);
           }
           
           .slider-thumb:focus {
             outline: none;
-            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.3);
           }
         `}
         </style>
@@ -57,7 +64,14 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
           <SliderPrimitive.Track className="slider-track">
             <SliderPrimitive.Range className="slider-range" />
           </SliderPrimitive.Track>
-          <SliderPrimitive.Thumb className="slider-thumb" />
+          <SliderPrimitive.Thumb
+            className="slider-thumb"
+            style={{
+              backgroundColor: thumbColor,
+              border: `2px solid ${thumbColor}`,
+              boxShadow: `0 0 0 5px ${thumbColor}33`,
+            }}
+          />
         </SliderPrimitive.Root>
       </div>
     );

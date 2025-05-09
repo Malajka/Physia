@@ -6,7 +6,7 @@ import { z, type ZodType } from "zod";
  */
 export const loginSchema: ZodType<AuthCredentialsDto> = z.object({
   email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
+  password: z.string({ required_error: "Password is required" }).min(1, "Password is required"),
 });
 
 /**
@@ -15,4 +15,4 @@ export const loginSchema: ZodType<AuthCredentialsDto> = z.object({
 export const registerSchema: ZodType<AuthCredentialsDto> = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters long"),
-}); 
+});
