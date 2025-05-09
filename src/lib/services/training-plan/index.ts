@@ -1,11 +1,11 @@
 import {
-    DEFAULT_REST_TIME_SECONDS,
-    HIGH_PAIN_THRESHOLD,
-    MAX_PLAN_EXERCISES,
-    MAX_TEST_EXERCISES,
-    MEDIUM_PAIN_THRESHOLD,
-    OPENROUTER_TIMEOUT_MS,
-    USE_MOCK_DATA,
+  DEFAULT_REST_TIME_SECONDS,
+  HIGH_PAIN_THRESHOLD,
+  MAX_PLAN_EXERCISES,
+  MAX_TEST_EXERCISES,
+  MEDIUM_PAIN_THRESHOLD,
+  OPENROUTER_TIMEOUT_MS,
+  USE_MOCK_DATA,
 } from "@/lib/services/training-plan/constants";
 import { buildTrainingPlanPrompt } from "@/lib/services/training-plan/prompt-builder";
 import { fetchWithTimeout } from "@/lib/utils/fetch";
@@ -198,3 +198,5 @@ export async function generateTrainingPlan(
     return { trainingPlan: null, error: e instanceof Error ? e.message : String(e) };
   }
 }
+
+export { generateMockTrainingPlan };

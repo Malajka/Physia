@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/45</span>
+                <span class='fraction'>45/45</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>6/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/45</span>
+                <span class='fraction'>45/45</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -108,96 +108,96 @@
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { withAuth } from "@/lib/middleware/withAuth";</span></span></span>
-<span class="cstat-no" title="statement not covered" >import { jsonResponse } from "@/lib/utils/response";</span>
-<span class="cstat-no" title="statement not covered" >import type { MuscleTestDto } from "@/types";</span>
-<span class="cstat-no" title="statement not covered" >import { z } from "zod";</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export const prerender = false;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Schema to parse and validate route parameter as a positive integer</span>
-<span class="cstat-no" title="statement not covered" >const ParamsSchema = z.object({</span>
-<span class="cstat-no" title="statement not covered" >  body_part_id: z.coerce</span>
-<span class="cstat-no" title="statement not covered" >    .number({</span>
-<span class="cstat-no" title="statement not covered" >      required_error: "body_part_id is required",</span>
-<span class="cstat-no" title="statement not covered" >      invalid_type_error: "body_part_id must be a number",</span>
-<span class="cstat-no" title="statement not covered" >    })</span>
-<span class="cstat-no" title="statement not covered" >    .int()</span>
-<span class="cstat-no" title="statement not covered" >    .positive(),</span>
-<span class="cstat-no" title="statement not covered" >});</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// Columns to select from muscle_tests table</span>
-<span class="cstat-no" title="statement not covered" >const SELECT_COLUMNS = "id, body_part_id, name, description, created_at";</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >// eslint-disable-next-line @typescript-eslint/no-unused-vars</span>
-<span class="cstat-no" title="statement not covered" >export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  // Parse and validate body_part_id</span>
-<span class="cstat-no" title="statement not covered" >  const parsed = ParamsSchema.safeParse(params);</span>
-<span class="cstat-no" title="statement not covered" >  if (!parsed.success) {</span>
-<span class="cstat-no" title="statement not covered" >    return jsonResponse({ error: "Invalid body_part_id", details: parsed.error.flatten() }, 400);</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >  const bodyPartId = parsed.data.body_part_id;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-<span class="cstat-no" title="statement not covered" >    const { data, error } = await supabase.from("muscle_tests").select(SELECT_COLUMNS).eq("body_part_id", bodyPartId);</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (error) {</span>
-<span class="cstat-no" title="statement not covered" >      // Upstream (Supabase) failure</span>
-<span class="cstat-no" title="statement not covered" >      return jsonResponse({ error: "Failed to fetch muscle tests", details: error.message }, 502);</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    // Wrap and return data with explicit response type</span>
-<span class="cstat-no" title="statement not covered" >    return jsonResponse&lt;{ data: MuscleTestDto[] }&gt;({ data: data ?? [] }, 200);</span>
-<span class="cstat-no" title="statement not covered" >  } catch {</span>
-<span class="cstat-no" title="statement not covered" >    // Unexpected server error</span>
-<span class="cstat-no" title="statement not covered" >    return jsonResponse({ error: "Internal server error" }, 500);</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" >});</span>
+<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { withAuth } from "@/lib/middleware/withAuth";
+import { jsonResponse } from "@/lib/utils/response";
+import type { MuscleTestDto } from "@/types";
+import { z } from "zod";
+&nbsp;
+export const prerender = false;
+&nbsp;
+// Schema to parse and validate route parameter as a positive integer
+const ParamsSchema = z.object({
+  body_part_id: z.coerce
+    .number({
+      required_error: "body_part_id is required",
+      invalid_type_error: "body_part_id must be a number",
+    })
+    .int()
+    .positive(),
+});
+&nbsp;
+// Columns to select from muscle_tests table
+const SELECT_COLUMNS = "id, body_part_id, name, description, created_at";
+&nbsp;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) =&gt; {
+  // Parse and validate body_part_id
+  const parsed = ParamsSchema.safeParse(params);
+  if (!parsed.success) {
+    return jsonResponse({ error: "Invalid body_part_id", details: parsed.error.flatten() }, 400);
+  }
+  const bodyPartId = parsed.data.body_part_id;
+&nbsp;
+  try {
+    const { data, error } = await supabase.from("muscle_tests").select(SELECT_COLUMNS).eq("body_part_id", bodyPartId);
+&nbsp;
+    if (error) {
+      // Upstream (Supabase) failure
+      return jsonResponse({ error: "Failed to fetch muscle tests", details: error.message }, 502);
+    }
+&nbsp;
+    // Wrap and return data with explicit response type
+    return jsonResponse&lt;{ data: MuscleTestDto[] }&gt;({ data: <span class="branch-0 cbranch-no" title="branch not covered" >data ?? [] }</span>, 200);
+  } catch {
+    // Unexpected server error
+    return jsonResponse({ error: "Internal server error" }, 500);
+  }
+});
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -205,7 +205,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-09T08:31:54.741Z
+                at 2025-05-09T10:10:34.791Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

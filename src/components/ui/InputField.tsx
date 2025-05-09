@@ -13,6 +13,7 @@ export interface InputFieldProps {
   onChange?: (value: string) => void;
   error?: string;
   "data-test-id"?: string;
+  forceShowError?: boolean;
 }
 
 function InputFieldComponent({
@@ -26,6 +27,7 @@ function InputFieldComponent({
   onChange,
   error,
   "data-test-id": dataTestId,
+  forceShowError = false,
 }: InputFieldProps) {
   const [touched, setTouched] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -48,7 +50,7 @@ function InputFieldComponent({
     setTouched(true);
   }, []);
 
-  const showError = touched && !!error;
+  const showError = (touched || forceShowError) && !!error;
 
   return (
     <div className="mb-4">

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.96% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>46/59</span>
+                <span class='fraction'>59/59</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>18/18</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>2/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">77.96% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>46/59</span>
+                <span class='fraction'>59/59</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -131,26 +131,26 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -173,14 +173,14 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
 import { useBodyParts } from "@/components/hooks/useBodyParts";
@@ -197,19 +197,19 @@ export default function BodyPartSelector() {
 &nbsp;
   const handleSelect = useCallback((id: number) =&gt; toggle(id), [toggle]);
 &nbsp;
-  if (discLoading) <span class="branch-0 cbranch-no" title="branch not covered" >return &lt;StatusMessage text="Loading disclaimer..." /&gt;;</span>
-  if (discError) <span class="branch-0 cbranch-no" title="branch not covered" >return &lt;StatusMessage text={discError} error /&gt;;</span>
-  if (!acceptedAt) <span class="branch-0 cbranch-no" title="branch not covered" >return &lt;DisclaimerModal open onAccept={accept} text={disclaimerText} /&gt;;</span>
-  if (bpLoading) <span class="branch-0 cbranch-no" title="branch not covered" >return &lt;StatusMessage text="Loading body areas..." /&gt;;</span>
+  if (discLoading) return &lt;StatusMessage text="Loading disclaimer..." /&gt;;
+  if (discError) return &lt;StatusMessage text={discError} error /&gt;;
+  if (!acceptedAt) return &lt;DisclaimerModal open onAccept={accept} text={disclaimerText} /&gt;;
+  if (bpLoading) return &lt;StatusMessage text="Loading body areas..." /&gt;;
   if (bpError)
-<span class="branch-0 cbranch-no" title="branch not covered" >    return (</span>
-<span class="cstat-no" title="statement not covered" >      &lt;StatusMessage text={bpError} error&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;button onClick={refetch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          Retry</span>
-<span class="cstat-no" title="statement not covered" >        &lt;/button&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/StatusMessage&gt;</span>
+    return (
+      &lt;StatusMessage text={bpError} error&gt;
+        &lt;button onClick={refetch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"&gt;
+          Retry
+        &lt;/button&gt;
+      &lt;/StatusMessage&gt;
     );
-  if (bodyParts.length === 0) <span class="branch-0 cbranch-no" title="branch not covered" >return &lt;StatusMessage text="No body areas available" /&gt;;</span>
+  if (bodyParts.length === 0) return &lt;StatusMessage text="No body areas available" /&gt;;
 &nbsp;
   return (
     &lt;div className="space-y-8"&gt;
@@ -232,14 +232,14 @@ export default function BodyPartSelector() {
   );
 }
 &nbsp;
-<span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {</span></span>
-<span class="cstat-no" title="statement not covered" >  return (</span>
-<span class="cstat-no" title="statement not covered" >    &lt;div className={`text-center py-8 ${error ? "text-red-600" : ""}`}&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;p&gt;{text}&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      {children}</span>
-<span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >  );</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
+  return (
+    &lt;div className={`text-center py-8 ${error ? "text-red-600" : ""}`}&gt;
+      &lt;p&gt;{text}&lt;/p&gt;
+      {children}
+    &lt;/div&gt;
+  );
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -247,7 +247,7 @@ export default function BodyPartSelector() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-09T08:31:54.741Z
+                at 2025-05-09T10:10:34.791Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

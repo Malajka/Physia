@@ -36,14 +36,13 @@ export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred");
-      console.error("Session generation error:", err);
     } finally {
       setIsLoading(false);
     }
   }
 
-  const retry = () => {
-    startGeneration();
+  const retry = async () => {
+    await startGeneration();
   };
 
   return { statusMessage, error, retry, isLoading, sessionDetail, startGeneration };

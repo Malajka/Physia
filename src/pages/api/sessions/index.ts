@@ -26,7 +26,9 @@ export const POST: APIRoute = withAuth(async ({ request, locals }, userId) => {
     }
     return successResponse(createdSession, 201);
   } catch (e) {
-    console.error(e);
+    if (e instanceof Response) {
+      return e;
+    }
     return errorResponse(ErrorCode.SERVER_ERROR, "Unexpected error", 500);
   }
 });

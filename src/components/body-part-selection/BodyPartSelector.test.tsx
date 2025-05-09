@@ -86,3 +86,66 @@ describe("BodyPartSelector (minimal)", () => {
     expect(screen.getByTestId("next-btn")).not.toBeDisabled();
   });
 });
+
+describe("BodyPartSelector edge cases", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDisclaimer.mockReset();
+    mockBodyParts.mockReset();
+    mockSingleSelection.mockReset();
+  });
+
+  it("shows disclaimer modal when not accepted", () => {
+    mockDisclaimer.mockReturnValue({ disclaimerText: "Test disclaimer", acceptedAt: null, loading: false, error: null, accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByTestId("disclaimer-modal")).toBeInTheDocument();
+    expect(screen.getByText("Test disclaimer")).toBeInTheDocument();
+  });
+
+  it("shows loading disclaimer message", () => {
+    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: true, error: null, accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByText(/Loading disclaimer/i)).toBeInTheDocument();
+  });
+
+  it("shows disclaimer error message", () => {
+    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: false, error: "Disclaimer error", accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByText("Disclaimer error")).toBeInTheDocument();
+  });
+
+  it("shows loading body parts message", () => {
+    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: true, error: null, refetch: vi.fn() });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByText(/Loading body areas/i)).toBeInTheDocument();
+  });
+
+  it("shows body parts error and retry button", () => {
+    const refetch = vi.fn();
+    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: "Body parts error", refetch });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByText("Body parts error")).toBeInTheDocument();
+    const retryBtn = screen.getByText("Retry");
+    expect(retryBtn).toBeInTheDocument();
+    fireEvent.click(retryBtn);
+    expect(refetch).toHaveBeenCalled();
+  });
+
+  it("shows message when no body parts are available", () => {
+    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
+    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
+    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
+    render(<BodyPartSelector />);
+    expect(screen.getByText(/No body areas available/i)).toBeInTheDocument();
+  });
+});

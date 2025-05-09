@@ -24,7 +24,16 @@ export const GET: APIRoute = async ({ locals, params }) => {
 
   // Authenticate user
   const supabase = locals.supabase;
-  const { data, error: authError } = await supabase.auth.getSession();
+  let sessionResult;
+  try {
+    sessionResult = await supabase.auth.getSession();
+  } catch (err) {
+    return jsonResponse({ error: "Internal server error", details: err instanceof Error ? err.message : String(err) }, 500);
+  }
+  if (!sessionResult) {
+    return jsonResponse({ error: "Internal server error", details: "No session result" }, 500);
+  }
+  const { data, error: authError } = sessionResult;
   const session = data.session;
   if (authError || !session) {
     return jsonResponse({ error: "Authentication required" }, 401);
