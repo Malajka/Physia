@@ -18,9 +18,9 @@ export const AuthForm = React.memo(function AuthForm({ title, onSubmit, children
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">{title}</h2>
 
-      {errors && <ErrorAlert errors={errors} />}
+      <ErrorAlert errors={errors} />
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} data-testid="auth-form">
         {children}
         <div className="mt-6 flex justify-center">
           <SubmitButton loading={loading}>{submitText}</SubmitButton>

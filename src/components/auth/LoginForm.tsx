@@ -4,7 +4,7 @@ import { InputField } from "@/components/ui/InputField";
 import { LinkButton } from "@/components/ui/LinkButton";
 import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
 import { login } from "@/lib/services/auth";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { z } from "zod";
 
 // Validation schema for login
@@ -21,16 +21,16 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
   const [errors, setErrors] = useState<string[] | string | null>(initialError);
 
   const handleSubmit = useCallback(async (formData: FormData): Promise<AuthFormSubmitResult> => {
-    const rawEmail = formData.get("email");
-    const rawPassword = formData.get("password");
+    console.log("handleSubmit called");
     const values = {
-      email: typeof rawEmail === "string" ? rawEmail : "",
-      password: typeof rawPassword === "string" ? rawPassword : "",
+      email: formData.get("email")?.toString() ?? "",
+      password: formData.get("password")?.toString() ?? "",
     };
     const parseResult = loginSchema.safeParse(values);
+    console.log("parseResult:", parseResult);
     if (!parseResult.success) {
       const errs = parseResult.error.errors.map((e) => e.message);
-      setErrors(errs);
+      setErrors([...errs]);
       return { success: false, error: errs.join(", ") };
     }
     // Use auth service for login
@@ -45,11 +45,15 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
     return result;
   }, []);
 
+  useEffect(() => {
+    console.log("LoginForm errors state:", errors);
+  }, [errors]);
+
   return (
     <AuthForm title="Log In" onSubmit={handleSubmit} submitText="Log In" errors={errors}>
-      <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required />
+      <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required data-test-id="email" />
 
-      <PasswordField id="password" name="password" label="Password" placeholder="Your password" required />
+      <PasswordField id="password" name="password" label="Password" placeholder="Your password" required data-test-id="password" />
 
       <div className="flex justify-end mt-2 mb-4">
         <LinkButton variant="text" href="/forgot-password" className="text-sm">

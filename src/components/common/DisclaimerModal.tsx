@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import * as React from "react";
 
-interface DisclaimerModalProps {
+export interface DisclaimerModalProps {
   open: boolean;
   onAccept: () => void;
   /** The dynamic disclaimer text to display */

@@ -13,7 +13,10 @@ export interface ErrorAlertProps<T> {
  * Uses a role="alert" and aria-live for accessibility.
  */
 export function ErrorAlert<T extends string | ReactNode = string>({ errors, render }: ErrorAlertProps<T>) {
-  if (!errors) return null;
+  if (!errors || (Array.isArray(errors) && errors.length === 0)) {
+    // Always render the alert region, but hide it if there are no errors
+    return <div role="alert" aria-live="assertive" style={{ display: "none" }} />;
+  }
   const list: T[] = Array.isArray(errors) ? errors : [errors];
 
   return (

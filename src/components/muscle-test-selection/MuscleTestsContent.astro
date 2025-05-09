@@ -1,8 +1,8 @@
 ---
-import type { MuscleTestDto } from "@/types";
-import EmptyState from "@/components/ui/EmptyState.astro";
-import ErrorAlert from "@/components/ui/ErrorAlert.astro";
 import MuscleTestForm from "@/components/muscle-test-selection/MuscleTestForm.tsx";
+import EmptyState from "@/components/ui/EmptyState.astro";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
+import type { MuscleTestDto } from "@/types";
 
 export interface Props {
   muscleTests: MuscleTestDto[];
@@ -16,7 +16,7 @@ const { muscleTests, fetchError, bodyPartId, backLink } = Astro.props as Props;
 
 {
   fetchError ? (
-    <ErrorAlert message={fetchError} {...backLink} />
+    <ErrorAlert errors={fetchError} />
   ) : muscleTests.length > 0 ? (
     <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
   ) : (
