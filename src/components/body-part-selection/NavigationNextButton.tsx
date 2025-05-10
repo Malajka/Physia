@@ -29,6 +29,7 @@ export function NavigationNextButton({ selectedBodyPartId, className = "", onNav
       size="lg"
       className={className}
       title={isDisabled ? "Select a body part to continue" : "Go to muscle tests"}
+      data-testid="body-part-next"
     >
       Next
     </Button>

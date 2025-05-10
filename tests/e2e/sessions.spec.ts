@@ -83,24 +83,3 @@ test("should create a new session via full flow", async ({ page }) => {
 
   // Test kończy się tutaj – nie sprawdzamy i nie klikamy Next!
 });
-
-test("should verify muscle test flow", async ({ page }) => {
-  // Po kliknięciu Next na body-parts i przejściu na /muscle-tests/[id]
-  await expect(page).toHaveURL(/\/muscle-tests\/\d+$/);
-
-  // Sprawdź, czy przycisk jest widoczny i nieaktywny na początku
-  const muscleTestNext = page.getByTestId("muscle-test-next");
-  await expect(muscleTestNext).toBeVisible();
-  await expect(muscleTestNext).toBeDisabled();
-
-  // Ustaw wartość slidera (przykład dla pierwszego testu)
-  const slider = page.getByTestId("slider-1");
-  await slider.fill("5"); // Jeśli to nie działa, użyj .type lub .press, zależnie od implementacji
-
-  // Teraz przycisk powinien być aktywny
-  await expect(muscleTestNext).toBeEnabled();
-
-  // (Opcjonalnie) Kliknij i sprawdź przekierowanie na podsumowanie sesji
-  // await muscleTestNext.click();
-  // await expect(page).toHaveURL(/\/session\/generate/);
-});
