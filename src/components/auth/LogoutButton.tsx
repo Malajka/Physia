@@ -34,7 +34,15 @@ export const LogoutButton = React.memo(function LogoutButton({ className = "" }:
   }, []);
 
   return (
-    <Button variant="ghost" size="default" onClick={handleLogout} disabled={isLoggingOut} aria-busy={isLoggingOut} className={cn(className)}>
+    <Button
+      variant="ghost"
+      size="default"
+      onClick={handleLogout}
+      disabled={isLoggingOut}
+      aria-busy={isLoggingOut}
+      className={cn(className)}
+      data-testid="logout-button"
+    >
       {isLoggingOut ? <Spinner className="h-4 w-4" /> : null}
       {isLoggingOut ? "Logging out..." : "Log out"}
     </Button>

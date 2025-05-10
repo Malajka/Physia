@@ -12,7 +12,7 @@ export interface InputFieldProps {
   value?: string;
   onChange?: (value: string) => void;
   error?: string;
-  "data-test-id"?: string;
+  dataTestid?: string;
   forceShowError?: boolean;
 }
 
@@ -26,8 +26,8 @@ function InputFieldComponent({
   value = "",
   onChange,
   error,
-  "data-test-id": dataTestId,
   forceShowError = false,
+  ...props
 }: InputFieldProps) {
   const [touched, setTouched] = useState(false);
   const [localValue, setLocalValue] = useState(value);
@@ -78,7 +78,7 @@ function InputFieldComponent({
           "w-full p-2 border rounded focus:ring-2 focus:outline-none",
           showError ? "border-red-300 focus:ring-red-200" : "border-gray-300 focus:ring-blue-200"
         )}
-        data-test-id={dataTestId}
+        {...props}
       />
       {showError && <ErrorAlert errors={error} />}
     </div>

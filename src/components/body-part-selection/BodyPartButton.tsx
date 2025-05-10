@@ -34,6 +34,7 @@ function BodyPartButtonComponent({ id, name, selected, onSelect }: BodyPartButto
       aria-label={`Select ${name}`}
       style={style}
       className={`${baseClass} ${selected ? selectedClass : unselectedClass}`}
+      data-testid={`body-part-${slug}`}
     >
       {!selected && <div className="absolute inset-0 bg-[var(--background)] opacity-35" aria-hidden="true" />}
       <span className={`relative z-10 px-2 py-1 rounded ${selected ? "bg-[var(--background)] text-primary" : "bg-[var(--primary)] text-white"}`}>

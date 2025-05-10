@@ -89,10 +89,10 @@ export const RegisterForm = React.memo(function RegisterForm({ initialError = nu
   }
 
   return (
-    <AuthForm title="Create Account" onSubmit={handleSubmit} submitText="Register" errors={errors}>
-      <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required />
-      <PasswordField id="password" name="password" label="Password" placeholder="Min. 8 characters" required />
-      <PasswordField id="passwordConfirm" name="passwordConfirm" label="Confirm Password" placeholder="Confirm your password" required />
+    <AuthForm title="Create Account" onSubmit={handleSubmit} submitText="Register" errors={errors} submitTestId="register-submit">
+      <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required data-testid="register-email" />
+      <PasswordField id="password" name="password" label="Password" placeholder="Min. 8 characters" required data-testid="register-password" />
+      <PasswordField id="passwordConfirm" name="passwordConfirm" label="Confirm Password" placeholder="Confirm your password" required data-testid="register-passwordConfirm" />
       <p className="text-sm text-gray-600 mt-2">Password must be at least 8 characters long.</p>
     </AuthForm>
   );

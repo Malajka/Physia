@@ -102,7 +102,7 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
           <ChevronLeft />
           Back
         </Button>
-        <Button type="submit" disabled={isSubmitting || !isFormValid()} aria-busy={isSubmitting} size="lg" className="">
+        <Button type="submit" disabled={isSubmitting || !isFormValid()} aria-busy={isSubmitting} size="lg" className="" data-testid="muscle-test-next">
           {isSubmitting ? "Redirecting..." : "Create Session"}
         </Button>
       </div>

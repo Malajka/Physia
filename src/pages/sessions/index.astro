@@ -69,13 +69,13 @@ const pageTitle = "My Exercise Sessions";
       ) : (
         <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {sessionsTyped.map((session) => (
-            <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+            <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-4" data-testid={`session-item-${session.id}`}>
               <div class="flex justify-between items-start mb-2">
                 <h3 class="font-semibold text-lg">{session.plan.title || `Session for ${session.bodyPartName}`}</h3>
                 <span class="text-xs text-gray-500">{new Date(session.created_at).toLocaleDateString()}</span>
               </div>
               <p class="text-sm text-gray-600 mb-4 line-clamp-2">{session.plan.description || "Personalized exercise plan"}</p>
-              <a href={`/sessions/${session.id}`} class="text-[#14a49b] hover:underline text-sm font-medium">
+              <a href={`/sessions/${session.id}`} class="text-[#14a49b] hover:underline text-sm font-medium" data-testid={`session-details-link-${session.id}`}>
                 View Details →
               </a>
             </div>

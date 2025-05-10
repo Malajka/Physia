@@ -2,7 +2,7 @@
 import PageHeader from "@/components/common/PageHeader.astro";
 import MuscleTestForm from "@/components/muscle-test-selection/MuscleTestForm";
 import EmptyState from "@/components/ui/EmptyState.astro";
-import ErrorAlert from "@/components/ui/ErrorAlert.astro";
+import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import Layout from "@/layouts/Layout.astro";
 import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
 
@@ -33,7 +33,7 @@ const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMu
 
     {
       fetchError ? (
-        <ErrorAlert message={fetchError} {...backLink} />
+        <ErrorAlert errors={fetchError} />
       ) : muscleTests.length > 0 ? (
         <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
       ) : (

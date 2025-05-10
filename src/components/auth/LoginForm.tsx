@@ -63,7 +63,7 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
   }, [errors]);
 
   return (
-    <AuthForm title="Log In" onSubmit={handleSubmit} submitText="Log In" errors={errors}>
+    <AuthForm title="Log In" onSubmit={handleSubmit} submitText="Log In" errors={errors} submitTestId="login-submit">
       <InputField
         id="email"
         name="email"
@@ -71,7 +71,7 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
         type="email"
         placeholder="your@email.com"
         required
-        data-test-id="email"
+        data-testid="email"
         error={fieldErrors.email}
         onChange={handleEmailChange}
         forceShowError={!!fieldErrors.email}
@@ -82,7 +82,7 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
         label="Password"
         placeholder="Your password"
         required
-        data-test-id="password"
+        data-testid="password"
         error={fieldErrors.password}
         onChange={handlePasswordChange}
         forceShowError={!!fieldErrors.password}

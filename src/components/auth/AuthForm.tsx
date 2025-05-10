@@ -9,9 +9,17 @@ interface AuthFormProps {
   children: React.ReactNode;
   submitText: string;
   errors?: string[] | string | null;
+  submitTestId?: string;
 }
 
-export const AuthForm = React.memo(function AuthForm({ title, onSubmit, children, submitText, errors: initialErrors = null }: AuthFormProps) {
+export const AuthForm = React.memo(function AuthForm({
+  title,
+  onSubmit,
+  children,
+  submitText,
+  errors: initialErrors = null,
+  submitTestId,
+}: AuthFormProps) {
   const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
 
   return (
@@ -23,7 +31,9 @@ export const AuthForm = React.memo(function AuthForm({ title, onSubmit, children
       <form onSubmit={handleSubmit} data-testid="auth-form">
         {children}
         <div className="mt-6 flex justify-center">
-          <SubmitButton loading={loading}>{submitText}</SubmitButton>
+          <SubmitButton loading={loading} data-testid={submitTestId}>
+            {submitText}
+          </SubmitButton>
         </div>
       </form>
     </div>
