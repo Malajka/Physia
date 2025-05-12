@@ -1,6 +1,6 @@
 import * as sessionService from "@/lib/services/session/generation";
 import { act, renderHook } from "@testing-library/react";
-import { vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSessionGeneration } from "./useSessionGeneration";
 
 describe("useSessionGeneration", () => {
@@ -12,7 +12,16 @@ describe("useSessionGeneration", () => {
   });
 
   it("sets sessionDetail and redirects on success", async () => {
-    const sessionDetail = { id: 123, foo: "bar" };
+    const sessionDetail = {
+      id: 123,
+      body_part_id: 1,
+      user_id: "1",
+      disclaimer_accepted_at: "2024-01-01T00:00:00Z",
+      created_at: "2024-01-01T00:00:00Z",
+      training_plan: {},
+      session_tests: [],
+      feedback_rating: null,
+    };
     const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({ data: sessionDetail, id: 123 });
     const locationSpy = vi.spyOn(window, "location", "set");
     const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
@@ -55,11 +64,42 @@ describe("useSessionGeneration", () => {
   });
 
   it("retry calls startGeneration again", async () => {
-    const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({ data: { id: 1 }, id: 1 });
-    const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
+    const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
+      data: {
+        id: 1,
+        body_part_id: 1,
+        user_id: "1",
+        disclaimer_accepted_at: "2024-01-01T00:00:00Z",
+        created_at: "2024-01-01T00:00:00Z",
+        training_plan: {},
+        session_tests: [],
+        feedback_rating: null,
+      },
+      id: 1
+    });
+    
+    // Initial render with invalid params to prevent useEffect trigger
+    const { result, rerender } = renderHook(
+      ({ bodyPartId, tests }: { bodyPartId: number; tests: { muscle_test_id: number; pain_intensity: number }[] }) =>
+        useSessionGeneration(bodyPartId, tests),
+      {
+        initialProps: {
+          bodyPartId: 0,
+          tests: [] as { muscle_test_id: number; pain_intensity: number }[],
+        }
+      }
+    );
+
+    // Update to valid params after initial render
+    await act(async () => {
+      rerender({ bodyPartId, tests: [{ muscle_test_id: 2, pain_intensity: 5 }] });
+    });
+
+    // Explicit retry call
     await act(async () => {
       await result.current.retry();
     });
-    expect(mockStart).toHaveBeenCalledTimes(1);
+
+    expect(mockStart).toHaveBeenCalledTimes(2);
   });
-}); 
+});

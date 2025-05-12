@@ -37,6 +37,8 @@ function createMockSupabase({
 function createMockRequest(json: unknown) {
   return {
     json: vi.fn().mockResolvedValue(json),
+    url: "http://localhost/api/sessions",
+    headers: new Headers(),
   } as unknown as Request;
 }
 

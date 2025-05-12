@@ -12,5 +12,3 @@ export const FeedbackParamsSchema = z.object({
 export const FeedbackBodySchema = z.object({
   rating: z.number().int().min(0).max(1),
 });
-
-// End of feedback.validator.ts

@@ -7,26 +7,54 @@ import { useDisclaimer } from "@/lib/hooks/useDisclaimer";
 import { useCallback } from "react";
 import { NavigationNextButton } from "./NavigationNextButton";
 
-export default function BodyPartSelector() {
-  const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();
-  const { bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts();
-  const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
+function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
+  return (
+    <div className={`text-center py-8 ${error ? "text-red-600" : ""}`}>
+      <p>{text}</p>
+      {children}
+    </div>
+  );
+}
 
+export default function BodyPartSelector() {
+  const {
+    disclaimerText,
+    acceptedAt,
+    loading: discLoading,
+    error: discError,
+    accept
+  } = useDisclaimer();
+
+  const {
+    bodyParts,
+    loading: bpLoading,
+    error: bpError,
+    refetch
+  } = useBodyParts({ disclaimerAccepted: acceptedAt });
+
+  const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
   const handleSelect = useCallback((id: number) => toggle(id), [toggle]);
 
   if (discLoading) return <StatusMessage text="Loading disclaimer..." />;
-  if (discError) return <StatusMessage text={discError} error />;
-  if (!acceptedAt) return <DisclaimerModal open onAccept={accept} text={disclaimerText} />;
+  if (discError) return <StatusMessage text={`Disclaimer Error: ${discError}`} error />;
+
+  if (!acceptedAt) {
+    return <DisclaimerModal open onAccept={accept} text={disclaimerText || "Loading disclaimer text..."} />;
+  }
+
   if (bpLoading) return <StatusMessage text="Loading body areas..." />;
   if (bpError)
     return (
-      <StatusMessage text={bpError} error>
+      <StatusMessage text={`Error loading body parts: ${bpError}`} error>
         <button onClick={refetch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
           Retry
         </button>
       </StatusMessage>
     );
-  if (bodyParts.length === 0) return <StatusMessage text="No body areas available" />;
+
+  if (!bodyParts || bodyParts.length === 0) {
+    return <StatusMessage text="No body areas available." />;
+  }
 
   return (
     <div className="space-y-8">
@@ -45,15 +73,6 @@ export default function BodyPartSelector() {
       <div className="mt-8 flex justify-end">
         <NavigationNextButton selectedBodyPartId={selectedBodyPartId} />
       </div>
-    </div>
-  );
-}
-
-function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
-  return (
-    <div className={`text-center py-8 ${error ? "text-red-600" : ""}`}>
-      <p>{text}</p>
-      {children}
     </div>
   );
 }

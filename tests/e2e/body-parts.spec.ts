@@ -1,4 +1,5 @@
-import { expect, test, Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { TEST_USER } from "./config";
 
 // --- START HELPER FUNCTIONS SECTION (can be moved to a separate utils file) ---
@@ -10,7 +11,7 @@ async function acceptDisclaimerIfVisible(page: Page) {
       await disclaimerLocator.click();
     }
   } catch (error) {
-    // Disclaimer not found or not visible, which is acceptable.
+    console.log("Disclaimer not found or not visible, continuing...", error);
   }
 }
 // --- END HELPER FUNCTIONS SECTION ---
@@ -28,7 +29,6 @@ test("Minimal create session flow", async ({ page }) => {
     await page.screenshot({ path: `debug-login-failure-${Date.now()}.png` });
     throw new Error("Login failed. Check credentials and if the user exists.");
   }
-  await page.waitForURL(/\/sessions|\/body-parts/, { timeout: 15000 });
 
   // Step 3: Navigate to body-parts page (if not automatically redirected)
   if (!page.url().includes("/body-parts")) {
@@ -54,8 +54,4 @@ test("Minimal create session flow", async ({ page }) => {
   const nextButtonLocator = page.getByTestId("body-part-next");
   await expect(nextButtonLocator, "'Next' button should be enabled after selecting a body part.").toBeEnabled({ timeout: 10000 });
   await nextButtonLocator.click();
-
-  // Step 7: Optional verification after clicking "Next"
-  // Example: await expect(page).toHaveURL(/\/expected-next-url/, { timeout: 10000 });
-  // Example: await expect(page.getByTestId("next-step-element")).toBeVisible({ timeout: 10000 });
 });

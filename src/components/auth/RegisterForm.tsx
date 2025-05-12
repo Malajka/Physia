@@ -4,7 +4,7 @@ import { register } from "@/lib/services/auth";
 import React, { useCallback, useState } from "react";
 import { z } from "zod";
 import { InputField } from "../ui/InputField";
-
+import { LinkButton } from "../ui/LinkButton";
 // Validation schema for registration
 const registerSchema = z
   .object({
@@ -69,21 +69,16 @@ export const RegisterForm = React.memo(function RegisterForm({ initialError = nu
       <div className="text-center py-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Registration Successful!</h2>
         <div className="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">
-          <p className="text-green-800 mb-4">
+          <p className="text-green-800 mb-4 text-xl">
             <strong>Thank you for registering!</strong>
           </p>
-          <p className="text-green-700 mb-4">
-            A confirmation email has been sent to your email address. Please check your inbox and click the verification link to activate your
-            account.
+          <p className="text-green-700 mb-4 text-lg">
+            Now you can start creating your own sessions and muscle tests!
           </p>
-          <p className="text-green-700 mb-2">If you do not see the email, please check your spam folder.</p>
+          <LinkButton href="/body-parts" variant="nav-primary" className="text-lg block w-full " data-testid="create-new-session-link">
+                Create First Session
+          </LinkButton>
         </div>
-        <a
-          href="/login"
-          className="inline-block mt-4 bg-primary border border-primary text-white rounded px-4 py-2 text-center transition-colors hover:bg-primary/90"
-        >
-          Go to login page
-        </a>
       </div>
     );
   }

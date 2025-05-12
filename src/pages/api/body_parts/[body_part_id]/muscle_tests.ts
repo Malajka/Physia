@@ -1,6 +1,5 @@
 import { withAuth } from "@/lib/middleware/withAuth";
 import { jsonResponse } from "@/lib/utils/response";
-import type { MuscleTestDto } from "@/types";
 import { z } from "zod";
 
 export const prerender = false;
@@ -37,7 +36,7 @@ export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) =>
     }
 
     // Wrap and return data with explicit response type
-    return jsonResponse<{ data: MuscleTestDto[] }>({ data: data ?? [] }, 200);
+    return jsonResponse({ data: data ?? [] }, 200);
   } catch {
     // Unexpected server error
     return jsonResponse({ error: "Internal server error" }, 500);

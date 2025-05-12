@@ -18,7 +18,9 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept
     title="Medical Disclaimer"
     footer={
       <div className="flex justify-between items-center w-full">
-        <Button onClick={onAccept} data-testid="accept-disclaimer">I Accept</Button>
+        <Button onClick={onAccept} data-testid="accept-disclaimer" className="flex justify-center mx-auto">
+          I Accept
+        </Button>
       </div>
     }
   >

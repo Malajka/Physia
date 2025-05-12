@@ -17,7 +17,9 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
 
   return (
     <div className="p-6 border drop-shadow-md rounded-lg bg-white">
-      <h2 className="text-lg font-semibold mb-2">{test.name}</h2>
+      <h2 className="text-lg font-semibold mb-2" data-testid={`muscle-test-heading-${test.id}`}>
+        {test.name}
+      </h2>
       <p className="mb-6 text-gray-700">{test.description}</p>
       <div className="flex flex-col space-y-4">
         <label htmlFor={`pain-${test.id}`} className="font-medium text-lg">
@@ -34,7 +36,16 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
             {value}
           </span>
         </label>
-        <Slider id={`pain-${test.id}`} min={0} max={10} step={1} value={[value]} onValueChange={([v]) => onChange(v)} aria-label="Pain intensity" />
+        <Slider
+          id={`pain-${test.id}`}
+          min={0}
+          max={10}
+          step={1}
+          value={[value]}
+          onValueChange={([v]) => onChange(v)}
+          aria-label="Pain intensity"
+          data-testid={`slider-${test.id}`}
+        />
       </div>
     </div>
   );

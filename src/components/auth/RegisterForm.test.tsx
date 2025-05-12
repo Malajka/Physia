@@ -47,7 +47,6 @@ describe("RegisterForm", () => {
     fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
     fireEvent.click(screen.getByRole("button", { name: /register/i }));
     expect(await screen.findByText(/registration successful/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /go to login page/i })).toHaveAttribute("href", "/login");
   });
 
   it("shows backend error if registration fails", async () => {

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Spinner } from "@/components/ui/Spinner";
-import { useSessionGeneration } from "@/lib/hooks/useSessionGeneration";
+import { useSessionGeneration } from "@/lib/hooks/useSessionGeneration"; // Adjust path if needed
 import { useEffect } from "react";
 
 interface SessionGenerationLoadingProps {
@@ -45,16 +45,12 @@ function LoadingSkeleton() {
       <div className="mb-8">
         <Spinner className="w-12 h-12" />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-        {/* Title skeleton */}
         <div className="col-span-full">
           <Skeleton className="h-8 w-3/4 mb-2" />
           <Skeleton className="h-6 w-full" />
           <Skeleton className="h-6 w-2/3 mt-1" />
         </div>
-
-        {/* Exercise skeletons */}
         {[1, 2, 3].map((i) => (
           <div key={i} className="border rounded-lg p-4">
             <Skeleton className="h-6 w-3/4 mb-2" />
@@ -85,18 +81,40 @@ function InvalidRequestDisplay() {
 export function SessionGenerationLoading({ bodyPartId, tests }: SessionGenerationLoadingProps) {
   const { statusMessage, error, retry, isLoading, startGeneration } = useSessionGeneration(bodyPartId, tests);
 
+  // The useSessionGeneration hook now handles its own initial start via its internal useEffect and ref.
+  // This useEffect is kept to ensure that if `startGeneration` function reference *itself* changes
+  // (which it shouldn't often, due to useCallback, unless its dependencies bodyPartId/tests change),
+  // or if `bodyPartId` or `tests` props change, we re-initiate.
+  // However, the primary gate for initial start is now within useSessionGeneration's own useEffect.
   useEffect(() => {
-    startGeneration();
-  }, [startGeneration]);
+    // This call might be redundant if useSessionGeneration's internal useEffect always triggers first.
+    // However, it acts as a safeguard or can be used if you want the component to explicitly
+    // control the "start" signal based on its own lifecycle or prop changes,
+    // and useSessionGeneration's internal useEffect is removed or modified.
+    // For now, with the internal useEffect in useSessionGeneration, this specific call might
+    // try to call startGeneration when generationInitiatedRef.current is already true.
+    // The `startGeneration` (exposed from the hook) could be a wrapper that checks the ref
+    // or the internal useEffect in the hook is the sole initiator.
+    // Let's simplify: if the hook manages its own start, this component doesn't need to call it explicitly.
+    // console.log("[SessionGenerationLoading useEffect] Component mounted/updated. Props:", { bodyPartId, testsLength: tests?.length });
+    // If `startGeneration` is memoized and its deps `bodyPartId`, `tests` are stable, this runs once.
+    // The hook's internal useEffect is now the primary initiator.
+    // This useEffect can be removed if the hook's internal useEffect is sufficient.
+    // Or, it can be kept if you want to re-trigger if `bodyPartId` or `tests` props change *after* initial mount.
 
-  if (!bodyPartId || !tests?.length) {
+    // If the hook itself doesn't auto-start, then this is needed:
+    // if (bodyPartId && tests?.length) {
+    //   startGeneration();
+    // }
+  }, [startGeneration, bodyPartId, tests]); // Re-run if these props/functions change
+
+  if (!bodyPartId || !tests || tests.length === 0) { // Added null check for tests
     return <InvalidRequestDisplay />;
   }
 
   return (
     <div className="flex flex-col items-center justify-center p-6">
       <h1 className="text-2xl font-bold mb-6">Generating Your Training Plan</h1>
-
       {isLoading ? (
         <>
           <p role="status" aria-live="polite" className="text-lg text-center mb-8 max-w-md">

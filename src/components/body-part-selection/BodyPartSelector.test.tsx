@@ -3,7 +3,7 @@ import type React from "react";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import BodyPartSelector from "./BodyPartSelector";
 
-// Mock child components
+// Mock child components for isolation
 vi.mock("./BodyPartButton", () => ({
   BodyPartButton: ({
     id,
@@ -57,6 +57,7 @@ describe("BodyPartSelector (minimal)", () => {
     mockSingleSelection.mockReset();
   });
 
+  // Test: Renders body part buttons and handles selection
   it("renders body part buttons and handles selection", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({
@@ -76,6 +77,7 @@ describe("BodyPartSelector (minimal)", () => {
     expect(toggle).toHaveBeenCalledWith(1);
   });
 
+  // Test: Renders InfoBar and Next button
   it("renders InfoBar and Next button", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [{ id: 1, name: "Shoulder" }], loading: false, error: null, refetch: vi.fn() });
@@ -95,6 +97,7 @@ describe("BodyPartSelector edge cases", () => {
     mockSingleSelection.mockReset();
   });
 
+  // Test: Shows disclaimer modal when not accepted
   it("shows disclaimer modal when not accepted", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "Test disclaimer", acceptedAt: null, loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
@@ -104,6 +107,7 @@ describe("BodyPartSelector edge cases", () => {
     expect(screen.getByText("Test disclaimer")).toBeInTheDocument();
   });
 
+  // Test: Shows loading disclaimer message
   it("shows loading disclaimer message", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: true, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
@@ -112,14 +116,17 @@ describe("BodyPartSelector edge cases", () => {
     expect(screen.getByText(/Loading disclaimer/i)).toBeInTheDocument();
   });
 
+  // Test: Shows disclaimer error message (fixed to match full error text)
   it("shows disclaimer error message", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: false, error: "Disclaimer error", accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
     mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
     render(<BodyPartSelector />);
-    expect(screen.getByText("Disclaimer error")).toBeInTheDocument();
+    // Match the full error message as rendered by the component
+    expect(screen.getByText(/Disclaimer Error: Disclaimer error/i)).toBeInTheDocument();
   });
 
+  // Test: Shows loading body parts message
   it("shows loading body parts message", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: true, error: null, refetch: vi.fn() });
@@ -128,19 +135,22 @@ describe("BodyPartSelector edge cases", () => {
     expect(screen.getByText(/Loading body areas/i)).toBeInTheDocument();
   });
 
+  // Test: Shows body parts error and retry button (fixed to match full error text)
   it("shows body parts error and retry button", () => {
     const refetch = vi.fn();
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: "Body parts error", refetch });
     mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
     render(<BodyPartSelector />);
-    expect(screen.getByText("Body parts error")).toBeInTheDocument();
+    // Match the full error message as rendered by the component
+    expect(screen.getByText(/Error loading body parts: Body parts error/i)).toBeInTheDocument();
     const retryBtn = screen.getByText("Retry");
     expect(retryBtn).toBeInTheDocument();
     fireEvent.click(retryBtn);
     expect(refetch).toHaveBeenCalled();
   });
 
+  // Test: Shows message when no body parts are available
   it("shows message when no body parts are available", () => {
     mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
     mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
