@@ -20,7 +20,7 @@ export const AuthForm = React.memo(function AuthForm({
   errors: initialErrors = null,
   submitTestId,
 }: AuthFormProps) {
-  const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
+   const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
 
   return (
     <div>
@@ -28,7 +28,7 @@ export const AuthForm = React.memo(function AuthForm({
 
       <ErrorAlert errors={errors} />
 
-      <form onSubmit={handleSubmit} data-testid="auth-form">
+      <form onSubmit={handleSubmit} data-testid="auth-form" noValidate>
         {children}
         <div className="mt-6 flex justify-center">
           <SubmitButton loading={loading} data-testid={submitTestId}>

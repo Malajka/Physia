@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LogoutButton } from "./LogoutButton";
 
 // Mock Spinner to avoid rendering its internals
@@ -15,7 +15,7 @@ beforeEach(() => {
   window.location = { href: "" } as any;
   vi.spyOn(window, "alert").mockImplementation(() => {});
 });
-afterAll(() => {
+afterEach(() => {
   window.location = originalLocation;
   vi.restoreAllMocks();
 });
@@ -54,6 +54,26 @@ describe("LogoutButton", () => {
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => {
       expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/logout error/i));
+    });
+  });
+
+  it("shows alert with fallback error message when response.text() is empty", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, text: () => Promise.resolve("") }));
+    const alertSpy = vi.spyOn(window, "alert");
+    render(<LogoutButton />);
+    fireEvent.click(screen.getByRole("button"));
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/logout failed/i));
+    });
+  });
+
+  it("shows alert with 'Unknown error' if thrown error is not an instance of Error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => { throw "some string error"; }));
+    const alertSpy = vi.spyOn(window, "alert");
+    render(<LogoutButton />);
+    fireEvent.click(screen.getByRole("button"));
+    await waitFor(() => {
+      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/unknown error/i));
     });
   });
 }); 

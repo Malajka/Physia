@@ -59,4 +59,73 @@ describe("RegisterForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /register/i }));
     expect(await screen.findByText(/already registered/i)).toBeInTheDocument();
   });
+
+  it("shows generic error if thrown error is not instance of Error or z.ZodError", async () => {
+    const { register } = await import("@/lib/services/auth");
+    (register as unknown as Mock).mockImplementation(() => { throw "unexpected error"; });
+    render(<RegisterForm />);
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText(/min\. 8 characters/i), { target: { value: "abcdefgh" } });
+    fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    expect(await screen.findByText(/an unexpected error occurred/i)).toBeInTheDocument();
+  });
+
+  it("shows backend error if registration fails with other error", async () => {
+    const { register } = await import("@/lib/services/auth");
+    (register as unknown as Mock).mockResolvedValue({ success: false, error: "Some other backend error" });
+    render(<RegisterForm />);
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText(/min\. 8 characters/i), { target: { value: "abcdefgh" } });
+    fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    expect(await screen.findByText(/some other backend error/i)).toBeInTheDocument();
+  });
+
+  it("shows validation error if email field is missing from the form", async () => {
+    render(<RegisterForm />);
+    // Remove email field from DOM
+    const emailInput = screen.getByLabelText(/email/i);
+    emailInput.parentElement?.removeChild(emailInput);
+    fireEvent.change(screen.getByPlaceholderText(/min\. 8 characters/i), { target: { value: "abcdefgh" } });
+    fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    expect(await screen.findByText(/email/i)).toBeInTheDocument();
+  });
+
+  it("shows validation error if password field is missing from the form", async () => {
+    render(<RegisterForm />);
+    // Remove password field from DOM
+    const passwordInput = screen.getByPlaceholderText(/min\. 8 characters/i);
+    passwordInput.parentElement?.removeChild(passwordInput);
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    expect(await screen.findByText(/password must be at least 8 characters long/i)).toBeInTheDocument();
+  });
+
+  it("shows validation error if passwordConfirm field is missing from the form", async () => {
+    render(<RegisterForm />);
+    // Usuń pole passwordConfirm z DOM
+    const passwordConfirmInput = screen.getByTestId("register-passwordConfirm");
+    passwordConfirmInput.parentElement?.removeChild(passwordConfirmInput);
+    // Wprowadź poprawny email i hasło!
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByTestId("register-password"), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    // Sprawdź obecność komunikatu w ErrorAlert
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toMatch(/expected string, received null/i);
+  });
+
+  it("shows fallback error if backend returns no error message", async () => {
+    const { register } = await import("@/lib/services/auth");
+    (register as unknown as Mock).mockResolvedValue({ success: false });
+    render(<RegisterForm />);
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
+    fireEvent.change(screen.getByPlaceholderText(/min\. 8 characters/i), { target: { value: "abcdefgh" } });
+    fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "abcdefgh" } });
+    fireEvent.click(screen.getByRole("button", { name: /register/i }));
+    expect(await screen.findByText(/registration failed/i)).toBeInTheDocument();
+  });
 });

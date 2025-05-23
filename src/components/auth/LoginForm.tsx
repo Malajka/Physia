@@ -4,7 +4,7 @@ import { InputField } from "@/components/ui/InputField";
 import { LinkButton } from "@/components/ui/LinkButton";
 import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
 import { login } from "@/lib/services/auth";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { z } from "zod";
 
 // Validation schema for login
@@ -18,9 +18,6 @@ interface LoginFormProps {
 }
 
 export const LoginForm = React.memo(function LoginForm({ initialError = null }: LoginFormProps) {
-  const [errors, setErrors] = useState<string[] | string | null>(initialError);
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
-
   const handleSubmit = useCallback(async (formData: FormData): Promise<AuthFormSubmitResult> => {
     const values = {
       email: formData.get("email")?.toString() ?? "",
@@ -28,42 +25,19 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
     };
     const parseResult = loginSchema.safeParse(values);
     if (!parseResult.success) {
-      const errs = parseResult.error.errors.map((e) => e.message);
-      setErrors([...errs]);
-      // Set field errors immediately
-      const fieldErrs: { email?: string; password?: string } = {};
-      for (const err of parseResult.error.errors) {
-        if (err.path[0] === "email") fieldErrs.email = err.message;
-        if (err.path[0] === "password") fieldErrs.password = err.message;
-      }
-      setFieldErrors(fieldErrs);
-      return { success: false, error: errs.join(", ") };
+      return { success: false, error: parseResult.error.errors.map((e) => e.message).join(", ") };
     }
-    setFieldErrors({});
     // Use auth service for login
     const result = await login(parseResult.data);
     if (!result.success) {
-      setErrors(result.error ?? null);
       return result;
     }
     window.location.href = "/sessions";
     return result;
   }, []);
 
-  // Reset field errors when input changes
-  const handleEmailChange = useCallback(() => {
-    setFieldErrors((prev) => ({ ...prev, email: undefined }));
-  }, []);
-  const handlePasswordChange = useCallback(() => {
-    setFieldErrors((prev) => ({ ...prev, password: undefined }));
-  }, []);
-
-  useEffect(() => {
-    // ... existing code ...
-  }, [errors]);
-
   return (
-    <AuthForm title="Log In" onSubmit={handleSubmit} submitText="Log In" errors={errors} submitTestId="login-submit">
+    <AuthForm title="Log In" onSubmit={handleSubmit} submitText="Log In" submitTestId="login-submit" errors={initialError}>
       <InputField
         id="email"
         name="email"
@@ -72,9 +46,6 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
         placeholder="your@email.com"
         required
         data-testid="email"
-        error={fieldErrors.email}
-        onChange={handleEmailChange}
-        forceShowError={!!fieldErrors.email}
       />
       <PasswordField
         id="password"
@@ -83,9 +54,6 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
         placeholder="Your password"
         required
         data-testid="password"
-        error={fieldErrors.password}
-        onChange={handlePasswordChange}
-        forceShowError={!!fieldErrors.password}
       />
       <div className="flex justify-end mt-2 mb-4">
         <LinkButton variant="text" href="/forgot-password" className="text-sm">
