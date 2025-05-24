@@ -112,4 +112,16 @@ describe("POST /api/auth/login", () => {
     const body = await response.json();
     expect(body.error).toMatch(/supabase down/);
   });
+
+  it("returns 500 and generic message if unexpected error is not an Error instance", async () => {
+    const request = createMockRequest(validCredentials);
+    // Podmieniamy funkcję, żeby rzucała string zamiast Error
+    (locals.supabase.auth.signInWithPassword as ReturnType<typeof vi.fn>).mockImplementation(() => {
+      throw "some string error";
+    });
+    const response = await POST({ request, locals, cookies } as unknown as Parameters<typeof POST>[0]);
+    expect(response.status).toBe(500);
+    const body = await response.json();
+    expect(body.error).toBe("An unexpected error occurred");
+  });
 });

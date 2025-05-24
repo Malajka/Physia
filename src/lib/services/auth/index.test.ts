@@ -1,5 +1,6 @@
+import type { AuthCredentialsDto } from "@/types";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { login, register, type LoginInput, type RegisterInput } from "./index";
+import { login, register } from "./index";
 
 // Helper to mock fetch
 function mockFetch(response: unknown, ok = true) {
@@ -15,7 +16,7 @@ describe("auth service", () => {
   });
 
   describe("login", () => {
-    const input: LoginInput = { email: "test@example.com", password: "password" };
+    const input: AuthCredentialsDto = { email: "test@example.com", password: "password" };
 
     it("returns success on valid response", async () => {
       mockFetch({}, true);
@@ -40,10 +41,16 @@ describe("auth service", () => {
       const result = await login(input);
       expect(result).toEqual({ success: false, error: "Network error" });
     });
+
+    it("returns default error on non-Error exception", async () => {
+      global.fetch = vi.fn().mockRejectedValue("some string error");
+      const result = await login(input);
+      expect(result).toEqual({ success: false, error: "An unexpected error occurred" });
+    });
   });
 
   describe("register", () => {
-    const input: RegisterInput = { email: "new@example.com", password: "password" };
+    const input: AuthCredentialsDto = { email: "new@example.com", password: "password" };
 
     it("returns success on valid response", async () => {
       mockFetch({}, true);
@@ -73,6 +80,12 @@ describe("auth service", () => {
       global.fetch = vi.fn().mockRejectedValue(new Error("Network error"));
       const result = await register(input);
       expect(result).toEqual({ success: false, error: "Network error" });
+    });
+
+    it("returns default error on non-Error exception", async () => {
+      global.fetch = vi.fn().mockRejectedValue(12345);
+      const result = await register(input);
+      expect(result).toEqual({ success: false, error: "An unexpected error occurred" });
     });
   });
 });

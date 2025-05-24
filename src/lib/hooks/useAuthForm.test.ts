@@ -60,4 +60,15 @@ describe("useAuthForm", () => {
     expect(result.current.errors).toBe("An unexpected error occurred");
     expect(result.current.loading).toBe(false);
   });
+
+  it("handles failed submit with no error property", async () => {
+    const onSubmit = vi.fn().mockResolvedValue({ success: false } as AuthFormSubmitResult);
+    const { result } = renderHook(() => useAuthForm(onSubmit));
+    const fakeEvent = createFakeEvent();
+    await act(async () => {
+      await result.current.handleSubmit(fakeEvent);
+    });
+    expect(result.current.errors).toBe(null);
+    expect(result.current.loading).toBe(false);
+  });
 });

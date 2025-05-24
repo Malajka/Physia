@@ -22,7 +22,7 @@ export const GET: APIRoute = withAuth(async ({ locals, params }, userId) => {
   if (fetchError) {
     return jsonResponse({ error: fetchError }, 500);
   }
-  return jsonResponse<{ data: typeof feedback }>({ data: feedback }, 200);
+  return jsonResponse({ data: feedback }, 200);
 });
 
 // POST /sessions/:session_id/feedback
@@ -53,5 +53,5 @@ export const POST: APIRoute = withAuth(async ({ locals, params, request }, userI
   if (upsertError) {
     return jsonResponse({ error: upsertError }, 500);
   }
-  return jsonResponse<{ data: typeof feedback }>({ data: feedback }, 200);
+  return jsonResponse({ data: feedback }, 200);
 });

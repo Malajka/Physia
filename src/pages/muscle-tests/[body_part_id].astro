@@ -6,22 +6,20 @@ import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import Layout from "@/layouts/Layout.astro";
 import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
 
-// Server-side guards
-// Prevent prerendering and require auth and disclaimer acceptance
 export const prerender = false;
 
-// Server-side guard: require authenticated session and disclaimer acceptance
-const authRes = await Astro.locals.supabase.auth.getSession();
-const session = authRes.data.session;
-if (!session) {
-  return Astro.redirect('/login');
-}
-if (!session.user.user_metadata?.disclaimer_accepted_at) {
-  return Astro.redirect('/body-parts');
-}
+// The global `onRequest` middleware should handle authentication and disclaimer checks.
+// If execution reaches this point, we assume the user is authenticated
+// and has an accepted disclaimer if required by the route.
 
-// Load all data for the page (fetch tests, title, backLink, etc.)
+// `getMuscleTestsPageData` will use Astro.locals (already populated by middleware)
+// or Astro.params to fetch page-specific data.
 const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Astro);
+
+// Note: If `getMuscleTestsPageData` itself encounters an unrecoverable auth issue
+// (e.g., session becomes invalid between middleware and this page load, which is rare),
+// it should ideally handle that by returning an appropriate error state (e.g., in `fetchError`)
+// rather than this page attempting another redirect that might conflict with middleware.
 ---
 
 <Layout title={pageTitle}>
@@ -34,7 +32,7 @@ const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMu
     {
       fetchError ? (
         <ErrorAlert errors={fetchError} />
-      ) : muscleTests.length > 0 ? (
+      ) : muscleTests && muscleTests.length > 0 ? (
         <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
       ) : (
         <EmptyState message="No muscle tests available for this body part." {...backLink} />

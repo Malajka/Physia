@@ -1,15 +1,10 @@
 import { jsonResponse } from "@/lib/utils/response";
+import { registerSchema } from "@/lib/validators/auth.validator";
 import type { AuthCredentialsDto } from "@/types";
 import type { APIRoute } from "astro";
-import { z, ZodError, type ZodType } from "zod";
+import { ZodError } from "zod";
 
 export const prerender = false;
-
-// Runtime validation schema matching the external DTO
-export const registerSchema: ZodType<AuthCredentialsDto> = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters long"),
-});
 
 export const POST: APIRoute = async ({ request, locals }) => {
   try {

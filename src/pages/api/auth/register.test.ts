@@ -109,4 +109,13 @@ describe('POST /api/auth/register', () => {
     const body = await response.json();
     expect(body.error).toMatch(/unexpected/);
   });
+
+  it('returns 500 and default error message if thrown value is not an Error', async () => {
+    const request = createMockRequest(validCredentials);
+    (locals.supabase.auth.signUp as ReturnType<typeof vi.fn>).mockRejectedValue("not-an-error");
+    const response = await POST({ request, locals } as PostArgs);
+    expect(response.status).toBe(500);
+    const body = await response.json();
+    expect(body.error).toBe("An unexpected error occurred");
+  });
 }); 

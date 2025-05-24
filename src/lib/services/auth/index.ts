@@ -1,25 +1,10 @@
 import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
-
-/**
- * Input for login
- */
-export interface LoginInput {
-  email: string;
-  password: string;
-}
-
-/**
- * Input for user registration
- */
-export interface RegisterInput {
-  email: string;
-  password: string;
-}
+import type { AuthCredentialsDto } from "@/types";
 
 /**
  * Calls the login API endpoint and returns success status and error message if any.
  */
-export async function login(data: LoginInput): Promise<AuthFormSubmitResult> {
+export async function login(data: AuthCredentialsDto): Promise<AuthFormSubmitResult> {
   try {
     const response = await fetch("/api/auth/login", {
       method: "POST",
@@ -40,7 +25,7 @@ export async function login(data: LoginInput): Promise<AuthFormSubmitResult> {
 /**
  * Calls the registration API endpoint and returns success status and error message if any.
  */
-export async function register(data: RegisterInput): Promise<AuthFormSubmitResult> {
+export async function register(data: AuthCredentialsDto): Promise<AuthFormSubmitResult> {
   try {
     const response = await fetch("/api/auth/register", {
       method: "POST",

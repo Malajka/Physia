@@ -6,13 +6,13 @@ import Layout from "@/layouts/Layout.astro";
 export const prerender = false;
 
 // Require authenticated session and disclaimer acceptance
-const authRes = await Astro.locals.supabase.auth.getSession();
-if (!authRes.data.session) {
-  return Astro.redirect("/login");
-}
-if (!authRes.data.session.user.user_metadata?.disclaimer_accepted_at) {
-  return Astro.redirect("/body-parts");
-}
+// const authRes = await Astro.locals.supabase.auth.getSession();
+// if (!authRes.data.session) {
+//   return Astro.redirect("/login");
+// }
+// if (!authRes.data.session.user.user_metadata?.disclaimer_accepted_at) {
+//   return Astro.redirect("/body-parts");
+// }
 
 // Parse query parameters
 const { searchParams } = new URL(Astro.request.url);
