@@ -4,7 +4,7 @@ import { InputField } from "@/components/ui/InputField";
 import { LinkButton } from "@/components/ui/LinkButton";
 import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
 import { login } from "@/lib/services/auth";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { z } from "zod";
 
 // Validation schema for login
@@ -17,7 +17,7 @@ interface LoginFormProps {
   initialError?: string | null;
 }
 
-export const LoginForm = React.memo(function LoginForm({ initialError = null }: LoginFormProps) {
+export const LoginForm = function LoginForm({ initialError = null }: LoginFormProps) {
   const handleSubmit = useCallback(async (formData: FormData): Promise<AuthFormSubmitResult> => {
     const values = {
       email: formData.get("email")?.toString() ?? "",
@@ -62,6 +62,4 @@ export const LoginForm = React.memo(function LoginForm({ initialError = null }: 
       </div>
     </AuthForm>
   );
-});
-
-LoginForm.displayName = "LoginForm";
+};

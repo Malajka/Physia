@@ -11,7 +11,7 @@ interface PasswordFieldProps {
   onChange?: (value: string) => void;
   error?: string;
   forceShowError?: boolean;
-  dataTestid?: string;
+  "data-testid"?: string;
 }
 
 export const PasswordField = React.memo(function PasswordField(props: PasswordFieldProps) {
@@ -23,7 +23,7 @@ export const PasswordField = React.memo(function PasswordField(props: PasswordFi
 
   return (
     <div className="relative">
-      <InputField {...props} type={showPassword ? "text" : "password"} forceShowError={props.forceShowError} dataTestid={props.dataTestid} />
+      <InputField {...props} type={showPassword ? "text" : "password"} forceShowError={props.forceShowError} data-testid={props["data-testid"]} />
       <button
         type="button"
         tabIndex={-1}

@@ -1,7 +1,7 @@
 import { AuthForm } from "@/components/auth/AuthForm";
 import { PasswordField } from "@/components/auth/PasswordField";
 import { register } from "@/lib/services/auth";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { z } from "zod";
 import { InputField } from "../ui/InputField";
 import { LinkButton } from "../ui/LinkButton";
@@ -21,7 +21,7 @@ interface RegisterFormProps {
   initialError?: string | null;
 }
 
-export const RegisterForm = React.memo(function RegisterForm({ initialError = null }: RegisterFormProps) {
+export const RegisterForm = function RegisterForm({ initialError = null }: RegisterFormProps) {
   const [errors, setErrors] = useState<string[] | string | null>(initialError);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
@@ -84,13 +84,21 @@ export const RegisterForm = React.memo(function RegisterForm({ initialError = nu
   }
 
   return (
-    <AuthForm title="Create Account" onSubmit={handleSubmit} submitText="Register" errors={errors} submitTestId="register-submit">
-      <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required data-testid="register-email" />
-      <PasswordField id="password" name="password" label="Password" placeholder="Min. 8 characters" required data-testid="register-password" />
-      <PasswordField id="passwordConfirm" name="passwordConfirm" label="Confirm Password" placeholder="Confirm your password" required data-testid="register-passwordConfirm" />
-      <p className="text-sm text-gray-600 mt-2">Password must be at least 8 characters long.</p>
-    </AuthForm>
+    <>
+      <AuthForm title="Create Account" onSubmit={handleSubmit} submitText="Register" errors={errors} submitTestId="register-submit">
+        <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required data-testid="register-email" />
+        <PasswordField id="password" name="password" label="Password" placeholder="Min. 8 characters" required data-testid="register-password" />
+        <PasswordField id="passwordConfirm" name="passwordConfirm" label="Confirm Password" placeholder="Confirm your password" required data-testid="register-passwordConfirm" />
+        <p className="text-sm text-gray-600 mt-2">Password must be at least 8 characters long.</p>
+      </AuthForm>
+      <div className="text-center mt-4">
+        <p className="text-sm text-gray-600">
+          Already have an account?{" "}
+          <LinkButton href="/login" variant="text" className="text-gray-600 underline">
+            Log in here
+          </LinkButton>
+        </p>
+      </div>
+    </>
   );
-});
-
-RegisterForm.displayName = "RegisterForm";
+};

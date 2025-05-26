@@ -1,7 +1,6 @@
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { useAuthForm, type AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
-import React from "react";
 
 interface AuthFormProps {
   title: string;
@@ -12,7 +11,7 @@ interface AuthFormProps {
   submitTestId?: string;
 }
 
-export const AuthForm = React.memo(function AuthForm({
+export const AuthForm = function AuthForm({
   title,
   onSubmit,
   children,
@@ -38,6 +37,4 @@ export const AuthForm = React.memo(function AuthForm({
       </form>
     </div>
   );
-});
-
-AuthForm.displayName = "AuthForm";
+};
