@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import { LoginForm } from "./LoginForm";
 
 // Mock the loginForm service
-vi.mock("@/lib/services/loginForm", () => ({
+vi.mock("@/lib/services/auth/loginForm", () => ({
   handleLoginSubmit: vi.fn(),
 }));
 

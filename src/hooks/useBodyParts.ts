@@ -1,6 +1,6 @@
 import { fetchAllBodyParts } from "@/lib/services/body-parts";
 import type { BodyPartDto } from "@/types";
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 
 interface UseBodyPartsOptions {
   baseUrl?: string;
@@ -8,90 +8,140 @@ interface UseBodyPartsOptions {
   disclaimerAccepted?: string | null | undefined;
 }
 
-interface State {
+interface BodyPartsState {
   data: BodyPartDto[];
   loading: boolean;
   error: string | null;
 }
-type Action =
-  | { type: "FETCH_INIT" }
-  | { type: "FETCH_SUCCESS"; payload: BodyPartDto[] }
-  | { type: "FETCH_FAILURE"; error: string }
-  | { type: "RESET_DATA" };
 
-function dataFetchReducer(state: State, action: Action): State {
+type BodyPartsAction =
+  | { type: "FETCH_START" }
+  | { type: "FETCH_SUCCESS"; payload: BodyPartDto[] }
+  | { type: "FETCH_ERROR"; error: string }
+  | { type: "FETCH_ABORT" }
+  | { type: "RESET" };
+
+// Helper functions
+const getDefaultBaseUrl = (): string => {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  }
+  return import.meta.env.PUBLIC_API_BASE || "";
+};
+
+const isValidDisclaimerAccepted = (disclaimerAccepted: string | null | undefined): disclaimerAccepted is string => {
+  return typeof disclaimerAccepted === "string" && disclaimerAccepted.length > 0;
+};
+
+const isDisclaimerRejected = (disclaimerAccepted: string | null | undefined): boolean => {
+  return disclaimerAccepted === null;
+};
+
+const shouldInitiallyLoad = (skipInitialFetch: boolean, disclaimerAccepted: string | null | undefined): boolean => {
+  return !skipInitialFetch && isValidDisclaimerAccepted(disclaimerAccepted);
+};
+
+function bodyPartsReducer(state: BodyPartsState, action: BodyPartsAction): BodyPartsState {
   switch (action.type) {
-    case "FETCH_INIT":
+    case "FETCH_START":
       return { ...state, loading: true, error: null };
     case "FETCH_SUCCESS":
       return { data: action.payload, loading: false, error: null };
-    case "FETCH_FAILURE":
+    case "FETCH_ERROR":
       return { data: [], loading: false, error: action.error };
-    case "RESET_DATA":
+    case "FETCH_ABORT":
+      return { ...state, loading: false };
+    case "RESET":
       return { data: [], loading: false, error: null };
     default:
       return state;
   }
 }
 
+const createInitialState = (skipInitialFetch: boolean, disclaimerAccepted: string | null | undefined): BodyPartsState => ({
+  data: [],
+  loading: shouldInitiallyLoad(skipInitialFetch, disclaimerAccepted),
+  error: null,
+});
+
 export function useBodyParts({
-  baseUrl = typeof window !== "undefined" ? window.location.origin : import.meta.env.PUBLIC_API_BASE,
+  baseUrl = getDefaultBaseUrl(),
   skipInitialFetch = false,
   disclaimerAccepted = undefined,
 }: UseBodyPartsOptions = {}) {
-  const controllerRef = useRef<AbortController | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const [state, dispatch] = useReducer(dataFetchReducer, {
-    data: [],
-    loading: !skipInitialFetch && disclaimerAccepted !== null && disclaimerAccepted !== undefined,
-    error: null,
-  });
+  const [state, dispatch] = useReducer(
+    bodyPartsReducer,
+    createInitialState(skipInitialFetch, disclaimerAccepted)
+  );
 
-  const fetchBodyParts = useCallback(async () => {
-    if (disclaimerAccepted === null) {
-      dispatch({ type: "RESET_DATA" });
+  const abortPreviousRequest = useCallback(() => {
+    abortControllerRef.current?.abort();
+  }, []);
+
+  const createNewAbortController = useCallback(() => {
+    abortPreviousRequest();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    return controller;
+  }, [abortPreviousRequest]);
+
+  const fetchBodyParts = useCallback(async (): Promise<void> => {
+    // Handle disclaimer rejection
+    if (isDisclaimerRejected(disclaimerAccepted)) {
+      dispatch({ type: "RESET" });
       return;
     }
-    if (typeof disclaimerAccepted !== 'string') {
-        return;
+
+    // Validate disclaimer acceptance
+    if (!isValidDisclaimerAccepted(disclaimerAccepted)) {
+      return;
     }
 
-    controllerRef.current?.abort();
-    const controller = new AbortController();
-    controllerRef.current = controller;
-    dispatch({ type: "FETCH_INIT" });
+    const controller = createNewAbortController();
+    dispatch({ type: "FETCH_START" });
 
     try {
-      const result = await fetchAllBodyParts(baseUrl, { signal: controller.signal });
-      dispatch({ type: "FETCH_SUCCESS", payload: result });
-    } catch (error: unknown) {
-      if (error instanceof DOMException && error.name === "AbortError") {
+      const bodyParts = await fetchAllBodyParts(baseUrl, { signal: controller.signal });
+      
+      // Check if request was aborted
+      if (controller.signal.aborted) {
+        dispatch({ type: "FETCH_ABORT" });
         return;
       }
-      const message = error instanceof Error ? error.message : String(error);
-      dispatch({ type: "FETCH_FAILURE", error: message });
-    }
-  }, [baseUrl, disclaimerAccepted]);
+      
+      dispatch({ type: "FETCH_SUCCESS", payload: bodyParts });
+    } catch (error: unknown) {
+      // Ignore abort errors
+      if (error instanceof DOMException && error.name === "AbortError") {
+        dispatch({ type: "FETCH_ABORT" });
+        return;
+      }
 
+      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
+      dispatch({ type: "FETCH_ERROR", error: errorMessage });
+    }
+  }, [baseUrl, disclaimerAccepted, createNewAbortController]);
+
+  // Effect for initial fetch and disclaimer changes
   useEffect(() => {
-    if (!skipInitialFetch && typeof disclaimerAccepted === 'string') {
+    if (shouldInitiallyLoad(skipInitialFetch, disclaimerAccepted)) {
       fetchBodyParts();
-    } else if (disclaimerAccepted === null) {
-      dispatch({ type: "RESET_DATA" });
+    } else if (isDisclaimerRejected(disclaimerAccepted)) {
+      dispatch({ type: "RESET" });
     }
-  
-    return () => {
-      controllerRef.current?.abort();
-    };
-  }, [fetchBodyParts, skipInitialFetch, disclaimerAccepted]);
 
-  return useMemo(
-    () => ({
-      bodyParts: state.data,
-      loading: state.loading,
-      error: state.error,
-      refetch: fetchBodyParts,
-    }),
-    [state.data, state.loading, state.error, fetchBodyParts]
-  );
+    // Cleanup on unmount
+    return () => {
+      abortPreviousRequest();
+    };
+  }, [fetchBodyParts, skipInitialFetch, disclaimerAccepted, abortPreviousRequest]);
+
+  return {
+    bodyParts: state.data,
+    loading: state.loading,
+    error: state.error,
+    refetch: fetchBodyParts,
+  } as const;
 }

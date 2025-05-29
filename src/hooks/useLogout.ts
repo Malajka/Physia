@@ -1,4 +1,4 @@
-import { logoutUser } from "@/lib/services/logout";
+import { logoutUser } from "@/lib/services/auth";
 import { useCallback, useState } from "react";
 
 export interface UseLogoutReturn {

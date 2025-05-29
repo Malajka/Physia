@@ -27,14 +27,11 @@ const defaultProps: DisclaimerModalProps = {
 };
 
 describe("DisclaimerModal", () => {
-  it("renders with open=true and displays title, text, and static list", () => {
+  it("renders with open=true and displays title and text from props", () => {
     render(<DisclaimerModal {...defaultProps} />);
     expect(screen.getByTestId("modal")).toBeInTheDocument();
     expect(screen.getByText("Medical Disclaimer")).toBeInTheDocument();
     expect(screen.getByText("Dynamic disclaimer text")).toBeInTheDocument();
-    expect(screen.getByText("Consult a healthcare professional before performing any exercises.")).toBeInTheDocument();
-    expect(screen.getByText("Stop immediately if you experience pain or discomfort.")).toBeInTheDocument();
-    expect(screen.getByText("These exercises are suggestions, not personalized medical advice.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /accept/i })).toBeInTheDocument();
   });
 

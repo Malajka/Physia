@@ -25,10 +25,5 @@ export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept
     }
   >
     <div className="whitespace-pre-line text-sm mb-4">{text}</div>
-    <ul className="list-disc list-inside text-sm space-y-2">
-      <li>Consult a healthcare professional before performing any exercises.</li>
-      <li>Stop immediately if you experience pain or discomfort.</li>
-      <li>These exercises are suggestions, not personalized medical advice.</li>
-    </ul>
   </Modal>
 );

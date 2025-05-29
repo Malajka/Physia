@@ -42,3 +42,9 @@ export async function register(data: AuthCredentialsDto): Promise<AuthFormSubmit
     return { success: false, error: msg };
   }
 }
+
+// Re-export functions from individual auth modules
+export { handleLoginSubmit } from "./loginForm";
+export { logoutUser } from "./logout";
+export { handleRegisterSubmit, type RegisterFormResult } from "./registerForm";
+

@@ -3,13 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRegister } from "./useRegister";
 
 // Mock the registerForm service
-vi.mock("@/lib/services/registerForm", () => ({
+vi.mock("@/lib/services/auth/registerForm", () => ({
   handleRegisterSubmit: vi.fn(),
 }));
 
 describe("useRegister", () => {
   const getRegisterService = async () => {
-    const { handleRegisterSubmit } = await import("@/lib/services/registerForm");
+    const { handleRegisterSubmit } = await import("@/lib/services/auth/registerForm");
     return handleRegisterSubmit as any;
   };
 

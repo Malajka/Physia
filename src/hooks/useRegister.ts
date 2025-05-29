@@ -1,4 +1,4 @@
-import { handleRegisterSubmit, type RegisterFormResult } from "@/lib/services/registerForm";
+import { handleRegisterSubmit, type RegisterFormResult } from "@/lib/services/auth";
 import { useCallback, useState } from "react";
 
 export interface UseRegisterReturn {

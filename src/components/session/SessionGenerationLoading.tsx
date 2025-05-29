@@ -81,34 +81,11 @@ function InvalidRequestDisplay() {
 export function SessionGenerationLoading({ bodyPartId, tests }: SessionGenerationLoadingProps) {
   const { statusMessage, error, retry, isLoading, startGeneration } = useSessionGeneration(bodyPartId, tests);
 
-  // The useSessionGeneration hook now handles its own initial start via its internal useEffect and ref.
-  // This useEffect is kept to ensure that if `startGeneration` function reference *itself* changes
-  // (which it shouldn't often, due to useCallback, unless its dependencies bodyPartId/tests change),
-  // or if `bodyPartId` or `tests` props change, we re-initiate.
-  // However, the primary gate for initial start is now within useSessionGeneration's own useEffect.
   useEffect(() => {
-    // This call might be redundant if useSessionGeneration's internal useEffect always triggers first.
-    // However, it acts as a safeguard or can be used if you want the component to explicitly
-    // control the "start" signal based on its own lifecycle or prop changes,
-    // and useSessionGeneration's internal useEffect is removed or modified.
-    // For now, with the internal useEffect in useSessionGeneration, this specific call might
-    // try to call startGeneration when generationInitiatedRef.current is already true.
-    // The `startGeneration` (exposed from the hook) could be a wrapper that checks the ref
-    // or the internal useEffect in the hook is the sole initiator.
-    // Let's simplify: if the hook manages its own start, this component doesn't need to call it explicitly.
-    // console.log("[SessionGenerationLoading useEffect] Component mounted/updated. Props:", { bodyPartId, testsLength: tests?.length });
-    // If `startGeneration` is memoized and its deps `bodyPartId`, `tests` are stable, this runs once.
-    // The hook's internal useEffect is now the primary initiator.
-    // This useEffect can be removed if the hook's internal useEffect is sufficient.
-    // Or, it can be kept if you want to re-trigger if `bodyPartId` or `tests` props change *after* initial mount.
+    // The hook manages its own initialization, this useEffect can be simplified or removed
+  }, [startGeneration, bodyPartId, tests]);
 
-    // If the hook itself doesn't auto-start, then this is needed:
-    // if (bodyPartId && tests?.length) {
-    //   startGeneration();
-    // }
-  }, [startGeneration, bodyPartId, tests]); // Re-run if these props/functions change
-
-  if (!bodyPartId || !tests || tests.length === 0) { // Added null check for tests
+  if (!bodyPartId || !tests || tests.length === 0) {
     return <InvalidRequestDisplay />;
   }
 

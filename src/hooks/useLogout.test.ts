@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useLogout } from "./useLogout";
 
 // Mock the logout service
-vi.mock("@/lib/services/logout", () => ({
+vi.mock("@/lib/services/auth/logout", () => ({
   logoutUser: vi.fn(),
 }));
 
@@ -12,7 +12,7 @@ global.alert = vi.fn();
 
 describe("useLogout", () => {
   const getLogoutService = async () => {
-    const { logoutUser } = await import("@/lib/services/logout");
+    const { logoutUser } = await import("@/lib/services/auth/logout");
     return logoutUser as any;
   };
 

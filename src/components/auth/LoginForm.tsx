@@ -1,5 +1,5 @@
 import { InputField } from "@/components/ui/InputField";
-import { handleLoginSubmit } from "@/lib/services/loginForm";
+import { handleLoginSubmit } from "@/lib/services/auth";
 import { AuthForm } from "./AuthForm";
 import { PasswordField } from "./PasswordField";
 
