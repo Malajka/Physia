@@ -11,7 +11,7 @@ export interface AuthFormSubmitResult {
  * @param initialErrors - optional initial errors to display.
  */
 export function useAuthForm(
-  onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult | undefined>,
+  onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult>,
   initialErrors: string[] | string | null = null
 ) {
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ export function useAuthForm(
         const formData = new FormData(e.currentTarget);
         const result = await onSubmit(formData);
 
-        if (result && !result.success) {
+        if (!result.success) {
           setErrors(result.error ?? null);
         }
       } catch (error) {

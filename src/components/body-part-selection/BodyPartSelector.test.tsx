@@ -37,13 +37,13 @@ vi.mock("@/components/common/DisclaimerModal", () => ({
 }));
 
 // Mock hooks
-vi.mock("../../lib/hooks/useDisclaimer");
-vi.mock("@/components/hooks/useBodyParts");
-vi.mock("@/components/hooks/useSingleSelection");
+vi.mock("@/hooks/useDisclaimer");
+vi.mock("@/hooks/useBodyParts");
+vi.mock("@/hooks/useSingleSelection");
 
-import { useBodyParts } from "@/components/hooks/useBodyParts";
-import { useSingleSelection } from "@/components/hooks/useSingleSelection";
-import { useDisclaimer } from "../../lib/hooks/useDisclaimer";
+import { useBodyParts } from "@/hooks/useBodyParts";
+import { useDisclaimer } from "@/hooks/useDisclaimer";
+import { useSingleSelection } from "@/hooks/useSingleSelection";
 
 const mockDisclaimer = useDisclaimer as Mock;
 const mockBodyParts = useBodyParts as Mock;

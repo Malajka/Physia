@@ -1,4 +1,4 @@
-import { useSessionGeneration } from "@/lib/hooks/useSessionGeneration";
+import { useSessionGeneration } from "@/hooks/useSessionGeneration";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
 import type { MockedFunction } from "vitest";
@@ -18,8 +18,8 @@ vi.mock("@/components/ui/Spinner", () => ({
   Spinner: (props: React.HTMLAttributes<HTMLDivElement>) => <div data-testid="spinner" {...props} />,
 }));
 
-// Mock useSessionGeneration
-vi.mock("@/lib/hooks/useSessionGeneration", () => ({
+// Mock useSessionGeneration - FIXED: correct path
+vi.mock("@/hooks/useSessionGeneration", () => ({
   useSessionGeneration: vi.fn(),
 }));
 

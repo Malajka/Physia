@@ -5,6 +5,7 @@ interface LinkButtonProps {
   children: React.ReactNode;
   variant?: "primary" | "secondary" | "text" | "nav-link" | "nav-primary" | "nav-secondary" | "nav-muted";
   className?: string;
+  "data-testid"?: string;
 }
 
 const baseStyles = "inline-block rounded px-4 py-2 text-center transition-colors";
@@ -21,9 +22,9 @@ const variantStyles: Record<"primary" | "secondary" | "text" | "nav-link" | "nav
   "nav-muted": "px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold",
 };
 
-export const LinkButton = React.memo(function LinkButton({ href, children, variant = "primary", className = "" }: LinkButtonProps) {
+export const LinkButton = React.memo(function LinkButton({ href, children, variant = "primary", className = "", "data-testid": dataTestId }: LinkButtonProps) {
   return (
-    <a href={href} className={`${baseStyles} ${variantStyles[variant]} ${className}`}>
+    <a href={href} className={`${baseStyles} ${variantStyles[variant]} ${className}`} data-testid={dataTestId}>
       {children}
     </a>
   );

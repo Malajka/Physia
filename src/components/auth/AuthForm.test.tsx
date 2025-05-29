@@ -1,4 +1,4 @@
-import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
+import type { AuthFormSubmitResult } from "@/hooks/useAuthForm";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -7,7 +7,7 @@ import { AuthForm } from "./AuthForm";
 // Mock hook useAuthForm
 vi.mock("@/lib/hooks/useAuthForm", () => {
   return {
-    useAuthForm: (onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult | undefined>, initialErrors: string[] | string | null) => ({
+    useAuthForm: (onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult>, initialErrors: string[] | string | null) => ({
       loading: false,
       errors: initialErrors,
       handleSubmit: (e: React.FormEvent<HTMLFormElement>) => {

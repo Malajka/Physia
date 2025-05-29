@@ -1,79 +1,283 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { LogoutButton } from "./LogoutButton";
 
-// Mock Spinner to avoid rendering its internals
-vi.mock("@/components/ui/Spinner", () => ({
-  Spinner: () => <span data-testid="spinner">spinner</span>,
+// Mock the useLogout hook
+vi.mock("@/hooks/useLogout", () => ({
+  useLogout: vi.fn(),
 }));
 
-// Mock window.location and alert
-const originalLocation = window.location;
-beforeEach(() => {
-  // @ts-ignore
-  delete window.location;
-  window.location = { href: "" } as any;
-  vi.spyOn(window, "alert").mockImplementation(() => {});
-});
-afterEach(() => {
-  window.location = originalLocation;
-  vi.restoreAllMocks();
-});
+// Mock Spinner component
+vi.mock("@/components/ui/Spinner", () => ({
+  Spinner: (props: any) => <span data-testid="spinner" {...props}>spinner</span>,
+}));
 
 describe("LogoutButton", () => {
-  it("renders button with text", () => {
-    render(<LogoutButton />);
-    expect(screen.getByRole("button", { name: /log out/i })).toBeInTheDocument();
+  const getUseLogoutMock = async () => {
+    const { useLogout } = await import("@/hooks/useLogout");
+    return useLogout as any;
+  };
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("calls fetch and redirects on success", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }));
-    render(<LogoutButton />);
-    fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => {
-      expect(window.location.href).toBe("/login");
+  describe("UI Rendering", () => {
+    it("renders button with correct text when not loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toBeInTheDocument();
+      expect(button).toHaveTextContent("Log out");
+      expect(button).not.toBeDisabled();
+    });
+
+    it("renders button with loading state", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toHaveTextContent("Logging out...");
+      expect(button).toBeDisabled();
+      expect(button).toHaveAttribute("aria-busy", "true");
+      expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    });
+
+    it("applies custom className", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton className="custom-class" />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toHaveClass("custom-class");
+    });
+
+    it("has correct button attributes", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toHaveAttribute("data-testid", "logout-button");
+      expect(button).toHaveRole("button");
     });
   });
 
-  it("shows spinner and disables button while logging out", async () => {
-    let resolveFetch: any;
-    vi.stubGlobal("fetch", () => new Promise(res => { resolveFetch = res; }));
-    render(<LogoutButton />);
-    fireEvent.click(screen.getByRole("button"));
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
-    expect(screen.getByRole("button")).toBeDisabled();
-    // finish fetch
-    resolveFetch({ ok: true });
-    await waitFor(() => expect(window.location.href).toBe("/login"));
-  });
+  describe("Loading States", () => {
+    it("shows spinner only when loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: vi.fn(),
+      });
 
-  it("shows alert on error", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, text: () => Promise.resolve("fail") }));
-    const alertSpy = vi.spyOn(window, "alert");
-    render(<LogoutButton />);
-    fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/logout error/i));
+      render(<LogoutButton />);
+      
+      expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    });
+
+    it("does not show spinner when not loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
+    });
+
+    it("sets aria-busy attribute when loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      expect(screen.getByTestId("logout-button")).toHaveAttribute("aria-busy", "true");
+    });
+
+    it("sets aria-busy attribute when not loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      expect(screen.getByTestId("logout-button")).toHaveAttribute("aria-busy", "false");
     });
   });
 
-  it("shows alert with fallback error message when response.text() is empty", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, text: () => Promise.resolve("") }));
-    const alertSpy = vi.spyOn(window, "alert");
-    render(<LogoutButton />);
-    fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/logout failed/i));
+  describe("Interaction", () => {
+    it("calls logout function when clicked", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      const mockLogout = vi.fn();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: mockLogout,
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      button.click();
+      
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not call logout when disabled/loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      const mockLogout = vi.fn();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: mockLogout,
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toBeDisabled();
+      
+      // Try to click disabled button
+      button.click();
+      
+      // Should not be called because button is disabled
+      expect(mockLogout).not.toHaveBeenCalled();
     });
   });
 
-  it("shows alert with 'Unknown error' if thrown error is not an instance of Error", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => { throw "some string error"; }));
-    const alertSpy = vi.spyOn(window, "alert");
-    render(<LogoutButton />);
-    fireEvent.click(screen.getByRole("button"));
-    await waitFor(() => {
-      expect(alertSpy).toHaveBeenCalledWith(expect.stringMatching(/unknown error/i));
+  describe("Hook Integration", () => {
+    it("integrates with useLogout hook", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      const mockLogout = vi.fn();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: "Some error",
+        logout: mockLogout,
+      });
+
+      render(<LogoutButton />);
+      
+      expect(useLogoutMock).toHaveBeenCalled();
+      expect(screen.getByTestId("logout-button")).toBeInTheDocument();
+    });
+
+    it("displays different states based on hook values", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      const mockLogout = vi.fn();
+      
+      // Test loading state
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: mockLogout,
+      });
+
+      const { unmount } = render(<LogoutButton />);
+      expect(screen.getByTestId("logout-button")).toHaveTextContent("Logging out...");
+      unmount();
+
+      // Test normal state  
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: mockLogout,
+      });
+
+      render(<LogoutButton />);
+      expect(screen.getByTestId("logout-button")).toHaveTextContent("Log out");
+    });
+  });
+
+  describe("Component Props", () => {
+    it("handles empty className", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton className="" />);
+      
+      expect(screen.getByTestId("logout-button")).toBeInTheDocument();
+    });
+
+    it("handles undefined className", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      expect(screen.getByTestId("logout-button")).toBeInTheDocument();
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("has proper ARIA attributes", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: false,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toHaveRole("button");
+      expect(button).toHaveAttribute("aria-busy");
+    });
+
+    it("is accessible when loading", async () => {
+      const useLogoutMock = await getUseLogoutMock();
+      useLogoutMock.mockReturnValue({
+        isLoggingOut: true,
+        error: null,
+        logout: vi.fn(),
+      });
+
+      render(<LogoutButton />);
+      
+      const button = screen.getByTestId("logout-button");
+      expect(button).toHaveAttribute("aria-busy", "true");
+      expect(button).toBeDisabled();
     });
   });
 }); 

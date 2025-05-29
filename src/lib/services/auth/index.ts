@@ -1,4 +1,4 @@
-import type { AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
+import type { AuthFormSubmitResult } from "@/hooks/useAuthForm";
 import type { AuthCredentialsDto } from "@/types";
 
 /**

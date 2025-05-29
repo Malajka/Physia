@@ -2,6 +2,8 @@
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { LinkButton } from "@/components/ui/LinkButton";
 const { isAuthenticated } = Astro.props;
+const currentPath = Astro.url.pathname;
+const isAuthPage = currentPath === '/login' || currentPath === '/register';
 ---
 
 <nav class="flex items-center w-full">
@@ -43,7 +45,7 @@ const { isAuthenticated } = Astro.props;
         ))
       }
       {
-        !isAuthenticated ? (
+        !isAuthenticated && !isAuthPage && (
           <>
             <li>
               <LinkButton href="/login" variant="nav-primary" className="block w-full">
@@ -56,7 +58,10 @@ const { isAuthenticated } = Astro.props;
               </LinkButton>
             </li>
           </>
-        ) : (
+        )
+      }
+      {
+        isAuthenticated && (
           <>
             <li>
               <LinkButton href="/sessions" variant="nav-muted" className="block w-full">
@@ -64,7 +69,7 @@ const { isAuthenticated } = Astro.props;
               </LinkButton>
             </li>
             <li>
-              <LinkButton href="/body-parts" variant="nav-muted" className="block w-full" data-testid="create-new-session-link">
+              <LinkButton href="/body-parts" variant="nav-muted" className="block w-full" data-testid="create-new-session-mobile">
                 Create New Session
               </LinkButton>
             </li>
@@ -82,7 +87,7 @@ const { isAuthenticated } = Astro.props;
 
   <ul class="hidden lg:flex items-center space-x-6">
     {
-      !isAuthenticated ? (
+      !isAuthenticated && !isAuthPage && (
         <>
           <li>
             <LinkButton href="/login" variant="nav-primary">
@@ -95,7 +100,10 @@ const { isAuthenticated } = Astro.props;
             </LinkButton>
           </li>
         </>
-      ) : (
+      )
+    }
+    {
+      isAuthenticated && (
         <>
           <li>
             <LinkButton href="/sessions" variant="nav-muted">
@@ -103,7 +111,7 @@ const { isAuthenticated } = Astro.props;
             </LinkButton>
           </li>
           <li>
-            <LinkButton href="/body-parts" variant="nav-muted">
+            <LinkButton href="/body-parts" variant="nav-muted" data-testid="create-new-session-desktop">
               Create New Session
             </LinkButton>
           </li>

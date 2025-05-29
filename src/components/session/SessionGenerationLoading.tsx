@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Spinner } from "@/components/ui/Spinner";
-import { useSessionGeneration } from "@/lib/hooks/useSessionGeneration"; // Adjust path if needed
+import { useSessionGeneration } from "@/hooks/useSessionGeneration";
 import { useEffect } from "react";
 
 interface SessionGenerationLoadingProps {

@@ -1,10 +1,10 @@
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { SubmitButton } from "@/components/ui/SubmitButton";
-import { useAuthForm, type AuthFormSubmitResult } from "@/lib/hooks/useAuthForm";
+import { useAuthForm, type AuthFormSubmitResult } from "@/hooks/useAuthForm";
 
 interface AuthFormProps {
   title: string;
-  onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult | undefined>;
+  onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult>;
   children: React.ReactNode;
   submitText: string;
   errors?: string[] | string | null;

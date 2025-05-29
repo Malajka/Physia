@@ -1,8 +1,8 @@
 ---
 export const prerender = false;
+import { LinkButton } from "@/components/ui/LinkButton";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
-import { LinkButton } from "@/components/ui/LinkButton";
 
 // Get the current user session
 const { data: authData } = await Astro.locals.supabase.auth.getSession();
@@ -63,7 +63,7 @@ const pageTitle = "My Exercise Sessions";
         <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg text-center">
           <h2 class="text-2xl font-bold text-[var(--foreground)] mb-8">No sessions yet</h2>
           <p class="text-xl text-[var(--foreground)] mb-8">Start by creating your first personalized exercise plan!</p>
-          <LinkButton href="/body-parts" variant="nav-primary">
+          <LinkButton href="/body-parts" variant="nav-primary" data-testid="create-first-session">
             Create New Session
          </LinkButton>
         </div>

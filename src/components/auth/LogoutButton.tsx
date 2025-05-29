@@ -1,43 +1,20 @@
 import { Button } from "@/components/ui/Button";
 import { Spinner } from "@/components/ui/Spinner";
+import { useLogout } from "@/hooks/useLogout";
 import { cn } from "@/lib/utils";
-import { JSON_HEADERS } from "@/lib/utils/api";
-import React, { useCallback, useState } from "react";
 
 interface LogoutButtonProps {
   className?: string;
 }
 
-export const LogoutButton = React.memo(function LogoutButton({ className = "" }: LogoutButtonProps) {
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = useCallback(async () => {
-    setIsLoggingOut(true);
-    try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: JSON_HEADERS,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || `Logout failed (status: ${response.status})`);
-      }
-
-      window.location.href = "/login";
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unknown error";
-      window.alert(`Logout error: ${message}`);
-    } finally {
-      setIsLoggingOut(false);
-    }
-  }, []);
+export const LogoutButton = function LogoutButton({ className = "" }: LogoutButtonProps) {
+  const { isLoggingOut, logout } = useLogout();
 
   return (
     <Button
       variant="ghost"
       size="default"
-      onClick={handleLogout}
+      onClick={logout}
       disabled={isLoggingOut}
       aria-busy={isLoggingOut}
       className={cn(className)}
@@ -47,6 +24,4 @@ export const LogoutButton = React.memo(function LogoutButton({ className = "" }:
       {isLoggingOut ? "Logging out..." : "Log out"}
     </Button>
   );
-});
-
-LogoutButton.displayName = "LogoutButton";
+};

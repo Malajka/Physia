@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDisclaimer } from "./useDisclaimer";
 
 describe("useDisclaimer", () => {

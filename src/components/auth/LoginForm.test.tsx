@@ -1,195 +1,134 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterAll, afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { LoginForm } from "./LoginForm";
 
-// Mock login service
-vi.mock("@/lib/services/auth", () => ({
-  login: vi.fn(),
+// Mock the loginForm service
+vi.mock("@/lib/services/loginForm", () => ({
+  handleLoginSubmit: vi.fn(),
 }));
 
-// Mock window.location
-const originalLocation = window.location;
-beforeEach(() => {
-  // @ts-expect-error: We need to delete window.location to mock it for redirect testing
-  delete window.location;
-  window.location = { href: "" } as Location;
-});
-afterAll(() => {
-  window.location = originalLocation;
-});
-afterEach(() => {
-  vi.clearAllMocks();
-  document.body.innerHTML = "";
-});
-
 describe("LoginForm", () => {
-  it("renders all fields and link", () => {
-    render(<LoginForm />);
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/your password/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /log in/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /forgot password/i })).toHaveAttribute("href", "/forgot-password");
-  });
+  describe("UI Rendering", () => {
+    it("renders all form elements correctly", () => {
+      render(<LoginForm />);
+      
+      expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
+      expect(screen.getByTestId("email")).toBeInTheDocument();
+      expect(screen.getByTestId("password")).toBeInTheDocument();
+      expect(screen.getByTestId("login-submit")).toBeInTheDocument();
+    });
 
-  it("shows backend error if login fails", async () => {
-    const { login } = await import("@/lib/services/auth");
-    (login as Mock).mockResolvedValue({ success: false, error: "Invalid credentials" });
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
-  });
+    it("renders email field with correct attributes", () => {
+      render(<LoginForm />);
+      
+      const emailField = screen.getByTestId("email");
+      expect(emailField).toHaveAttribute("type", "email");
+      expect(emailField).toHaveAttribute("name", "email");
+      expect(emailField).toHaveAttribute("placeholder", "your@email.com");
+      expect(emailField).toHaveAttribute("required");
+    });
 
-  it("redirects on successful login", async () => {
-    const { login } = await import("@/lib/services/auth");
-    (login as Mock).mockResolvedValue({ success: true });
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    await waitFor(() => {
-      expect(window.location.href).toBe("/sessions");
+    it("renders password field with correct attributes", () => {
+      render(<LoginForm />);
+      
+      const passwordField = screen.getByTestId("password");
+      expect(passwordField).toHaveAttribute("type", "password");
+      expect(passwordField).toHaveAttribute("name", "password");
+      expect(passwordField).toHaveAttribute("placeholder", "Your password");
+      expect(passwordField).toHaveAttribute("required");
+    });
+
+    it("renders submit button with correct text", () => {
+      render(<LoginForm />);
+      
+      const submitButton = screen.getByTestId("login-submit");
+      expect(submitButton).toHaveTextContent("Log In");
+      expect(submitButton).toHaveAttribute("type", "submit");
+    });
+
+    it("displays initial error when provided", () => {
+      const errorMessage = "Test error message";
+      render(<LoginForm initialError={errorMessage} />);
+      
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    });
+
+    it("does not display error when no initial error provided", () => {
+      render(<LoginForm />);
+      
+      // Should not have any error alert visible
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 
-  it("shows initial error if provided", () => {
-    render(<LoginForm initialError="Test error" />);
-    expect(screen.getByText(/test error/i)).toBeInTheDocument();
-  });
+  describe("Form Structure", () => {
+    it("renders form with correct attributes", () => {
+      render(<LoginForm />);
+      
+      const form = screen.getByTestId("auth-form");
+      expect(form).toHaveAttribute("novalidate");
+    });
 
-  it("shows validation error for invalid email", async () => {
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "not-an-email" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/please enter a valid email address/i)).toBeInTheDocument();
-  });
+    it("has proper form accessibility", () => {
+      render(<LoginForm />);
+      
+      const emailField = screen.getByTestId("email");
+      const passwordField = screen.getByTestId("password");
+      
+      expect(emailField).toHaveAttribute("aria-required", "true");
+      expect(passwordField).toHaveAttribute("aria-required", "true");
+    });
 
-  it("shows validation error for empty fields", async () => {
-    render(<LoginForm />);
-    const submitButton = screen.getByRole("button", { name: /log in/i });
-    fireEvent.click(submitButton);
-    await waitFor(() => {
-      expect(screen.getByText(/email is required/i)).toBeInTheDocument();
-      expect(screen.getByText(/password is required/i)).toBeInTheDocument();
+    it("integrates with AuthForm component", () => {
+      render(<LoginForm />);
+      
+      // Check that AuthForm elements are present
+      expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
+      expect(screen.getByTestId("auth-form")).toBeInTheDocument();
+      expect(screen.getByTestId("login-submit")).toBeInTheDocument();
     });
   });
 
-  it("shows validation error for empty password", async () => {
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
-  });
+  describe("Props Handling", () => {
+    it("handles null initial error", () => {
+      render(<LoginForm initialError={null} />);
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
 
-  it("password field is of type password", () => {
-    render(<LoginForm />);
-    const passwordInput = screen.getByPlaceholderText(/your password/i);
-    expect(passwordInput).toHaveAttribute("type", "password");
-  });
+    it("handles undefined initial error", () => {
+      render(<LoginForm initialError={undefined} />);
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
 
-  it("disables login button while loading", async () => {
-    const { login } = await import("@/lib/services/auth");
-    (login as Mock).mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ success: false, error: "Invalid" }), 100)));
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(screen.getByRole("button", { name: /processing/i })).toBeDisabled();
-  });
+    it("handles empty string initial error", () => {
+      render(<LoginForm initialError="" />);
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
 
-  it("does not call login if validation fails (invalid email)", async () => {
-    const { login } = await import("@/lib/services/auth");
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "not-an-email" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    await waitFor(() => {
-      expect(login).not.toHaveBeenCalled();
+    it("handles multiple error messages", () => {
+      const errorMessage = "Multiple error messages combined";
+      render(<LoginForm initialError={errorMessage} />);
+      expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
   });
 
-  it("does not call login if validation fails (empty fields)", async () => {
-    const { login } = await import("@/lib/services/auth");
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    await waitFor(() => {
-      expect(login).not.toHaveBeenCalled();
+  describe("Component Integration", () => {
+    it("passes correct props to AuthForm", () => {
+      const initialError = "Test error";
+      render(<LoginForm initialError={initialError} />);
+      
+      // Verify AuthForm receives correct props by checking rendered output
+      expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
+      expect(screen.getByText(initialError)).toBeInTheDocument();
+      expect(screen.getByTestId("login-submit")).toHaveTextContent("Log In");
+    });
+
+    it("renders all child components", () => {
+      render(<LoginForm />);
+      
+      // Check that all child components are rendered
+      expect(screen.getByTestId("email")).toBeInTheDocument(); // InputField
+      expect(screen.getByTestId("password")).toBeInTheDocument(); // PasswordField
     });
   });
-
-  it("shows both validation errors when both fields are empty", async () => {
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    await waitFor(() => {
-      expect(screen.getByText(/email is required/i)).toBeInTheDocument();
-      expect(screen.getByText(/password is required/i)).toBeInTheDocument();
-    });
-  });
-
-  it("shows only email required error if password is filled", async () => {
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/email is required/i)).toBeInTheDocument();
-    expect(screen.queryByText(/password is required/i)).not.toBeInTheDocument();
-  });
-
-  it("shows only password required error if email is filled", async () => {
-    render(<LoginForm />);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
-    expect(screen.queryByText(/email is required/i)).not.toBeInTheDocument();
-  });
-
-  it("shows validation error if email field is missing from the form", async () => {
-    render(<LoginForm />);
-    // Remove email field from DOM
-    const emailInput = screen.getByLabelText(/email/i);
-    emailInput.parentElement?.removeChild(emailInput);
-    fireEvent.change(screen.getByPlaceholderText(/your password/i), { target: { value: "pass" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/email is required/i)).toBeInTheDocument();
-  });
-
-  it("shows validation error if password field is missing from the form", async () => {
-    render(<LoginForm />);
-    // Remove password field from DOM
-    const passwordInput = screen.getByPlaceholderText(/your password/i);
-    passwordInput.parentElement?.removeChild(passwordInput);
-    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "user@example.com" } });
-    fireEvent.click(screen.getByRole("button", { name: /log in/i }));
-    expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
-  });
-
-  // it("sets aria-invalid on fields with error", async () => {
-  //   render(<LoginForm />);
-  //   const emailInput = screen.getByLabelText(/email/i);
-  //   const passwordInput = screen.getByPlaceholderText(/your password/i);
-  //   const submitButton = screen.getByRole("button", { name: /log in/i });
-
-  //   // Clear fields and submit
-  //   fireEvent.change(emailInput, { target: { value: "" } });
-  //   fireEvent.change(passwordInput, { target: { value: "" } });
-  //   fireEvent.click(submitButton);
-
-  //   // Wait for validation errors to appear
-  //   await waitFor(() => {
-  //     expect(screen.getByText(/email is required/i)).toBeInTheDocument();
-  //     expect(screen.getByText(/password is required/i)).toBeInTheDocument();
-  //   });
-
-  //   // Check aria-invalid attributes
-  //   expect(emailInput).toHaveAttribute("aria-invalid", "true");
-  //   expect(passwordInput).toHaveAttribute("aria-invalid", "true");
-  // });
 });

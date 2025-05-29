@@ -1,9 +1,9 @@
 import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
-import { useBodyParts } from "@/components/hooks/useBodyParts";
-import { useSingleSelection } from "@/components/hooks/useSingleSelection";
 import { InfoBar } from "@/components/ui/InfoBar";
-import { useDisclaimer } from "@/lib/hooks/useDisclaimer";
+import { useBodyParts } from "@/hooks/useBodyParts";
+import { useDisclaimer } from "@/hooks/useDisclaimer";
+import { useSingleSelection } from "@/hooks/useSingleSelection";
 import { useCallback } from "react";
 import { NavigationNextButton } from "./NavigationNextButton";
 

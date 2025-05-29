@@ -1,6 +1,6 @@
 import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { cn } from "@/lib/utils";
-import React, { useCallback, useEffect, useState, type ChangeEvent } from "react";
+import React, { useCallback, useState, type ChangeEvent } from "react";
 
 export interface InputFieldProps {
   id: string;
@@ -12,7 +12,7 @@ export interface InputFieldProps {
   value?: string;
   onChange?: (value: string) => void;
   error?: string;
-  dataTestid?: string;
+  "data-testid"?: string;
   forceShowError?: boolean;
 }
 
@@ -30,17 +30,11 @@ function InputFieldComponent({
   ...props
 }: InputFieldProps) {
   const [touched, setTouched] = useState(false);
-  const [localValue, setLocalValue] = useState(value);
   const errorId = `${id}-error`;
-
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const newValue = e.target.value;
-      setLocalValue(newValue);
       onChange?.(newValue);
     },
     [onChange]
@@ -66,7 +60,7 @@ function InputFieldComponent({
         id={id}
         name={name || id}
         type={type}
-        value={localValue}
+        defaultValue={value}
         onChange={handleChange}
         onBlur={handleBlur}
         placeholder={placeholder}
