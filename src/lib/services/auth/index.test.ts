@@ -47,6 +47,12 @@ describe("auth service", () => {
       const result = await login(input);
       expect(result).toEqual({ success: false, error: "An unexpected error occurred" });
     });
+
+    it("returns error with code appended when API response includes code", async () => {
+      mockFetch({ error: "Invalid credentials", code: "AUTH_001" }, false);
+      const result = await login(input);
+      expect(result).toEqual({ success: false, error: "Invalid credentials|AUTH_001" });
+    });
   });
 
   describe("register", () => {
@@ -86,6 +92,12 @@ describe("auth service", () => {
       global.fetch = vi.fn().mockRejectedValue(12345);
       const result = await register(input);
       expect(result).toEqual({ success: false, error: "An unexpected error occurred" });
+    });
+
+    it("returns error with code appended when API response includes code", async () => {
+      mockFetch({ message: "Weak password", code: "PASS_001" }, false);
+      const result = await register(input);
+      expect(result).toEqual({ success: false, error: "Weak password|PASS_001" });
     });
   });
 });

@@ -1,6 +1,6 @@
 import type { AuthFormSubmitResult } from '@/hooks/useAuthForm';
-import { register } from '@/lib/services/auth';
 import { registerWithConfirmSchema } from '@/lib/validators/auth.validator';
+import { register } from './index';
 
 export interface RegisterFormResult extends AuthFormSubmitResult {
   registrationSuccess?: boolean;
@@ -28,8 +28,8 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
     };
   }
 
+  // Attempt registration with only email and password
   try {
-    // Attempt registration with only email and password
     const result = await register({
       email: parseResult.data.email,
       password: parseResult.data.password,
@@ -37,7 +37,7 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
 
     if (!result.success) {
       // Special handling for email already exists error
-      if (typeof result.error === "string" && result.error.includes("already registered")) {
+      if (typeof result.error === "string" && result.error.includes("|EMAIL_ALREADY_EXISTS")) {
         return {
           success: false,
           error: `This email is already registered. Would you like to <a href="/login" class="text-blue-600 hover:underline">log in</a> instead?`
@@ -45,7 +45,7 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
       }
       return {
         success: false,
-        error: result.error || "Registration failed"
+        error: typeof result.error === "string" ? result.error.split("|")[0] : "Registration failed"
       };
     }
 

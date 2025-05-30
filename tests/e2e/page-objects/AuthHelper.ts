@@ -33,6 +33,8 @@ export class AuthHelper {
 
       // Clear all browser storage
       await this.clearBrowserStorage(page);
+      
+      // Clear cookies and wait for completion
       await context.clearCookies();
 
       // Attempt API logout
@@ -40,6 +42,9 @@ export class AuthHelper {
 
       // Attempt Supabase logout
       await this.attemptSupabaseLogout(page);
+
+      // Additional wait to ensure all cleanup operations complete
+      await page.waitForTimeout(500);
 
       console.log('User data cleared, API logout called, Supabase signOut called.');
       

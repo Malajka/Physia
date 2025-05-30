@@ -17,10 +17,10 @@ export const logoutUser = async (): Promise<LogoutResult> => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
+      const json = await response.json();
       return {
         success: false,
-        error: errorText || `Logout failed (status: ${response.status})`
+        error: json.error || json.message || `Logout failed (status: ${response.status})`
       };
     }
 

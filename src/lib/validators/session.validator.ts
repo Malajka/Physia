@@ -10,6 +10,5 @@ export const CreateSessionSchema = z.object({
         pain_intensity: z.number().int().min(0).max(10),
       })
     )
-    .nonempty()
-    .max(15, "Maximum 15 tests allowed per session"),
+    .nonempty(),
 });

@@ -26,11 +26,6 @@ describe("CreateSessionSchema", () => {
     expect(() => CreateSessionSchema.parse({ ...validSession, tests: [] })).toThrow();
   });
 
-  it("rejects too many tests", () => {
-    const tooManyTests = Array.from({ length: 16 }, (_, i) => ({ muscle_test_id: i + 1, pain_intensity: 5 }));
-    expect(() => CreateSessionSchema.parse({ ...validSession, tests: tooManyTests })).toThrow("Maximum 15 tests allowed per session");
-  });
-
   it("rejects test with non-positive muscle_test_id", () => {
     const tests = [{ muscle_test_id: 0, pain_intensity: 5 }];
     expect(() => CreateSessionSchema.parse({ ...validSession, tests })).toThrow();

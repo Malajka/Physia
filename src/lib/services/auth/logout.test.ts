@@ -51,7 +51,7 @@ describe("logoutUser", () => {
       (fetch as any).mockResolvedValue({
         ok: false,
         status: 401,
-        text: vi.fn().mockResolvedValue(errorMessage),
+        json: vi.fn().mockResolvedValue({ error: errorMessage }),
       });
 
       const result = await logoutUser();
@@ -67,7 +67,7 @@ describe("logoutUser", () => {
       (fetch as any).mockResolvedValue({
         ok: false,
         status: 500,
-        text: vi.fn().mockResolvedValue(""),
+        json: vi.fn().mockResolvedValue({}),
       });
 
       const result = await logoutUser();
@@ -106,7 +106,7 @@ describe("logoutUser", () => {
       (fetch as any).mockResolvedValue({
         ok: false,
         status: 400,
-        text: vi.fn().mockResolvedValue("Bad request"),
+        json: vi.fn().mockResolvedValue({ error: "Bad request" }),
       });
 
       await logoutUser();

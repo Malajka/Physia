@@ -1,6 +1,6 @@
 import type { AuthFormSubmitResult } from '@/hooks/useAuthForm';
-import { login } from '@/lib/services/auth';
 import { loginSchema } from '@/lib/validators/auth.validator';
+import { login } from './index';
 
 /**
  * Handles login form submission with validation and authentication

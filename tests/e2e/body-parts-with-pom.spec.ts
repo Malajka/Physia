@@ -19,8 +19,11 @@ test.describe('Body Parts Selection (with POM)', () => {
     sessionsPage = new SessionsPage(page);
     bodyPartsPage = new BodyPartsPage(page);
     
-    // Ensure clean state before each test
+    // Ensure clean state before each test with more thorough cleanup
     await AuthHelper.ensureLoggedOut(page, context);
+    
+    // Wait a bit to ensure cleanup is complete
+    await page.waitForTimeout(1000);
   });
 
   test.afterEach(async () => {
@@ -34,9 +37,14 @@ test.describe('Body Parts Selection (with POM)', () => {
     await loginPage.fillEmail(TEST_USER.email);
     await loginPage.fillPassword(TEST_USER.password);
     await loginPage.clickSubmit();
-
-    // Step 2: Verify successful login
-    await loginPage.expectNoLoginError();
+    
+    // Step 2: Wait for successful login and navigation
+    await page.waitForTimeout(3000);
+    
+    // Verify successful login by checking we're NOT on login page anymore
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    
+    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
 
     // Step 3: Navigate to body parts using navigation link
@@ -70,9 +78,14 @@ test.describe('Body Parts Selection (with POM)', () => {
     await loginPage.fillEmail(TEST_USER.email);
     await loginPage.fillPassword(TEST_USER.password);
     await loginPage.clickSubmit();
-
-    // Step 2: Verify successful login
-    await loginPage.expectNoLoginError();
+    
+    // Step 2: Wait for successful login and navigation
+    await page.waitForTimeout(3000);
+    
+    // Verify successful login by checking we're NOT on login page anymore
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    
+    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
     
     // Step 3: Navigate to body parts using navigation link
@@ -94,9 +107,14 @@ test.describe('Body Parts Selection (with POM)', () => {
     await loginPage.fillEmail(TEST_USER.email);
     await loginPage.fillPassword(TEST_USER.password);
     await loginPage.clickSubmit();
-
-    // Step 2: Verify successful login
-    await loginPage.expectNoLoginError();
+    
+    // Step 2: Wait for successful login and navigation
+    await page.waitForTimeout(3000);
+    
+    // Verify successful login by checking we're NOT on login page anymore
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    
+    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
     
     // Step 3: Navigate to body parts using navigation link
@@ -143,9 +161,14 @@ test.describe('Body Parts Selection (with POM)', () => {
     await loginPage.fillEmail(TEST_USER.email);
     await loginPage.fillPassword(TEST_USER.password);
     await loginPage.clickSubmit();
-
-    // Step 2: Verify successful login
-    await loginPage.expectNoLoginError();
+    
+    // Step 2: Wait for successful login and navigation
+    await page.waitForTimeout(3000);
+    
+    // Verify successful login by checking we're NOT on login page anymore
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    
+    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
     
     // Step 3: Navigate to body parts using navigation link

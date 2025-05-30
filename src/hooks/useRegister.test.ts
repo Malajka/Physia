@@ -153,6 +153,21 @@ describe("useRegister", () => {
       expect(result.current.registrationSuccess).toBe(false);
     });
 
+    it("handles null/undefined exceptions", async () => {
+      const registerService = await getRegisterService();
+      registerService.mockRejectedValue(null);
+
+      const { result } = renderHook(() => useRegister());
+      const formData = new FormData();
+
+      await act(async () => {
+        await result.current.submitRegistration(formData);
+      });
+
+      expect(result.current.error).toBe("Unexpected error during registration");
+      expect(result.current.registrationSuccess).toBe(false);
+    });
+
     it("resets loading state after error", async () => {
       const registerService = await getRegisterService();
       registerService.mockRejectedValue(new Error("Test error"));
@@ -186,6 +201,62 @@ describe("useRegister", () => {
         success: false,
         error: "Validation failed"
       });
+    });
+
+    it("handles service failure without error message", async () => {
+      const registerService = await getRegisterService();
+      registerService.mockResolvedValue({ 
+        success: false 
+        // No error property
+      });
+
+      const { result } = renderHook(() => useRegister());
+      const formData = new FormData();
+
+      await act(async () => {
+        await result.current.submitRegistration(formData);
+      });
+
+      expect(result.current.error).toBe(null); // Should not set error if no error message
+      expect(result.current.registrationSuccess).toBe(false);
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    it("handles edge case: success true but registrationSuccess false with error", async () => {
+      const registerService = await getRegisterService();
+      registerService.mockResolvedValue({ 
+        success: true, 
+        registrationSuccess: false,
+        error: "Partial success with warning"
+      });
+
+      const { result } = renderHook(() => useRegister());
+      const formData = new FormData();
+
+      await act(async () => {
+        await result.current.submitRegistration(formData);
+      });
+
+      expect(result.current.registrationSuccess).toBe(false); // registrationSuccess is false
+      expect(result.current.error).toBe(null); // Should not set error because success is true
+    });
+
+    it("handles service success with explicitly undefined registrationSuccess", async () => {
+      const registerService = await getRegisterService();
+      registerService.mockResolvedValue({ 
+        success: true, 
+        registrationSuccess: undefined // Explicitly undefined
+      });
+
+      const { result } = renderHook(() => useRegister());
+      const formData = new FormData();
+
+      await act(async () => {
+        await result.current.submitRegistration(formData);
+      });
+
+      expect(result.current.registrationSuccess).toBe(false);
+      expect(result.current.error).toBe(null);
     });
   });
 

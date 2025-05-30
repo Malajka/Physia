@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi, type Mock } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { handleRegisterSubmit } from "./registerForm";
 
 // Mock dependencies
@@ -163,7 +163,7 @@ describe("handleRegisterSubmit", () => {
       const registerMock = await getRegisterMock();
       registerMock.mockResolvedValue({ 
         success: false, 
-        error: "This email is already registered" 
+        error: "This email is already registered. Please log in instead.|EMAIL_ALREADY_EXISTS" 
       });
 
       const formData = createFormData("existing@example.com", "password123", "password123");
