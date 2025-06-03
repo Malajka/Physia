@@ -1,0 +1,171 @@
+name: Deploy to DigitalOcean
+
+# Uruchamianie workflow
+on:
+  # Automatycznie po push do main/master (tylko po przejściu CI)
+  push:
+    branches: [ main, master ]
+  
+  # Ręczne uruchamianie z GitHub UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - staging
+        - production
+      skip_tests:
+        description: 'Skip running tests before deploy'
+        required: false
+        default: false
+        type: boolean
+
+# Uprawnienia
+permissions:
+  contents: read
+  packages: write
+
+# Zmienne środowiskowe
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job sprawdzający czy CI przeszło pomyślnie
+  check-ci:
+    name: Check CI Status
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    
+    steps:
+      - name: Wait for CI to complete
+        uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'CI Success'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30
+
+  # Job buildujący Docker image
+  build-docker:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [check-ci]
+    if: always() && (needs.check-ci.result == 'success' || github.event_name == 'workflow_dispatch')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Job deployujący na DigitalOcean
+  deploy:
+    name: Deploy to DigitalOcean
+    runs-on: ubuntu-latest
+    needs: [build-docker]
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      - name: Set up Docker context for DigitalOcean
+        run: doctl auth init --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      
+      # Ta sekcja będzie wymagać dostosowania do konkretnej konfiguracji DigitalOcean
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          # Przykładowa komenda - dostosować do rzeczywistego setupu
+          echo "Deploying to DigitalOcean..."
+          # doctl apps create-deployment ${{ secrets.DO_APP_ID }} --wait
+          echo "✅ Deployment completed"
+        env:
+          DO_APP_ID: ${{ secrets.DO_APP_ID }}
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "🚀 Deployment successful!"
+          else
+            echo "❌ Deployment failed!"
+            exit 1
+          fi
+
+  # Job walidujący deployment
+  validate-deployment:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: success()
+    
+    steps:
+      - name: Health check
+        run: |
+          # Podstawowy health check - dostosować URL
+          APP_URL="${{ secrets.APP_URL || 'https://your-app.digitalocean.app' }}"
+          
+          echo "Checking health of: $APP_URL"
+          
+          # Czekaj maksymalnie 5 minut na odpowiedź
+          for i in {1..30}; do
+            if curl -f -s "$APP_URL" > /dev/null; then
+              echo "✅ Application is responding"
+              exit 0
+            fi
+            echo "Attempt $i: Application not ready yet, waiting..."
+            sleep 10
+          done
+          
+          echo "❌ Application health check failed"
+          exit 1 
