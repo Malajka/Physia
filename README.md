@@ -6,7 +6,7 @@
 
 ## Project Description
 
-Physia is a web application designed to help users suffering from overload-related muscle pain create personalized exercise plans. The application allows users to select affected body parts, assess pain intensity, and receive tailored exercise recommendations based on pre-developed sets by physiotherapists. the physiotherapist first feeds the database with their expertise and specific instructions, and then the LLM generates a personalized exercise plan for each user based on this context and selected by user information.
+Physia is a web application designed to help users suffering from overload-related muscle pain create personalized exercise plans.The application allows users to select affected body parts, assess pain intensity, and receive tailored exercise recommendations based on pre-developed sets by physiotherapists. the physiotherapist first feeds the database with their expertise and specific instructions, and then the LLM generates a personalized exercise plan for each user based on this context and selected by user information.
 
 ### Problem Statement
 
