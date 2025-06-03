@@ -112,9 +112,6 @@ class OpenRouterService {
     if (response.status === 429) {
       throw new RateLimitError('Rate limit exceeded')
     }
-    if (response.status >= 400) {
-      throw new ApiError(response.status, response.statusText)
-    }
     return response.data
   }
 
@@ -139,8 +136,7 @@ class OpenRouterService {
 3. **RateLimitError** – HTTP 429 from OpenRouter
 4. **AuthenticationError** – HTTP 401/403
 5. **ValidationError** – response fails JSON Schema validation
-6. **ApiError** – other HTTP 4xx/5xx statuses
-7. **UnexpectedError** – parsing or unknown runtime exceptions
+6. **UnexpectedError** – parsing or unknown runtime exceptions
 
 > Use guard clauses, clear error messages, and custom error classes.
 

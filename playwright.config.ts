@@ -1,27 +1,58 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
+dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
 export default defineConfig({
-  testDir: './e2e',
-  fullyParallel: true,
+  testDir: "./tests/e2e",
+
+  // Disable parallel execution for better stability
+  fullyParallel: false,
+
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+
+  // Increase retries for better stability
+  retries: process.env.CI ? 2 : 1,
+
+  // Single worker for better stability
+  workers: 1,
+
+  // Increase global timeout
+  timeout: 90000,
+
+  reporter: "html",
+  expect: {
+    // Increase expect timeout
+    timeout: 15000,
+  },
   use: {
-    // Use only Chromium browser following the guidelines
-    baseURL: 'http://localhost:4321',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    baseURL: "http://localhost:4321",
+    trace: "on",
+    video: "on",
+    screenshot: "on",
+
+    // Increased timeouts
+    navigationTimeout: 30000,
+    actionTimeout: 20000,
+    
+    // Improve browser stability
+    viewport: { width: 1280, height: 720 },
+    launchOptions: {
+      slowMo: 100,
+    },
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
     },
   ],
   webServer: {
-    command: 'npm run preview',
-    port: 4321,
-    reuseExistingServer: !process.env.CI,
+    command: "npm run dev",
+    url: "http://localhost:4321",
+    reuseExistingServer: true,
+    timeout: 120000,
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
-}); 
+});

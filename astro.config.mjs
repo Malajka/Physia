@@ -11,7 +11,10 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   output: "server",
   integrations: [react(), sitemap()],
-  server: { port: 3000 },
+  server: { port: 4321 },
+  experimental: {
+    session: true,
+  },
   vite: {
     resolve: {
       alias: {

@@ -1,0 +1,45 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## ✨ JavaScript Clean Code Principles
+
+### ✅ General Best Practices
+- Use `const` and `let` instead of `var`
+- Prefer immutability
+- Keep functions small and pure
+- Avoid deeply nested logic
+- Group related code into modules
+- Follow consistent formatting with ESLint + Prettier
+- Use TypeScript for type safety on larger projects
+- Avoid global variables and side effect
+- Use descriptive names
+### 🧠 Function Design
+- Single responsibility per function
+- Limit to 3 parameters max (or use objects)
+- Use default values and destructuring
+- Return early to reduce nesting
+- Write pure functions when possible
+- Use meaningful function names that describe what they do
+- Avoid mixing abstraction levels within functions
+- Keep function signatures consistent and intuitive
+
+### 🔁 Control Structures
+- Avoid `else` when `if` returns
+- Use ternary only for simple expressions
+- Prefer array methods (`map`, `filter`, `reduce`) over loops
+- Use optional chaining (`?.`) and nullish coalescing (`??`)
+- Consider `switch` statements for multiple conditions
+- Avoid nested callbacks (use async/await instead)
+- Keep conditionals simple and readable
+
+### 📂 Code Organization
+- Organize imports logically (React, libraries, components, styles)
+- Group related functions and constants
+- Use module pattern for encapsulation
+- Keep files focused on a single responsibility
+- Use barrel exports (index.js) for cleaner imports
+- Separate business logic from UI logic
+
+---

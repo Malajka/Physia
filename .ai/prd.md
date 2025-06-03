@@ -73,7 +73,7 @@ many visits and needs modifications depending on intensity.
 **Description**: As a lawyer, I want to ensure compliance with legal requirements.
 **Acceptance Criteria**:
 - Display of a disclaimer before starting to initialize first session for user.
-- User has to accept dislaimer before starting to create first session.
+- User has to accept disclaimer before starting to create first session.
 - Link to the full terms and conditions in the PDF footer.
 
 ### ID: US-005
@@ -92,13 +92,7 @@ Title: Application Login
 - Incorrect login details, displaying messages about data disclosure.
 - Data regarding the input is safe in the way.
 
-### US-007: Session deletion
-**Description**: As a user, I want to delete my sessions so that I can manage my session history.
-**Acceptance Criteria**:
-- The user can delete their own sessions.
-- The session history view is not available without logging in to the system (US-006).
-
-### US-008: Secure access and authentication
+### US-007: Secure access and authentication
 **Description**: As a user, I want to register and log into the system in a way that ensures the security of my data.
 **Acceptance Criteria**:
 - Registration and login occur on dedicated pages.

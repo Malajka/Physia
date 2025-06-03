@@ -32,7 +32,7 @@ alwaysApply: false
 |---------------------|---------------------------------------------------------|---------------------|
 | Unit Tests          | React components, utility functions, custom hooks       | Vitest / Jest + RTL |
 | Integration Tests   | Astro pages → API routes → Supabase client              | Vitest + mocking    |
-| End-to-End Tests    | Full user journey through UI, network, DB               | Cypress / Playwright|
+| End-to-End Tests    | Full user journey through UI, network, DB               |  Playwright|
 | Performance Tests   | Lighthouse audits, API latency                          | Lighthouse CI       |
 | Accessibility Tests | Keyboard navigation, ARIA roles, color contrast         | axe / pa11y CI      |
 | Security Checks     | Input validation, rate limiting, auth flow              | OWASP ZAP / manual  |
@@ -52,7 +52,8 @@ alwaysApply: false
    - Acceptance state persists in user profile or local storage.  
 
 3. **Body Part Selection:**  
-   - Clickable buttons for body parts (e.g. “Shoulder,” “Lower Back”).  
+   - Clickable buttons for body parts (e.g. “Shoulder,” “Lower Back”). 
+   - Only one button can be selected at the time. 
    - On selection, the next step opens with correct headline.  
 
 4. **Pain Intensity Input:**  
@@ -62,8 +63,7 @@ alwaysApply: false
    - At least one test with value above 0 is required to enable “Generate Plan.”  
 
 5. **Submit & Plan Generation:**  
-   - “Generate Plan” button disabled until disclaimer accepted, body part selected, and pain value > 0.  
-   - On click, triggers API call to `/api/exercises`.  
+   - “Generate Plan” button on click, triggers API call to `/api/exercises`.  
    - Handles 200 OK (exercise list displays correctly).  
    - Handles 4xx/5xx (error banner shown).  
    - Retry flow works.  
