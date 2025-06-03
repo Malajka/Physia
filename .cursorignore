@@ -1,7 +1,32 @@
+# Cursor IDE ignore file
+# This file tells Cursor what files to ignore in chat context
+
+# Ignore environment files for security
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.production
 .env.development
 .env.test
+
+# Allow .env.example to be used in chat (this is safe since it contains no real secrets)
+!.env.example
+
+# Ignore large directories
+node_modules/
+dist/
+.astro/
+coverage/
+playwright-report/
+test-results/
+
+# Ignore logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Ignore system files
+.DS_Store
+Thumbs.db 
