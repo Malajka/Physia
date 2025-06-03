@@ -8,4 +8,4 @@ describe("getPageTitle", () => {
   it("returns the title with the body part id if name is not provided", () => {
     expect(getPageTitle("", 5)).toBe("Muscle Tests for Body Part 5");
   });
-}); 
+});

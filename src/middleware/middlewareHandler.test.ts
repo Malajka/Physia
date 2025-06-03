@@ -21,8 +21,8 @@ function createMockSession(userMetadata = {}): Session {
       aud: "authenticated",
       created_at: new Date().toISOString(),
       email: "",
-      phone: ""
-    }
+      phone: "",
+    },
   };
 }
 
@@ -124,10 +124,7 @@ describe("middlewareHandler", () => {
     context.locals.supabase.auth.setSession = vi.fn().mockResolvedValue({ error: setSessionError });
     const logSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     await handleRequest(context as any, mockNext);
-    expect(logSpy).toHaveBeenCalledWith(
-      expect.stringContaining("[MW_HANDLER_SESSION_SET_ERROR]"),
-      setSessionError.message
-    );
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("[MW_HANDLER_SESSION_SET_ERROR]"), setSessionError.message);
     logSpy.mockRestore();
   });
 
@@ -146,21 +143,21 @@ describe("middlewareHandler", () => {
 
   it("handleSessionOwnership returns undefined if path does not start with /sessions/", async () => {
     const { context } = makeContext({ pathname: "/not-sessions/1" });
-    const fn = (await import("./middlewareHandler"));
+    const fn = await import("./middlewareHandler");
     const result = await fn.handleRequest(context as any, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
 
   it("handleSessionOwnership returns undefined if pathSegments.length < 3", async () => {
     const { context } = makeContext({ pathname: "/sessions/" });
-    const fn = (await import("./middlewareHandler"));
+    const fn = await import("./middlewareHandler");
     const result = await fn.handleRequest(context as any, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
 
   it("handleSessionOwnership returns undefined if pathSegments[2] is NaN", async () => {
     const { context } = makeContext({ pathname: "/sessions/abc" });
-    const fn = (await import("./middlewareHandler"));
+    const fn = await import("./middlewareHandler");
     const result = await fn.handleRequest(context as any, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
@@ -209,4 +206,4 @@ describe("middlewareHandler", () => {
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
   });
-}); 
+});

@@ -64,17 +64,10 @@ const createInitialState = (skipInitialFetch: boolean, disclaimerAccepted: strin
   error: null,
 });
 
-export function useBodyParts({
-  baseUrl = getDefaultBaseUrl(),
-  skipInitialFetch = false,
-  disclaimerAccepted = undefined,
-}: UseBodyPartsOptions = {}) {
+export function useBodyParts({ baseUrl = getDefaultBaseUrl(), skipInitialFetch = false, disclaimerAccepted = undefined }: UseBodyPartsOptions = {}) {
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const [state, dispatch] = useReducer(
-    bodyPartsReducer,
-    createInitialState(skipInitialFetch, disclaimerAccepted)
-  );
+  const [state, dispatch] = useReducer(bodyPartsReducer, createInitialState(skipInitialFetch, disclaimerAccepted));
 
   const abortPreviousRequest = useCallback(() => {
     abortControllerRef.current?.abort();
@@ -104,13 +97,13 @@ export function useBodyParts({
 
     try {
       const bodyParts = await fetchAllBodyParts(baseUrl, { signal: controller.signal });
-      
+
       // Check if request was aborted
       if (controller.signal.aborted) {
         dispatch({ type: "FETCH_ABORT" });
         return;
       }
-      
+
       dispatch({ type: "FETCH_SUCCESS", payload: bodyParts });
     } catch (error: unknown) {
       // Ignore abort errors

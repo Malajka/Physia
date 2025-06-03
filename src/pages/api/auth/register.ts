@@ -34,10 +34,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const errorMessageLower = signUpError.message.toLowerCase();
       const duplicateEmailPatterns = ["already registered", "duplicate", "unique constraint", "taken"];
       if (duplicateEmailPatterns.some((pattern) => errorMessageLower.includes(pattern))) {
-        return jsonResponse({ 
-          error: "This email is already registered. Please log in instead.",
-          code: "EMAIL_ALREADY_EXISTS" 
-        }, 409);
+        return jsonResponse(
+          {
+            error: "This email is already registered. Please log in instead.",
+            code: "EMAIL_ALREADY_EXISTS",
+          },
+          409
+        );
       }
       return jsonResponse({ error: signUpError.message }, 400);
     }

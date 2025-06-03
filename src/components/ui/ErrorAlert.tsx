@@ -17,13 +17,7 @@ export function ErrorAlert<T extends string | ReactNode = string>({ errors, rend
   const list: T[] = errors ? (Array.isArray(errors) ? errors : [errors]) : [];
 
   return (
-    <div
-      role="alert"
-      aria-live="assertive"
-      className={errorAlertBase}
-      style={!hasErrors ? { display: "none" } : undefined}
-      aria-hidden={!hasErrors}
-    >
+    <div role="alert" aria-live="assertive" className={errorAlertBase} style={!hasErrors ? { display: "none" } : undefined} aria-hidden={!hasErrors}>
       {hasErrors && (
         <div className="flex">
           <div className="flex-shrink-0">
@@ -41,11 +35,7 @@ export function ErrorAlert<T extends string | ReactNode = string>({ errors, rend
               <ul className="list-disc pl-5 space-y-1">
                 {list.map((err, i) => (
                   <li key={i}>
-                    {render ? render(err) : typeof err === "string" ? (
-                      <span dangerouslySetInnerHTML={{ __html: err }} />
-                    ) : (
-                      err as ReactNode
-                    )}
+                    {render ? render(err) : typeof err === "string" ? <span dangerouslySetInnerHTML={{ __html: err }} /> : (err as ReactNode)}
                   </li>
                 ))}
               </ul>

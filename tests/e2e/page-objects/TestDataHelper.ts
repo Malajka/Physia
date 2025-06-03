@@ -1,4 +1,4 @@
-import { TEST_USER } from '../config';
+import { TEST_USER } from "../config";
 
 export class TestDataHelper {
   /**
@@ -16,7 +16,7 @@ export class TestDataHelper {
   static generateTestUser() {
     return {
       email: this.generateUniqueEmail(),
-      password: 'ValidPassword123!'
+      password: "ValidPassword123!",
     };
   }
 
@@ -27,7 +27,7 @@ export class TestDataHelper {
   static getExistingTestUser() {
     return {
       email: TEST_USER.email,
-      password: TEST_USER.password
+      password: TEST_USER.password,
     };
   }
 
@@ -35,21 +35,21 @@ export class TestDataHelper {
    * Get a valid password that meets requirements
    */
   static getValidPassword(): string {
-    return 'ValidPassword123!';
+    return "ValidPassword123!";
   }
 
   /**
    * Get an invalid password (too short)
    */
   static getInvalidPassword(): string {
-    return 'short';
+    return "short";
   }
 
   /**
    * Get an invalid email format
    */
   static getInvalidEmail(): string {
-    return 'invalid-email-format';
+    return "invalid-email-format";
   }
 
   /**
@@ -60,7 +60,7 @@ export class TestDataHelper {
     return {
       email: user.email,
       password: user.password,
-      passwordConfirm: 'DifferentPassword123!'
+      passwordConfirm: "DifferentPassword123!",
     };
   }
 
@@ -69,9 +69,9 @@ export class TestDataHelper {
    */
   static getEmptyFormData() {
     return {
-      email: '',
-      password: '',
-      passwordConfirm: ''
+      email: "",
+      password: "",
+      passwordConfirm: "",
     };
   }
-} 
+}

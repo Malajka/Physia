@@ -32,4 +32,4 @@ describe("buildTrainingPlanPrompt", () => {
     expect(prompt).toContain("Biceps: Pain Intensity 7/10");
     // Should not throw or include exercises section for Biceps
   });
-}); 
+});

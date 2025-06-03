@@ -67,7 +67,7 @@ function createMockContext({
     currentLocale: "en",
     defaultLocale: "en",
     locales: ["en"],
-    routing: { strategy: "prefix-always" }
+    routing: { strategy: "prefix-always" },
   } as unknown as APIContext;
 }
 
@@ -195,7 +195,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
     // CRITICAL: This `invalidPostBody` must be structured such that it *fails* your FeedbackBodySchema.
     // For example, if rating must be 0-5, then 10 should fail.
     const invalidPostBody = { rating: 10 };
-    
+
     const context = createMockContext({
       params: { session_id: mockSessionIdString }, // Params are valid
       requestBody: invalidPostBody, // This should be rejected by FeedbackBodySchema

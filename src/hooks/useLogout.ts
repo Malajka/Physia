@@ -21,7 +21,7 @@ export const useLogout = (): UseLogoutReturn => {
 
     try {
       const result = await logoutUser();
-      
+
       if (!result.success && result.error) {
         setError(result.error);
         window.alert(result.error);
@@ -41,4 +41,4 @@ export const useLogout = (): UseLogoutReturn => {
     error,
     logout,
   };
-}; 
+};

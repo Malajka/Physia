@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock astro:middleware before importing GET
 vi.mock("astro:middleware", () => ({
-  defineMiddleware: (fn: any) => fn
+  defineMiddleware: (fn: any) => fn,
 }));
 
 import { GET } from "./index";

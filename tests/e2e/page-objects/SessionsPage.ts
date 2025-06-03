@@ -1,6 +1,6 @@
-import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import type { Locator, Page } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class SessionsPage extends BasePage {
   readonly logoutButton: Locator;
@@ -10,36 +10,36 @@ export class SessionsPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.logoutButton = this.getByTestId('logout-button');
-    this.logoutButtons = page.getByTestId('logout-button');
+    this.logoutButton = this.getByTestId("logout-button");
+    this.logoutButtons = page.getByTestId("logout-button");
     this.sessionItems = page.locator('[data-testid^="session-item-"]');
-    this.createFirstSessionButton = this.getByTestId('create-first-session');
+    this.createFirstSessionButton = this.getByTestId("create-first-session");
   }
 
   async navigateToSessions() {
-    await this.goto('/sessions');
-    await this.waitForUrl('**/sessions');
+    await this.goto("/sessions");
+    await this.waitForUrl("**/sessions");
   }
 
   async logout() {
     // Find and click visible logout button
     const buttons = await this.logoutButtons.all();
     let logoutButtonClicked = false;
-    
+
     for (const btn of buttons) {
       if (await btn.isVisible()) {
         // Wait for logout response if available
-        const logoutResponsePromise = this.page.waitForResponse('**/api/auth/logout').catch(() => null);
+        const logoutResponsePromise = this.page.waitForResponse("**/api/auth/logout").catch(() => null);
         await btn.click();
         logoutButtonClicked = true;
         break;
       }
     }
-    
+
     if (!logoutButtonClicked) {
-      throw new Error('No visible logout button found');
+      throw new Error("No visible logout button found");
     }
-    
+
     return logoutButtonClicked;
   }
 
@@ -54,8 +54,8 @@ export class SessionsPage extends BasePage {
 
   async verifyProtectedRouteRedirect(route: string) {
     await this.page.goto(route);
-    await expect(this.page, `Route ${route} should redirect to login when not authenticated`).toHaveURL(/\/login/, { 
-      timeout: 5000
+    await expect(this.page, `Route ${route} should redirect to login when not authenticated`).toHaveURL(/\/login/, {
+      timeout: 5000,
     });
   }
 
@@ -72,23 +72,23 @@ export class SessionsPage extends BasePage {
       await createNewSessionDesktop.click();
       return;
     }
-    
+
     // Try mobile navigation link
     const createNewSessionMobile = this.getByTestId("create-new-session-mobile");
     if (await createNewSessionMobile.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createNewSessionMobile.click();
       return;
     }
-    
+
     // Fallback: try the sessions page button for users with no sessions
     const createFirstSessionButton = this.getByTestId("create-first-session");
     if (await createFirstSessionButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createFirstSessionButton.click();
       return;
     }
-    
+
     // Last fallback: navigate directly to body-parts
-    await this.goto('/body-parts');
+    await this.goto("/body-parts");
   }
 
   async waitForSessionItems() {
@@ -128,4 +128,4 @@ export class SessionsPage extends BasePage {
     const hasItems = await this.hasSessionItems();
     expect(hasItems).toBeFalsy();
   }
-} 
+}

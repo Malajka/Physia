@@ -45,7 +45,7 @@ function createMockApiContext(
   method: string = "GET",
   pathnameSuffix: string = "" // Dla dynamicznych ścieżek
 ): APIContext {
-  const requestUrl = `http://localhost/api/body_parts/${params.body_part_id || 'test'}${pathnameSuffix}`;
+  const requestUrl = `http://localhost/api/body_parts/${params.body_part_id || "test"}${pathnameSuffix}`;
   const request = new Request(requestUrl, { method, headers: new Headers() }) as Request & {
     json: () => Promise<any>;
     text: () => Promise<string>;
@@ -73,7 +73,6 @@ function createMockApiContext(
   } as unknown as APIContext;
 }
 
-
 describe("GET /api/body_parts/[body_part_id]/muscle_tests", () => {
   let locals: Locals;
 
@@ -82,8 +81,8 @@ describe("GET /api/body_parts/[body_part_id]/muscle_tests", () => {
     locals = { supabase: createMockSupabase({ data: [], error: null }) };
     // Resetuj wszystkie inne mocki, jeśli to konieczne
     vi.clearAllMocks(); // Jeśli używasz vi.fn() globalnie lub w createMockSupabase
-                        // to może być konieczne, aby zresetować liczniki wywołań itp.
-                        // Jeśli createMockSupabase jest czyste, to może nie być potrzebne.
+    // to może być konieczne, aby zresetować liczniki wywołań itp.
+    // Jeśli createMockSupabase jest czyste, to może nie być potrzebne.
     // Ponowne skonfigurowanie mocka getSession dla locals.supabase, jeśli został zresetowany przez clearAllMocks
     locals.supabase.auth.getSession = vi.fn().mockResolvedValue({ data: { session: { user: { id: "test-user-id" } } }, error: null });
   });

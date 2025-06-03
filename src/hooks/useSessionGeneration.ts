@@ -32,9 +32,8 @@ export function useSessionGeneration(
   tests?: { muscle_test_id: number; pain_intensity: number }[]
 ) {
   // Handle both parameter formats
-  const { bodyPartId, tests: testsArray } = typeof paramsOrBodyPartId === 'object' 
-    ? paramsOrBodyPartId 
-    : { bodyPartId: paramsOrBodyPartId, tests: tests! };
+  const { bodyPartId, tests: testsArray } =
+    typeof paramsOrBodyPartId === "object" ? paramsOrBodyPartId : { bodyPartId: paramsOrBodyPartId, tests: tests! };
 
   const [statusMessage, setStatusMessage] = useState("Preparing session data...");
   const [error, setError] = useState<string | null>(null);
@@ -56,12 +55,12 @@ export function useSessionGeneration(
     try {
       setStatusMessage("Initializing session...");
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       setStatusMessage("Sending data to the AI engine...");
       const result = await startSessionGeneration(bodyPartId, testsArray);
 
       setStatusMessage("Finalizing your personalized training plan...");
-      
+
       if (!result.data) {
         throw new Error("No session data received");
       }
@@ -72,7 +71,6 @@ export function useSessionGeneration(
 
       setSessionDetail(result.data);
       window.location.href = `/sessions/${result.id}`;
-      
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorMessage);
@@ -99,12 +97,12 @@ export function useSessionGeneration(
     startGeneration();
   }, [bodyPartId, testsArray, startGeneration]);
 
-  return { 
-    statusMessage, 
-    error, 
-    retry, 
-    isLoading, 
-    sessionDetail, 
-    startGeneration 
+  return {
+    statusMessage,
+    error,
+    retry,
+    isLoading,
+    sessionDetail,
+    startGeneration,
   };
 }

@@ -86,9 +86,9 @@ describe("useLogout", () => {
     it("handles service error and shows alert", async () => {
       const logoutService = await getLogoutService();
       const errorMessage = "Session expired";
-      logoutService.mockResolvedValue({ 
-        success: false, 
-        error: errorMessage 
+      logoutService.mockResolvedValue({
+        success: false,
+        error: errorMessage,
       });
 
       const { result } = renderHook(() => useLogout());
@@ -149,13 +149,13 @@ describe("useLogout", () => {
   describe("State management", () => {
     it("clears previous error before new logout attempt", async () => {
       const logoutService = await getLogoutService();
-      
+
       // First call fails
-      logoutService.mockResolvedValueOnce({ 
-        success: false, 
-        error: "First error" 
+      logoutService.mockResolvedValueOnce({
+        success: false,
+        error: "First error",
       });
-      
+
       // Second call succeeds
       logoutService.mockResolvedValueOnce({ success: true });
 
@@ -178,13 +178,13 @@ describe("useLogout", () => {
 
     it("maintains stable logout function reference", () => {
       const { result, rerender } = renderHook(() => useLogout());
-      
+
       const firstLogoutFn = result.current.logout;
-      
+
       rerender();
-      
+
       const secondLogoutFn = result.current.logout;
-      
+
       expect(firstLogoutFn).toBe(secondLogoutFn);
     });
   });
@@ -192,11 +192,7 @@ describe("useLogout", () => {
   describe("Concurrent logout calls", () => {
     it("handles multiple concurrent logout calls gracefully", async () => {
       const logoutService = await getLogoutService();
-      logoutService.mockImplementation(() => 
-        new Promise(resolve => 
-          setTimeout(() => resolve({ success: true }), 100)
-        )
-      );
+      logoutService.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve({ success: true }), 100)));
 
       const { result } = renderHook(() => useLogout());
 
@@ -217,4 +213,4 @@ describe("useLogout", () => {
       expect(logoutService).toHaveBeenCalledTimes(3);
     });
   });
-}); 
+});

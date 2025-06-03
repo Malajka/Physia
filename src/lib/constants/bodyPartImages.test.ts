@@ -13,4 +13,4 @@ describe("bodyPartImages", () => {
     expect(bodyPartImages[999]).toBeUndefined();
     expect(bodyPartImages[0]).toBeUndefined();
   });
-}); 
+});

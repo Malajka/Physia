@@ -1,9 +1,11 @@
 # Implementation Plan for Body Area Selection View
 
 ## 1. Overview
+
 This view allows the user to select at most one body area (out of four) where they experience overload-related muscle pain. After selecting an area, the user can proceed to the muscle tests assessment step.
 
 ## 2. Routing and File Structure
+
 - Route: `/body-parts` (Astro page at `src/pages/body-parts.astro`).
 - Current project structure (per tech stack):
   - `src/pages` – Astro pages.
@@ -18,6 +20,7 @@ This view allows the user to select at most one body area (out of four) where th
   - Hook: `src/lib/hooks/useBodyParts.ts` to return state, error, loading, and `refresh()`.
 
 ## 3. Component Structure
+
 - **BodyAreaSelectionPage** (Astro page): Wraps content in `MainLayout` and loads the client component.
   - **BodyPartSelector** (React, `client:load`): Handles data fetching, display of buttons, and selection logic.
     - **BodyPartButton** (React): Renders a single body part button with an icon and name.
@@ -26,6 +29,7 @@ This view allows the user to select at most one body area (out of four) where th
 ## 4. Component Details
 
 ### BodyPartSelector
+
 - Description: Container that manages the list of body parts, selection state, and validation.
 - Main elements:
   - Grid container (`<div className="grid grid-cols-2 gap-4">`).
@@ -45,6 +49,7 @@ This view allows the user to select at most one body area (out of four) where th
 - Props: none (fetches data internally).
 
 ### BodyPartButton
+
 - Description: Represents a single body part selection button.
 - Elements:
   - `<button>` with an SVG icon and text label.
@@ -57,6 +62,7 @@ This view allows the user to select at most one body area (out of four) where th
   - `onSelect: (id: number) => void`
 
 ### NavigationNextButton
+
 - Description: Next-step navigation button.
 - Elements:
   - `<Button>` with label 'Next'.
@@ -68,6 +74,7 @@ This view allows the user to select at most one body area (out of four) where th
   - `selectedBodyPartId: number | null`
 
 ## 5. Types
+
 - `BodyPartDto`:
   - `id: number`
   - `name: string`
@@ -75,6 +82,7 @@ This view allows the user to select at most one body area (out of four) where th
 - `BodyPartVM` (optional view model): same as `BodyPartDto` or a subset.
 
 ## 6. State Management
+
 - State variables:
   - `bodyParts: BodyPartDto[]`
   - `selectedBodyPartId: number | null`
@@ -84,27 +92,32 @@ This view allows the user to select at most one body area (out of four) where th
 - Hook: `useBodyParts()` returns these states and a `refresh()` function.
 
 ## 7. API Integration
+
 - Endpoint: `GET /api/body_parts`
   - Request: none.
   - Response: `200 OK` with `BodyPartDto[]`.
 - Usage: call `fetch('/api/body_parts')` inside `useBodyParts` hook.
 
 ## 8. User Interactions
+
 1. User visits `/body-parts` → loader fetches data.
 2. User clicks a body part button → selection state updates and button highlights.
 3. User clicks another button after one is already selected → error message "Select max 1 area" appears.
 4. User clicks 'Next' after a valid selection → navigates to `/muscle-tests/${selectedBodyPartId}`.
 
 ## 9. Conditions and Validation
+
 - On initial load: 'Next' button is disabled.
 - On valid selection: 'Next' button is enabled.
 - On attempting a second selection: display "Select max 1 area" error.
 
 ## 10. Error Handling
+
 - Fetch error: display an error message and a retry button.
 - No data: display "No body areas available".
 
 ## 11. Implementation Steps
+
 1. Create API route `src/pages/api/body_parts.ts` using `context.locals.supabase`.
 2. Create Astro page `src/pages/body-parts.astro`, wrap content with `MainLayout`.
 3. Implement `BodyPartSelector.tsx` in `src/components/body-area-selection`.

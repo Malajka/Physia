@@ -8,7 +8,7 @@ describe("PasswordField", () => {
     const input = screen.getByPlaceholderText(/your password/i);
     expect(input).toBeInTheDocument();
     expect(input).toHaveAttribute("type", "password");
-    expect(screen.getByLabelText(/^password$/i, { selector: 'input' })).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password$/i, { selector: "input" })).toBeInTheDocument();
   });
 
   it("toggles password visibility on button click", () => {
@@ -30,4 +30,4 @@ describe("PasswordField", () => {
     fireEvent.change(input, { target: { value: "abc" } });
     expect(onChange).toHaveBeenCalledWith("abc");
   });
-}); 
+});

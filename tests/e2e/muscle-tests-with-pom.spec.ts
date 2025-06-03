@@ -6,7 +6,7 @@ import { LoginPage } from "./page-objects/LoginPage";
 import { MuscleTestsPage } from "./page-objects/MuscleTestsPage";
 import { SessionsPage } from "./page-objects/SessionsPage";
 
-test.describe('Muscle Tests (with POM)', () => {
+test.describe("Muscle Tests (with POM)", () => {
   let page: any;
   let context: any;
   let loginPage: LoginPage;
@@ -21,7 +21,7 @@ test.describe('Muscle Tests (with POM)', () => {
     sessionsPage = new SessionsPage(page);
     bodyPartsPage = new BodyPartsPage(page);
     muscleTestsPage = new MuscleTestsPage(page);
-    
+
     // Ensure clean state before each test
     await AuthHelper.ensureLoggedOut(page, context);
   });
@@ -48,14 +48,14 @@ test.describe('Muscle Tests (with POM)', () => {
     // Step 4: Navigate through body parts selection
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
-    
+
     // Wait for body parts to load
     await page.waitForTimeout(3000);
-    
+
     // Select first available body part
     const bodyPartTestIds = ["body-part-upper-back", "body-part-lower-back", "body-part-arms-and-wrists", "body-part-hips-and-knees"];
     let selected = false;
-    
+
     for (const testId of bodyPartTestIds) {
       try {
         const button = page.getByTestId(testId);
@@ -68,7 +68,7 @@ test.describe('Muscle Tests (with POM)', () => {
         console.log(`${testId} not found, trying next...`);
       }
     }
-    
+
     if (!selected) {
       throw new Error("No body parts available for selection");
     }
@@ -77,13 +77,13 @@ test.describe('Muscle Tests (with POM)', () => {
 
     // Step 5: Handle muscle tests
     await muscleTestsPage.expectOnMuscleTestsPage();
-    
+
     // Set slider value for first muscle test
     await muscleTestsPage.setSliderValue("slider-1", 5);
-    
+
     // Verify the slider value was set correctly
     await muscleTestsPage.expectSliderValue("slider-1", 5);
-    
+
     // Click next to generate session
     await muscleTestsPage.clickNext();
 
@@ -109,7 +109,7 @@ test.describe('Muscle Tests (with POM)', () => {
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
     await page.waitForTimeout(3000);
-    
+
     // Select body part
     const bodyPartButton = page.getByTestId("body-part-upper-back");
     await expect(bodyPartButton).toBeVisible({ timeout: 10000 });
@@ -118,14 +118,14 @@ test.describe('Muscle Tests (with POM)', () => {
 
     // Step 2: Verify muscle tests page loads
     await muscleTestsPage.expectOnMuscleTestsPage();
-    
+
     // Step 3: Initially next button should be disabled (assuming no sliders are set)
     // Note: This might need adjustment based on actual implementation
     // await muscleTestsPage.expectNextButtonDisabled();
-    
+
     // Step 4: Set a slider value
     await muscleTestsPage.setSliderValue("slider-1", 3);
-    
+
     // Step 5: Now next button should be enabled
     await muscleTestsPage.expectNextButtonEnabled();
   });
@@ -146,7 +146,7 @@ test.describe('Muscle Tests (with POM)', () => {
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
     await page.waitForTimeout(3000);
-    
+
     const bodyPartButton = page.getByTestId("body-part-upper-back");
     await expect(bodyPartButton).toBeVisible({ timeout: 10000 });
     await bodyPartButton.click();
@@ -154,14 +154,14 @@ test.describe('Muscle Tests (with POM)', () => {
 
     // Step 2: Set multiple slider values
     await muscleTestsPage.expectOnMuscleTestsPage();
-    
+
     // Try to set multiple sliders if they exist
     const sliderValues = {
       "slider-1": 5,
       "slider-2": 3,
-      "slider-3": 7
+      "slider-3": 7,
     };
-    
+
     // Set values for sliders that exist
     for (const [sliderId, value] of Object.entries(sliderValues)) {
       try {
@@ -173,7 +173,7 @@ test.describe('Muscle Tests (with POM)', () => {
         console.log(`Slider ${sliderId} not found, skipping...`);
       }
     }
-    
+
     // Proceed to session generation
     await muscleTestsPage.clickNext();
     await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 15000 });
@@ -184,7 +184,7 @@ test.describe('Muscle Tests (with POM)', () => {
   test("Should generate different sessions based on pain levels", async () => {
     // This test could be expanded to verify that different slider values
     // result in different exercise recommendations
-    
+
     await loginPage.navigateToLogin();
     await loginPage.fillEmail(TEST_USER.email);
     await loginPage.fillPassword(TEST_USER.password);
@@ -198,14 +198,14 @@ test.describe('Muscle Tests (with POM)', () => {
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
     await page.waitForTimeout(3000);
-    
+
     const bodyPartButton = page.getByTestId("body-part-upper-back");
     await expect(bodyPartButton).toBeVisible({ timeout: 10000 });
     await bodyPartButton.click();
     await bodyPartsPage.clickNext();
 
     await muscleTestsPage.expectOnMuscleTestsPage();
-    
+
     // Set high pain level
     await muscleTestsPage.setSliderValue("slider-1", 8);
     await muscleTestsPage.clickNext();
@@ -214,9 +214,9 @@ test.describe('Muscle Tests (with POM)', () => {
     await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 15000 });
     await expect(page.getByTestId("session-description")).toBeVisible();
     await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible();
-    
+
     // Could add assertions about the type of exercises recommended for high pain
     const sessionTitle = await page.getByTestId("session-title").textContent();
     expect(sessionTitle).toBeTruthy();
   });
-}); 
+});

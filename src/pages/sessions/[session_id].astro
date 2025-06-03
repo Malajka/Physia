@@ -64,8 +64,12 @@ if (trainingSession) {
       trainingSession && (
         <>
           <div class="mt-6 text-left">
-            <h3 class="text-xl font-semibold" data-testid="session-title">{trainingSession.training_plan.title}</h3>
-            <p class="mb-4" data-testid="session-description">{trainingSession.training_plan.description}</p>
+            <h3 class="text-xl font-semibold" data-testid="session-title">
+              {trainingSession.training_plan.title}
+            </h3>
+            <p class="mb-4" data-testid="session-description">
+              {trainingSession.training_plan.description}
+            </p>
             {trainingSession.training_plan.exercises.length > 0 ? (
               trainingSession.training_plan.exercises.map((ex: TrainingPlan["exercises"][number]) => (
                 <div class="mb-4 p-4 border rounded-lg" style="background-color:#f5fffc;" data-testid={`session-exercise-${ex.id}`}>

@@ -4,9 +4,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSessionGeneration } from "./useSessionGeneration";
 
 // Mock window.location
-Object.defineProperty(window, 'location', {
+Object.defineProperty(window, "location", {
   value: {
-    href: '',
+    href: "",
   },
   writable: true,
 });
@@ -17,7 +17,7 @@ describe("useSessionGeneration", () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    window.location.href = '';
+    window.location.href = "";
   });
 
   it("sets sessionDetail and redirects on success", async () => {
@@ -31,61 +31,61 @@ describe("useSessionGeneration", () => {
       session_tests: [],
       feedback_rating: null,
     };
-    
-    const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({ 
-      data: sessionDetail, 
-      id: 123 
+
+    const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
+      data: sessionDetail,
+      id: 123,
     });
-    
+
     const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
-    
+
     await act(async () => {
       await result.current.startGeneration();
     });
-    
+
     expect(result.current.sessionDetail).toEqual(sessionDetail);
     expect(result.current.error).toBeNull();
     expect(mockStart).toHaveBeenCalledWith(bodyPartId, tests);
     expect(result.current.isLoading).toBe(false);
-    expect(window.location.href).toBe('/sessions/123');
+    expect(window.location.href).toBe("/sessions/123");
   });
 
   it("sets error if no bodyPartId or tests", async () => {
     const { result } = renderHook(() => useSessionGeneration(0, []));
-    
+
     await act(async () => {
       await result.current.startGeneration();
     });
-    
+
     expect(result.current.error).toBe("Invalid request parameters");
     expect(result.current.isLoading).toBe(false);
   });
 
   it("sets error if startSessionGeneration throws", async () => {
     vi.spyOn(sessionService, "startSessionGeneration").mockRejectedValue(new Error("API failure"));
-    
+
     const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
-    
+
     await act(async () => {
       await result.current.startGeneration();
     });
-    
+
     expect(result.current.error).toBe("API failure");
     expect(result.current.isLoading).toBe(false);
   });
 
   it("sets error if no session data received", async () => {
-    vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({ 
-      data: undefined, 
-      id: undefined 
+    vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
+      data: undefined,
+      id: undefined,
     });
-    
+
     const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
-    
+
     await act(async () => {
       await result.current.startGeneration();
     });
-    
+
     expect(result.current.error).toBe("No session data received");
     expect(result.current.isLoading).toBe(false);
   });
@@ -101,18 +101,18 @@ describe("useSessionGeneration", () => {
       session_tests: [],
       feedback_rating: null,
     };
-    
+
     vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
       data: sessionDetail,
-      id: undefined
+      id: undefined,
     });
-    
+
     const { result } = renderHook(() => useSessionGeneration(bodyPartId, tests));
-    
+
     await act(async () => {
       await result.current.startGeneration();
     });
-    
+
     expect(result.current.error).toBe("Invalid session data received (missing ID)");
     expect(result.current.isLoading).toBe(false);
   });
@@ -128,22 +128,19 @@ describe("useSessionGeneration", () => {
       session_tests: [],
       feedback_rating: null,
     };
-    
+
     const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
       data: sessionDetail,
-      id: 1
+      id: 1,
     });
-    
+
     // Start with invalid params to prevent useEffect trigger
-    const { result, rerender } = renderHook(
-      ({ bodyPartId, tests }) => useSessionGeneration(bodyPartId, tests),
-      {
-        initialProps: {
-          bodyPartId: 0,
-          tests: [] as { muscle_test_id: number; pain_intensity: number }[],
-        }
-      }
-    );
+    const { result, rerender } = renderHook(({ bodyPartId, tests }) => useSessionGeneration(bodyPartId, tests), {
+      initialProps: {
+        bodyPartId: 0,
+        tests: [] as { muscle_test_id: number; pain_intensity: number }[],
+      },
+    });
 
     // Update to valid params
     await act(async () => {
@@ -170,32 +167,32 @@ describe("useSessionGeneration", () => {
       session_tests: [],
       feedback_rating: null,
     };
-    
+
     const mockStart = vi.spyOn(sessionService, "startSessionGeneration").mockResolvedValue({
       data: sessionDetail,
-      id: 456
+      id: 456,
     });
-    
+
     renderHook(() => useSessionGeneration(bodyPartId, tests));
-    
+
     // Wait for useEffect to trigger
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 600)); // Wait longer than the 500ms delay
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Wait longer than the 500ms delay
     });
-    
+
     expect(mockStart).toHaveBeenCalledWith(bodyPartId, tests);
   });
 
   it("does not start generation automatically with invalid params", async () => {
     const mockStart = vi.spyOn(sessionService, "startSessionGeneration");
-    
+
     renderHook(() => useSessionGeneration(0, []));
-    
+
     // Wait for potential useEffect trigger
     await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     });
-    
+
     expect(mockStart).not.toHaveBeenCalled();
   });
 });

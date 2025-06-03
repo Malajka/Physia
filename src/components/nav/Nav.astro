@@ -3,7 +3,7 @@ import { LogoutButton } from "@/components/auth/LogoutButton";
 import { LinkButton } from "@/components/ui/LinkButton";
 const { isAuthenticated } = Astro.props;
 const currentPath = Astro.url.pathname;
-const isAuthPage = currentPath === '/login' || currentPath === '/register';
+const isAuthPage = currentPath === "/login" || currentPath === "/register";
 ---
 
 <nav class="flex items-center w-full">

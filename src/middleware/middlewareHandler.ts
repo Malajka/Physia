@@ -81,11 +81,7 @@ function shouldRedirectToDisclaimer(session: any, pathname: string): boolean {
   return session && doesPathRequireDisclaimerAcceptance(pathname) && !isDisclaimerAccepted && pathname !== DISCLAIMER_ACCEPTANCE_PATH;
 }
 
-async function handleSessionOwnership(
-  supabase: SupabaseClient,
-  userId: string,
-  pathname: string
-): Promise<Response | undefined> {
+async function handleSessionOwnership(supabase: SupabaseClient, userId: string, pathname: string): Promise<Response | undefined> {
   if (!pathname.startsWith("/sessions/")) {
     return undefined;
   }
@@ -94,11 +90,7 @@ async function handleSessionOwnership(
     return undefined;
   }
   const sessionId = Number(pathSegments[2]);
-  const { data: sessionRecord, error } = await supabase
-    .from("sessions")
-    .select("user_id")
-    .eq("id", sessionId)
-    .single();
+  const { data: sessionRecord, error } = await supabase.from("sessions").select("user_id").eq("id", sessionId).single();
   if (error || !sessionRecord || sessionRecord.user_id !== userId) {
     return createRedirect(DEFAULT_AUTHENTICATED_PATH);
   }
@@ -120,7 +112,12 @@ export async function handleRequest(context: APIContext, next: MiddlewareNext): 
     return createRedirect(DISCLAIMER_ACCEPTANCE_PATH);
   }
 
-  if (session && doesPathRequireDisclaimerAcceptance(pathname) && !session?.user?.user_metadata?.disclaimer_accepted_at && pathname === DISCLAIMER_ACCEPTANCE_PATH) {
+  if (
+    session &&
+    doesPathRequireDisclaimerAcceptance(pathname) &&
+    !session?.user?.user_metadata?.disclaimer_accepted_at &&
+    pathname === DISCLAIMER_ACCEPTANCE_PATH
+  ) {
     return next();
   }
 

@@ -1,6 +1,6 @@
-import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import type { Locator, Page } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class BodyPartsPage extends BasePage {
   readonly disclaimerAcceptButton: Locator;
@@ -9,14 +9,14 @@ export class BodyPartsPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.disclaimerAcceptButton = this.getByTestId('accept-disclaimer');
-    this.nextButton = this.getByTestId('body-part-next');
-    this.infoBar = this.getByTestId('info-bar');
+    this.disclaimerAcceptButton = this.getByTestId("accept-disclaimer");
+    this.nextButton = this.getByTestId("body-part-next");
+    this.infoBar = this.getByTestId("info-bar");
   }
 
   async navigateToBodyParts() {
-    await this.goto('/body-parts');
-    await this.page.waitForURL('**/body-parts', { timeout: 10000 });
+    await this.goto("/body-parts");
+    await this.page.waitForURL("**/body-parts", { timeout: 10000 });
   }
 
   async acceptDisclaimerIfVisible() {
@@ -25,7 +25,7 @@ export class BodyPartsPage extends BasePage {
         await this.disclaimerAcceptButton.click();
       }
     } catch (error) {
-      console.log('Disclaimer not found or not visible, continuing...', error);
+      console.log("Disclaimer not found or not visible, continuing...", error);
     }
   }
 
@@ -57,4 +57,4 @@ export class BodyPartsPage extends BasePage {
     await this.selectBodyPart(bodyPartTestId);
     await this.clickNext();
   }
-} 
+}

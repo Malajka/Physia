@@ -136,10 +136,7 @@ describe("logoutUser", () => {
 
       await logoutUser();
 
-      expect(fetch).toHaveBeenCalledWith(
-        "/api/auth/logout",
-        expect.any(Object)
-      );
+      expect(fetch).toHaveBeenCalledWith("/api/auth/logout", expect.any(Object));
     });
   });
-}); 
+});

@@ -37,8 +37,8 @@ export default mergeConfig(
         inline: [/@supabase\/supabase-js/],
       },
       alias: {
-        'astro:middleware': './src/__mocks__/astro__middleware.ts'
-      }
-    }
+        "astro:middleware": "./src/__mocks__/astro__middleware.ts",
+      },
+    },
   })
 );

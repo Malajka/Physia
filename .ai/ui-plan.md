@@ -5,6 +5,7 @@
 Physia is a web application designed to help users with overload-related muscle pain create personalized exercise plans. The UI architecture is organized around a step-by-step flow for creating exercise plans and managing past sessions, with a focus on simplicity and accessibility. The application uses Astro for static pages with React for interactive components, incorporating Shadcn/ui components styled with Tailwind.
 
 The application follows a hierarchical structure:
+
 - Authentication layer (login/registration)
 - Medical disclaimer gateway
 - Main application shell with navigation
@@ -14,6 +15,7 @@ The application follows a hierarchical structure:
 ## 2. View List
 
 ### Authentication View
+
 - **Path**: `/auth`
 - **Primary Purpose**: Allow users to register or log in to the application
 - **Key Information**:
@@ -31,6 +33,7 @@ The application follows a hierarchical structure:
   - Protected routes redirect to login
 
 ### Medical Disclaimer View
+
 - **Path**: Popup modal (triggered after first login)
 - **Primary Purpose**: Inform users about medical limitations and collect informed consent
 - **Key Information**:
@@ -46,6 +49,7 @@ The application follows a hierarchical structure:
   - Stores acceptance status in database via API
 
 ### Home View
+
 - **Path**: `/`
 - **Primary Purpose**: Provide introduction and entry point to the application
 - **Key Information**:
@@ -60,6 +64,7 @@ The application follows a hierarchical structure:
   - Redirects unauthenticated users to login
 
 ### Body Area Selection View
+
 - **Path**: `/body-parts`
 - **Primary Purpose**: Allow selection of body area for exercise plan
 - **Key Information**:
@@ -75,6 +80,7 @@ The application follows a hierarchical structure:
   - Protected route requiring authentication
 
 ### Muscle Tests View
+
 - **Path**: `/muscle-tests/:bodyPartId`
 - **Primary Purpose**: Assess pain levels for specific muscle tests
 - **Key Information**:
@@ -91,6 +97,7 @@ The application follows a hierarchical structure:
   - Path validation to prevent access without body part selection
 
 ### Session Generation Loading View
+
 - **Path**: `/session/generate`
 - **Primary Purpose**: Indicate plan generation in progress
 - **Key Information**:
@@ -106,6 +113,7 @@ The application follows a hierarchical structure:
   - Aria-live regions for screen readers
 
 ### Exercise Plan View
+
 - **Path**: `/sessions/:id`
 - **Primary Purpose**: Display generated exercise plan
 - **Key Information**:
@@ -123,6 +131,7 @@ The application follows a hierarchical structure:
   - Session owner validation
 
 ### Session History View
+
 - **Path**: `/sessions`
 - **Primary Purpose**: List previous exercise sessions
 - **Key Information**:
@@ -138,6 +147,7 @@ The application follows a hierarchical structure:
   - Only shows current user's sessions
 
 ### Session Detail View
+
 - **Path**: Connected to Session History via Accordion
 - **Primary Purpose**: Show detailed exercise plan from history
 - **Key Information**:
@@ -154,6 +164,7 @@ The application follows a hierarchical structure:
   - Session owner validation
 
 ### Account Settings View
+
 - **Path**: `/account`
 - **Primary Purpose**: Manage account settings and data
 - **Key Information**:
@@ -170,17 +181,21 @@ The application follows a hierarchical structure:
 ## 3. User Journey Map
 
 ### Primary Journey: Creating an Exercise Plan
+
 1. **Authentication**
+
    - User navigates to the application
    - User logs in or registers for an account
    - System checks if user has accepted the disclaimer
 
 2. **Medical Disclaimer** (if not previously accepted)
+
    - System displays medical disclaimer popup
    - User reads and accepts the disclaimer
    - System records acceptance
 
 3. **Plan Creation**
+
    - User lands on home page and clicks "Start" button
    - User selects a body area from four options
    - User is presented with muscle tests for the selected area
@@ -195,7 +210,9 @@ The application follows a hierarchical structure:
    - User can export the plan as PDF or print it
 
 ### Secondary Journey: Managing Session History
+
 1. **Accessing History**
+
    - User clicks "My Sessions" in the navigation bar
    - System displays chronological list of past sessions
 
@@ -205,7 +222,9 @@ The application follows a hierarchical structure:
    - User can export or delete the session
 
 ### Tertiary Journey: Account Management
+
 1. **Accessing Account Settings**
+
    - User clicks account icon in navigation bar
    - User selects "Account Settings" from dropdown
 
@@ -217,6 +236,7 @@ The application follows a hierarchical structure:
 ## 4. Layout and Navigation Structure
 
 ### Primary Navigation
+
 - **Top Navigation Bar**
   - Left: Logo/Home link
   - Center: Main navigation links
@@ -227,13 +247,16 @@ The application follows a hierarchical structure:
     - Logout
 
 ### Flow Navigation
+
 - **Step Indicators**
   - Progress indicators for plan creation flow
   - Back/Next buttons where appropriate
   - Clear highlighting of current step
 
 ### Contextual Navigation
+
 - **Exercise Plan View**
+
   - Section tabs or Jump-to links
   - Back to History link
   - Export/Print options
@@ -243,6 +266,7 @@ The application follows a hierarchical structure:
   - New Plan button
 
 ### Responsive Considerations
+
 - On mobile: Navigation collapses to hamburger menu
 - Streamlined layouts for small screens
 - Touch-friendly tap targets
@@ -251,45 +275,59 @@ The application follows a hierarchical structure:
 ## 5. Key Components
 
 ### AuthForm
+
 A flexible authentication component that handles both login and registration with form validation and error handling.
 
 ### DisclaimerDialog
+
 A modal dialog that displays the medical disclaimer text and requires explicit acceptance.
 
 ### BodyPartSelector
+
 A grid of selectable buttons representing body areas, providing clear visual feedback on selection.
 
 ### MuscleTestSlider
+
 A specialized slider component for rating pain intensity with descriptive labels for minimum and maximum values.
 
 ### ExerciseCard
+
 A card component displaying exercise details including image, description, sets/reps information, and potentially video content.
 
 ### SectionContainer
+
 A container component that groups exercises by their category (Warm-up, Exercises, Relaxation) with appropriate headings.
 
 ### SessionCard
+
 A card component displaying summary information about a session including date, body area, and a button to view details.
 
 ### FeedbackButtons
+
 Simple thumbs up/down buttons for collecting user feedback on exercise plans.
 
 ### ExportPDFButton
+
 A button that triggers the generation and download of a PDF version of the exercise plan.
 
 ### LoadingIndicator
+
 An animated component indicating that content is being generated or loaded, with status messaging.
 
 ### NavigationBar
+
 The main navigation component providing access to key areas of the application and user account functions.
 
 ### ConfirmationDialog
+
 A reusable dialog component for confirming potentially destructive actions like deletion.
 
 ### AccountInfoCard
+
 A component displaying user account information with options for management.
 
 ## Key Decisions
+
 1. Disclaimer acceptance will be implemented as a popup where the user must click an acceptance button.
 2. Only logged-in users can generate sessions.
 3. Body areas will be represented as a list of 4 buttons with optional icons.

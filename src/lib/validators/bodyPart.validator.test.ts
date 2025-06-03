@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-    BodyPartDtoArraySchema,
-    BodyPartDtoSchema,
-    BodyPartIdSchema,
-    validateBodyPartId,
-    validateBodyPartsDto,
-} from "./bodyPart.validator";
+import { BodyPartDtoArraySchema, BodyPartDtoSchema, BodyPartIdSchema, validateBodyPartId, validateBodyPartsDto } from "./bodyPart.validator";
 
 const validBodyPart = {
   id: 1,
@@ -66,4 +60,4 @@ describe("validateBodyPartsDto", () => {
   it("throws for invalid input", () => {
     expect(() => validateBodyPartsDto([{ ...validBodyPart, id: 0 }])).toThrow();
   });
-}); 
+});

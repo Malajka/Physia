@@ -26,7 +26,7 @@ const mockBodyParts: BodyPartDto[] = [
     created_at: "2024-01-01T00:00:00Z",
   },
   {
-    id: 2, 
+    id: 2,
     name: "Shoulder",
     created_at: "2024-01-01T00:00:00Z",
   },
@@ -36,7 +36,7 @@ describe("useBodyParts", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.clearAllTimers();
-    
+
     // Setup window.location mock properly for jsdom
     Object.defineProperty(global.window, "location", {
       value: { origin: "https://localhost:3000" },
@@ -47,9 +47,7 @@ describe("useBodyParts", () => {
 
   describe("Initial State", () => {
     it("should have correct initial state when disclaimer is accepted", () => {
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       expect(result.current.bodyParts).toEqual([]);
       expect(result.current.loading).toBe(true);
@@ -58,9 +56,7 @@ describe("useBodyParts", () => {
     });
 
     it("should have correct initial state when disclaimer is not accepted", () => {
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: undefined })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: undefined }));
 
       expect(result.current.bodyParts).toEqual([]);
       expect(result.current.loading).toBe(false);
@@ -69,9 +65,9 @@ describe("useBodyParts", () => {
 
     it("should have correct initial state when skipInitialFetch is true", () => {
       const { result } = renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           disclaimerAccepted: "2024-01-01T00:00:00Z",
-          skipInitialFetch: true 
+          skipInitialFetch: true,
         })
       );
 
@@ -81,45 +77,34 @@ describe("useBodyParts", () => {
 
   describe("Base URL Configuration", () => {
     it("should use window.location.origin when available", () => {
-      renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
-      expect(mockFetchAllBodyParts).toHaveBeenCalledWith(
-        "https://localhost:3000",
-        expect.objectContaining({ signal: expect.any(AbortSignal) })
-      );
+      expect(mockFetchAllBodyParts).toHaveBeenCalledWith("https://localhost:3000", expect.objectContaining({ signal: expect.any(AbortSignal) }));
     });
 
     it("should use custom baseUrl when provided", () => {
       const customUrl = "https://custom-api.com";
-      
+
       renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           baseUrl: customUrl,
-          disclaimerAccepted: "2024-01-01T00:00:00Z" 
+          disclaimerAccepted: "2024-01-01T00:00:00Z",
         })
       );
 
-      expect(mockFetchAllBodyParts).toHaveBeenCalledWith(
-        customUrl,
-        expect.objectContaining({ signal: expect.any(AbortSignal) })
-      );
+      expect(mockFetchAllBodyParts).toHaveBeenCalledWith(customUrl, expect.objectContaining({ signal: expect.any(AbortSignal) }));
     });
 
     it("should fallback to env variable when window is not available", () => {
       // Mock the hook to test server-side rendering scenario
       const { result } = renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           baseUrl: "https://test-api.com", // Explicitly provide the fallback URL
-          disclaimerAccepted: "2024-01-01T00:00:00Z" 
+          disclaimerAccepted: "2024-01-01T00:00:00Z",
         })
       );
 
-      expect(mockFetchAllBodyParts).toHaveBeenCalledWith(
-        "https://test-api.com",
-        expect.objectContaining({ signal: expect.any(AbortSignal) })
-      );
+      expect(mockFetchAllBodyParts).toHaveBeenCalledWith("https://test-api.com", expect.objectContaining({ signal: expect.any(AbortSignal) }));
     });
   });
 
@@ -127,9 +112,7 @@ describe("useBodyParts", () => {
     it("should fetch and return body parts successfully", async () => {
       mockFetchAllBodyParts.mockResolvedValueOnce(mockBodyParts);
 
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
@@ -144,9 +127,9 @@ describe("useBodyParts", () => {
       mockFetchAllBodyParts.mockResolvedValue(mockBodyParts);
 
       const { result } = renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           disclaimerAccepted: "2024-01-01T00:00:00Z",
-          skipInitialFetch: true 
+          skipInitialFetch: true,
         })
       );
 
@@ -165,9 +148,7 @@ describe("useBodyParts", () => {
       const errorMessage = "Network error";
       mockFetchAllBodyParts.mockRejectedValueOnce(new Error(errorMessage));
 
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
@@ -180,9 +161,7 @@ describe("useBodyParts", () => {
     it("should handle non-Error exceptions", async () => {
       mockFetchAllBodyParts.mockRejectedValueOnce("String error");
 
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       await waitFor(() => {
         expect(result.current.loading).toBe(false);
@@ -195,9 +174,7 @@ describe("useBodyParts", () => {
       const abortError = new DOMException("Aborted", "AbortError");
       mockFetchAllBodyParts.mockRejectedValueOnce(abortError);
 
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       // Wait for the fetch to complete/fail
       await waitFor(() => {
@@ -205,9 +182,12 @@ describe("useBodyParts", () => {
       });
 
       // Give it a bit more time for state updates
-      await waitFor(() => {
-        expect(result.current.loading).toBe(false);
-      }, { timeout: 1000 });
+      await waitFor(
+        () => {
+          expect(result.current.loading).toBe(false);
+        },
+        { timeout: 1000 }
+      );
 
       // Should not set error for abort
       expect(result.current.error).toBeNull();
@@ -218,11 +198,10 @@ describe("useBodyParts", () => {
   describe("Disclaimer State Management", () => {
     it("should reset data when disclaimer is rejected (null)", async () => {
       mockFetchAllBodyParts.mockResolvedValue(mockBodyParts);
-      
-      const { result, rerender } = renderHook(
-        ({ disclaimerAccepted }) => useBodyParts({ disclaimerAccepted }),
-        { initialProps: { disclaimerAccepted: "2024-01-01T00:00:00Z" as string | null | undefined } }
-      );
+
+      const { result, rerender } = renderHook(({ disclaimerAccepted }) => useBodyParts({ disclaimerAccepted }), {
+        initialProps: { disclaimerAccepted: "2024-01-01T00:00:00Z" as string | null | undefined },
+      });
 
       // Wait for initial load
       await waitFor(() => {
@@ -252,10 +231,9 @@ describe("useBodyParts", () => {
     it("should refetch when disclaimer changes from undefined to accepted", async () => {
       mockFetchAllBodyParts.mockResolvedValue(mockBodyParts);
 
-      const { result, rerender } = renderHook(
-        ({ disclaimerAccepted }) => useBodyParts({ disclaimerAccepted }),
-        { initialProps: { disclaimerAccepted: undefined as string | null | undefined } }
-      );
+      const { result, rerender } = renderHook(({ disclaimerAccepted }) => useBodyParts({ disclaimerAccepted }), {
+        initialProps: { disclaimerAccepted: undefined as string | null | undefined },
+      });
 
       expect(mockFetchAllBodyParts).not.toHaveBeenCalled();
 
@@ -273,16 +251,16 @@ describe("useBodyParts", () => {
   describe("Request Cancellation", () => {
     it("should cancel previous request when new request is made", async () => {
       let abortSignal: AbortSignal | undefined;
-      
+
       mockFetchAllBodyParts.mockImplementation((_, options) => {
         abortSignal = options?.signal;
-        return new Promise(resolve => setTimeout(() => resolve(mockBodyParts), 100));
+        return new Promise((resolve) => setTimeout(() => resolve(mockBodyParts), 100));
       });
 
       const { result } = renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           disclaimerAccepted: "2024-01-01T00:00:00Z",
-          skipInitialFetch: true 
+          skipInitialFetch: true,
         })
       );
 
@@ -304,9 +282,7 @@ describe("useBodyParts", () => {
     });
 
     it("should cleanup abort controller on unmount", () => {
-      const { unmount } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { unmount } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       // Should not throw on unmount
       expect(() => unmount()).not.toThrow();
@@ -315,26 +291,20 @@ describe("useBodyParts", () => {
 
   describe("Loading States", () => {
     it("should show loading during fetch", () => {
-      mockFetchAllBodyParts.mockImplementation(
-        () => new Promise(resolve => setTimeout(() => resolve(mockBodyParts), 100))
-      );
+      mockFetchAllBodyParts.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(mockBodyParts), 100)));
 
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       expect(result.current.loading).toBe(true);
     });
 
     it("should show loading during refetch", () => {
-      mockFetchAllBodyParts.mockImplementation(
-        () => new Promise(resolve => setTimeout(() => resolve(mockBodyParts), 100))
-      );
+      mockFetchAllBodyParts.mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(mockBodyParts), 100)));
 
       const { result } = renderHook(() =>
-        useBodyParts({ 
+        useBodyParts({
           disclaimerAccepted: "2024-01-01T00:00:00Z",
-          skipInitialFetch: true 
+          skipInitialFetch: true,
         })
       );
 
@@ -348,9 +318,7 @@ describe("useBodyParts", () => {
 
   describe("Type Safety", () => {
     it("should return readonly object with correct types", () => {
-      const { result } = renderHook(() =>
-        useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" })
-      );
+      const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01T00:00:00Z" }));
 
       const returnValue = result.current;
 

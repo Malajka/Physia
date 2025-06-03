@@ -1,6 +1,6 @@
-import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
+import { afterEach } from "vitest";
 
 // Czyszczenie po każdym teście
 afterEach(() => {
@@ -13,4 +13,4 @@ class ResizeObserver {
   unobserve() {}
   disconnect() {}
 }
-(globalThis as any).ResizeObserver = ResizeObserver; 
+(globalThis as any).ResizeObserver = ResizeObserver;

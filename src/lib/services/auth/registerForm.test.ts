@@ -40,10 +40,10 @@ describe("handleRegisterSubmit", () => {
     it("extracts all fields from FormData", async () => {
       const schemaMock = await getSchemaMock();
       const registerMock = await getRegisterMock();
-      
-      schemaMock.mockReturnValue({ 
-        success: true, 
-        data: { email: "test@example.com", password: "password123", passwordConfirm: "password123" }
+
+      schemaMock.mockReturnValue({
+        success: true,
+        data: { email: "test@example.com", password: "password123", passwordConfirm: "password123" },
       });
       registerMock.mockResolvedValue({ success: true });
 
@@ -59,9 +59,9 @@ describe("handleRegisterSubmit", () => {
 
     it("handles missing form fields gracefully", async () => {
       const schemaMock = await getSchemaMock();
-      schemaMock.mockReturnValue({ 
-        success: false, 
-        error: { errors: [{ message: "Email is required" }] }
+      schemaMock.mockReturnValue({
+        success: false,
+        error: { errors: [{ message: "Email is required" }] },
       });
 
       const emptyFormData = new FormData();
@@ -74,7 +74,7 @@ describe("handleRegisterSubmit", () => {
       });
       expect(result).toEqual({
         success: false,
-        error: "Email is required"
+        error: "Email is required",
       });
     });
   });
@@ -84,12 +84,9 @@ describe("handleRegisterSubmit", () => {
       const schemaMock = await getSchemaMock();
       schemaMock.mockReturnValue({
         success: false,
-        error: { 
-          errors: [
-            { message: "Please enter a valid email address" },
-            { message: "Password must be at least 8 characters long" }
-          ]
-        }
+        error: {
+          errors: [{ message: "Please enter a valid email address" }, { message: "Password must be at least 8 characters long" }],
+        },
       });
 
       const formData = createFormData("invalid-email", "short", "short");
@@ -97,7 +94,7 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Please enter a valid email address, Password must be at least 8 characters long"
+        error: "Please enter a valid email address, Password must be at least 8 characters long",
       });
     });
 
@@ -105,9 +102,9 @@ describe("handleRegisterSubmit", () => {
       const schemaMock = await getSchemaMock();
       schemaMock.mockReturnValue({
         success: false,
-        error: { 
-          errors: [{ message: "Passwords do not match" }]
-        }
+        error: {
+          errors: [{ message: "Passwords do not match" }],
+        },
       });
 
       const formData = createFormData("test@example.com", "password123", "different");
@@ -115,14 +112,14 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Passwords do not match"
+        error: "Passwords do not match",
       });
     });
 
     it("proceeds to registration when validation passes", async () => {
       const schemaMock = await getSchemaMock();
       const registerMock = await getRegisterMock();
-      
+
       const validData = { email: "test@example.com", password: "password123", passwordConfirm: "password123" };
       schemaMock.mockReturnValue({ success: true, data: validData });
       registerMock.mockResolvedValue({ success: true });
@@ -140,9 +137,9 @@ describe("handleRegisterSubmit", () => {
   describe("Registration Process", () => {
     beforeEach(async () => {
       const schemaMock = await getSchemaMock();
-      schemaMock.mockReturnValue({ 
-        success: true, 
-        data: { email: "test@example.com", password: "password123", passwordConfirm: "password123" }
+      schemaMock.mockReturnValue({
+        success: true,
+        data: { email: "test@example.com", password: "password123", passwordConfirm: "password123" },
       });
     });
 
@@ -153,17 +150,17 @@ describe("handleRegisterSubmit", () => {
       const formData = createFormData("test@example.com", "password123", "password123");
       const result = await handleRegisterSubmit(formData);
 
-      expect(result).toEqual({ 
-        success: true, 
-        registrationSuccess: true 
+      expect(result).toEqual({
+        success: true,
+        registrationSuccess: true,
       });
     });
 
     it("handles already registered email error", async () => {
       const registerMock = await getRegisterMock();
-      registerMock.mockResolvedValue({ 
-        success: false, 
-        error: "This email is already registered. Please log in instead.|EMAIL_ALREADY_EXISTS" 
+      registerMock.mockResolvedValue({
+        success: false,
+        error: "This email is already registered. Please log in instead.|EMAIL_ALREADY_EXISTS",
       });
 
       const formData = createFormData("existing@example.com", "password123", "password123");
@@ -171,15 +168,15 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: `This email is already registered. Would you like to <a href="/login" class="text-blue-600 hover:underline">log in</a> instead?`
+        error: `This email is already registered. Would you like to <a href="/login" class="text-blue-600 hover:underline">log in</a> instead?`,
       });
     });
 
     it("handles other registration errors", async () => {
       const registerMock = await getRegisterMock();
-      registerMock.mockResolvedValue({ 
-        success: false, 
-        error: "Server error" 
+      registerMock.mockResolvedValue({
+        success: false,
+        error: "Server error",
       });
 
       const formData = createFormData("test@example.com", "password123", "password123");
@@ -187,7 +184,7 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Server error"
+        error: "Server error",
       });
     });
 
@@ -200,7 +197,7 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Registration failed"
+        error: "Registration failed",
       });
     });
 
@@ -213,7 +210,7 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Network error"
+        error: "Network error",
       });
     });
 
@@ -226,7 +223,7 @@ describe("handleRegisterSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "An unexpected error occurred"
+        error: "An unexpected error occurred",
       });
     });
   });
@@ -235,7 +232,7 @@ describe("handleRegisterSubmit", () => {
     it("handles complete successful flow", async () => {
       const schemaMock = await getSchemaMock();
       const registerMock = await getRegisterMock();
-      
+
       const formData = { email: "user@example.com", password: "validpass123", passwordConfirm: "validpass123" };
       schemaMock.mockReturnValue({ success: true, data: formData });
       registerMock.mockResolvedValue({ success: true });
@@ -248,19 +245,19 @@ describe("handleRegisterSubmit", () => {
         email: formData.email,
         password: formData.password,
       });
-      expect(result).toEqual({ 
-        success: true, 
-        registrationSuccess: true 
+      expect(result).toEqual({
+        success: true,
+        registrationSuccess: true,
       });
     });
 
     it("handles complete failed validation flow", async () => {
       const schemaMock = await getSchemaMock();
       const registerMock = await getRegisterMock();
-      
+
       schemaMock.mockReturnValue({
         success: false,
-        error: { errors: [{ message: "Invalid email" }] }
+        error: { errors: [{ message: "Invalid email" }] },
       });
 
       const formData = createFormData("bad-email", "password", "password");
@@ -270,8 +267,8 @@ describe("handleRegisterSubmit", () => {
       expect(registerMock).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: false,
-        error: "Invalid email"
+        error: "Invalid email",
       });
     });
   });
-}); 
+});

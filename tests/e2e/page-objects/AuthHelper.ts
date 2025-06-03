@@ -1,5 +1,5 @@
 // AuthHelper.ts - Authentication helper for E2E tests
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext, Page } from "@playwright/test";
 
 declare global {
   interface Window {
@@ -10,7 +10,7 @@ declare global {
     };
     // Add definition for indexedDB.databases() if not globally available
     indexedDB: IDBFactory & {
-        databases?(): Promise<IDBDatabaseInfo[]>;
+      databases?(): Promise<IDBDatabaseInfo[]>;
     };
   }
 }
@@ -29,11 +29,11 @@ export class AuthHelper {
   static async ensureLoggedOut(page: Page, context: BrowserContext): Promise<void> {
     try {
       // Navigate to home page to ensure proper context for scripts
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
+      await page.goto("/", { waitUntil: "domcontentloaded" });
 
       // Clear all browser storage
       await this.clearBrowserStorage(page);
-      
+
       // Clear cookies and wait for completion
       await context.clearCookies();
 
@@ -46,10 +46,9 @@ export class AuthHelper {
       // Additional wait to ensure all cleanup operations complete
       await page.waitForTimeout(500);
 
-      console.log('User data cleared, API logout called, Supabase signOut called.');
-      
+      console.log("User data cleared, API logout called, Supabase signOut called.");
     } catch (error) {
-      console.error('Error in ensureLoggedOut:', error);
+      console.error("Error in ensureLoggedOut:", error);
       // Consider throwing error if logout is critical for test correctness
       // throw error;
     }
@@ -63,8 +62,8 @@ export class AuthHelper {
     await page.evaluate(async () => {
       localStorage.clear();
       sessionStorage.clear();
-      
-      if ('indexedDB' in window && typeof window.indexedDB.databases === 'function') {
+
+      if ("indexedDB" in window && typeof window.indexedDB.databases === "function") {
         try {
           const dbs = await window.indexedDB.databases();
           for (const db of dbs) {
@@ -73,7 +72,7 @@ export class AuthHelper {
             }
           }
         } catch (error) {
-          console.warn('Error clearing IndexedDB databases in page.evaluate:', error);
+          console.warn("Error clearing IndexedDB databases in page.evaluate:", error);
         }
       }
     });
@@ -85,10 +84,10 @@ export class AuthHelper {
    */
   private static async attemptApiLogout(page: Page): Promise<void> {
     try {
-      await page.request.post('/api/auth/logout');
+      await page.request.post("/api/auth/logout");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.log('API auth logout attempt failed or endpoint not found (non-critical):', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.log("API auth logout attempt failed or endpoint not found (non-critical):", errorMessage);
     }
   }
 
@@ -98,22 +97,22 @@ export class AuthHelper {
    */
   private static async attemptSupabaseLogout(page: Page): Promise<void> {
     // Navigate to home page again if previous actions changed the page
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
     const supabaseSignOutResult = await page.evaluate(async () => {
-      if (typeof window.supabase?.auth?.signOut === 'function') {
+      if (typeof window.supabase?.auth?.signOut === "function") {
         try {
           await window.supabase.auth.signOut();
-          return 'success';
+          return "success";
         } catch (error) {
-          console.error('Supabase signOut error in page.evaluate:', error);
-          return 'error';
+          console.error("Supabase signOut error in page.evaluate:", error);
+          return "error";
         }
       }
-      return 'not_applicable';
+      return "not_applicable";
     });
-    
-    console.log('Supabase signOut result:', supabaseSignOutResult);
+
+    console.log("Supabase signOut result:", supabaseSignOutResult);
   }
 
   /**
@@ -122,10 +121,10 @@ export class AuthHelper {
    */
   static async logoutViaAPI(page: Page): Promise<void> {
     try {
-      await page.request.post('/api/logout');
+      await page.request.post("/api/logout");
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.log('API logout error (expected or non-critical):', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.log("API logout error (expected or non-critical):", errorMessage);
     }
   }
 }

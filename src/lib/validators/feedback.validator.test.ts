@@ -38,4 +38,4 @@ describe("FeedbackBodySchema", () => {
   it("rejects missing rating", () => {
     expect(() => FeedbackBodySchema.parse({})).toThrow();
   });
-}); 
+});

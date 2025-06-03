@@ -104,9 +104,9 @@ describe("useRegister", () => {
     it("handles service error and sets error state", async () => {
       const registerService = await getRegisterService();
       const errorMessage = "Email already registered";
-      registerService.mockResolvedValue({ 
-        success: false, 
-        error: errorMessage 
+      registerService.mockResolvedValue({
+        success: false,
+        error: errorMessage,
       });
 
       const { result } = renderHook(() => useRegister());
@@ -184,9 +184,9 @@ describe("useRegister", () => {
 
     it("returns error result when service fails", async () => {
       const registerService = await getRegisterService();
-      registerService.mockResolvedValue({ 
-        success: false, 
-        error: "Validation failed" 
+      registerService.mockResolvedValue({
+        success: false,
+        error: "Validation failed",
       });
 
       const { result } = renderHook(() => useRegister());
@@ -199,14 +199,14 @@ describe("useRegister", () => {
 
       expect(serviceResult).toEqual({
         success: false,
-        error: "Validation failed"
+        error: "Validation failed",
       });
     });
 
     it("handles service failure without error message", async () => {
       const registerService = await getRegisterService();
-      registerService.mockResolvedValue({ 
-        success: false 
+      registerService.mockResolvedValue({
+        success: false,
         // No error property
       });
 
@@ -224,10 +224,10 @@ describe("useRegister", () => {
 
     it("handles edge case: success true but registrationSuccess false with error", async () => {
       const registerService = await getRegisterService();
-      registerService.mockResolvedValue({ 
-        success: true, 
+      registerService.mockResolvedValue({
+        success: true,
         registrationSuccess: false,
-        error: "Partial success with warning"
+        error: "Partial success with warning",
       });
 
       const { result } = renderHook(() => useRegister());
@@ -243,9 +243,9 @@ describe("useRegister", () => {
 
     it("handles service success with explicitly undefined registrationSuccess", async () => {
       const registerService = await getRegisterService();
-      registerService.mockResolvedValue({ 
-        success: true, 
-        registrationSuccess: undefined // Explicitly undefined
+      registerService.mockResolvedValue({
+        success: true,
+        registrationSuccess: undefined, // Explicitly undefined
       });
 
       const { result } = renderHook(() => useRegister());
@@ -263,17 +263,17 @@ describe("useRegister", () => {
   describe("State management", () => {
     it("clears previous error before new registration attempt", async () => {
       const registerService = await getRegisterService();
-      
+
       // First call fails
-      registerService.mockResolvedValueOnce({ 
-        success: false, 
-        error: "First error" 
+      registerService.mockResolvedValueOnce({
+        success: false,
+        error: "First error",
       });
-      
+
       // Second call succeeds
-      registerService.mockResolvedValueOnce({ 
-        success: true, 
-        registrationSuccess: true 
+      registerService.mockResolvedValueOnce({
+        success: true,
+        registrationSuccess: true,
       });
 
       const { result } = renderHook(() => useRegister());
@@ -310,15 +310,15 @@ describe("useRegister", () => {
 
     it("maintains stable function references", () => {
       const { result, rerender } = renderHook(() => useRegister());
-      
+
       const firstSubmitFn = result.current.submitRegistration;
       const firstResetFn = result.current.resetForm;
-      
+
       rerender();
-      
+
       const secondSubmitFn = result.current.submitRegistration;
       const secondResetFn = result.current.resetForm;
-      
+
       expect(firstSubmitFn).toBe(secondSubmitFn);
       expect(firstResetFn).toBe(secondResetFn);
     });
@@ -344,10 +344,8 @@ describe("useRegister", () => {
   describe("Concurrent registration calls", () => {
     it("handles multiple concurrent registration calls gracefully", async () => {
       const registerService = await getRegisterService();
-      registerService.mockImplementation(() => 
-        new Promise(resolve => 
-          setTimeout(() => resolve({ success: true, registrationSuccess: true }), 100)
-        )
+      registerService.mockImplementation(
+        () => new Promise((resolve) => setTimeout(() => resolve({ success: true, registrationSuccess: true }), 100))
       );
 
       const { result } = renderHook(() => useRegister());
@@ -370,4 +368,4 @@ describe("useRegister", () => {
       expect(registerService).toHaveBeenCalledTimes(3);
     });
   });
-}); 
+});

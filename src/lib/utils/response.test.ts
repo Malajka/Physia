@@ -15,4 +15,4 @@ describe("jsonResponse", () => {
     const res = jsonResponse({ ok: true });
     expect(res.status).toBe(200);
   });
-}); 
+});

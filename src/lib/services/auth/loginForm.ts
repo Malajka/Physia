@@ -1,6 +1,6 @@
-import type { AuthFormSubmitResult } from '@/hooks/useAuthForm';
-import { loginSchema } from '@/lib/validators/auth.validator';
-import { login } from './index';
+import type { AuthFormSubmitResult } from "@/hooks/useAuthForm";
+import { loginSchema } from "@/lib/validators/auth.validator";
+import { login } from "./index";
 
 /**
  * Handles login form submission with validation and authentication
@@ -17,19 +17,19 @@ export const handleLoginSubmit = async (formData: FormData): Promise<AuthFormSub
   // Validate credentials using shared schema
   const parseResult = loginSchema.safeParse(credentials);
   if (!parseResult.success) {
-    return { 
-      success: false, 
-      error: parseResult.error.errors.map((e) => e.message).join(", ") 
+    return {
+      success: false,
+      error: parseResult.error.errors.map((e) => e.message).join(", "),
     };
   }
 
   // Attempt authentication
   const result = await login(parseResult.data);
-  
+
   // Handle successful login with redirect
   if (result.success) {
     window.location.href = "/sessions";
   }
-  
+
   return result;
-}; 
+};

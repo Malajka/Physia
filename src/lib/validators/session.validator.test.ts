@@ -40,4 +40,4 @@ describe("CreateSessionSchema", () => {
     const tests = [{ muscle_test_id: 1, pain_intensity: 11 }];
     expect(() => CreateSessionSchema.parse({ ...validSession, tests })).toThrow();
   });
-}); 
+});

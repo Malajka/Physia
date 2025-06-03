@@ -31,4 +31,4 @@ describe("registerSchema", () => {
   it("rejects short password", () => {
     expect(() => registerSchema.parse({ email: validEmail, password: "short" })).toThrow("Password must be at least 8 characters long");
   });
-}); 
+});

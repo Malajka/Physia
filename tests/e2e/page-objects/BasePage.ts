@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Page } from "@playwright/test";
 
 export class BasePage {
   readonly page: Page;
@@ -18,4 +18,4 @@ export class BasePage {
   async waitForUrl(url: string | RegExp) {
     await this.page.waitForURL(url);
   }
-} 
+}

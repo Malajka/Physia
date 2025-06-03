@@ -56,4 +56,4 @@ describe("session generation service", () => {
     mockFetch({}, false, 500);
     await expect(startSessionGeneration(2, [])).rejects.toThrow("Server error: Server Error");
   });
-}); 
+});

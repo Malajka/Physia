@@ -1,9 +1,11 @@
 # API Endpoint Implementation Plan: POST /api/sessions
 
 ## 1. Endpoint Overview
+
 Create a new muscle-testing session for an authenticated user, generate a personalized exercise plan using an LLM (OpenRouter.ai), and then save the result in the database.
 
 ## 2. Request Details
+
 - HTTP Method: POST
 - Endpoint: `/api/sessions`
 - Headers:
@@ -26,6 +28,7 @@ Create a new muscle-testing session for an authenticated user, generate a person
   - Optional: none
 
 ## 3. Types Used
+
 - `CreateSessionCommandDto` (request model)
 - `SessionDetailDto` (response model)
 - `SessionTestDto`
@@ -33,6 +36,7 @@ Create a new muscle-testing session for an authenticated user, generate a person
 - `Json` (aliased from DB definitions) for the `training_plan` field
 
 ## 4. Response Details
+
 - Status Code: `201 Created`
 - Body (JSON): a `SessionDetailDto` object, for example:
   ```json
@@ -42,13 +46,20 @@ Create a new muscle-testing session for an authenticated user, generate a person
     "user_id": "uuid-...",
     "disclaimer_accepted_at": "2024-01-01T12:00:00Z",
     "created_at": "2024-01-01T12:05:00Z",
-    "training_plan": { /* complex JSON plan */ },
-    "session_tests": [ /* array of SessionTestDto */ ],
-    "feedback_rating": { /* FeedbackRatingDto or null */ }
+    "training_plan": {
+      /* complex JSON plan */
+    },
+    "session_tests": [
+      /* array of SessionTestDto */
+    ],
+    "feedback_rating": {
+      /* FeedbackRatingDto or null */
+    }
   }
   ```
 
 ## 5. Data Flow
+
 1. **Middleware / Auth**: retrieve `userId` via `context.locals.supabase.auth.getUser()` and validate the token.
 2. **Input Validation (Zod)**: define `CreateSessionCommandDto` schema in `src/pages/api/sessions/index.ts` to validate `body_part_id` and `tests`.
 3. **Disclaimer Check**: verify that the user has accepted the disclaimer; if not, return 403 (`disclaimer_required`).
@@ -67,6 +78,7 @@ Create a new muscle-testing session for an authenticated user, generate a person
 5. **Response**: return the populated `SessionDetailDto`, including `training_plan`.
 
 ## 6. Security Considerations
+
 - Authentication: Bearer JWT header required, validated in middleware.
 - Authorization: Supabase row-level security (RLS) ensures access only to own resources.
 - Data Validation: Zod enforces format and range (0–10 for `pain_intensity`).
@@ -75,15 +87,16 @@ Create a new muscle-testing session for an authenticated user, generate a person
 
 ## 7. Error Handling
 
-| Status | Scenario                                                    | Action                                                                    |
-|--------|-------------------------------------------------------------|---------------------------------------------------------------------------|
-| 400    | Invalid JSON or Zod schema violation                        | `400 Bad Request` with validation details                                 |
-| 401    | Missing or invalid token                                    | `401 Unauthorized`                                                        |
-| 403    | Disclaimer not accepted (`disclaimer_required`)             | `403 Forbidden`, error code `disclaimer_required`                         |
-| 404    | Non-existent `body_part_id` or `muscle_test_id`             | `404 Not Found`                                                           |
-| 500    | Internal error: DB, LLM call, transaction failure           | Log to `generation_error_logs` and return `500 Internal Server Error`     |
+| Status | Scenario                                          | Action                                                                |
+| ------ | ------------------------------------------------- | --------------------------------------------------------------------- |
+| 400    | Invalid JSON or Zod schema violation              | `400 Bad Request` with validation details                             |
+| 401    | Missing or invalid token                          | `401 Unauthorized`                                                    |
+| 403    | Disclaimer not accepted (`disclaimer_required`)   | `403 Forbidden`, error code `disclaimer_required`                     |
+| 404    | Non-existent `body_part_id` or `muscle_test_id`   | `404 Not Found`                                                       |
+| 500    | Internal error: DB, LLM call, transaction failure | Log to `generation_error_logs` and return `500 Internal Server Error` |
 
 ## 8. Performance Considerations
+
 - Batch-insert multiple `session_tests` records.
 - Limit the number of tests per request (e.g. max 10–15) for load control.
 - Efficiently fetch related records (`muscle_tests`, `exercises`, `exercise_images`) in one query or via `.select()`.
@@ -93,7 +106,9 @@ Create a new muscle-testing session for an authenticated user, generate a person
 - Implement monitoring and alerting to track endpoint and AI service performance (latency, error rates).
 
 ## 9. Implementation Steps
+
 - Use mock AI service responses during development instead of real AI calls.
+
 1. Add Zod schema `CreateSessionCommandDto` in `src/pages/api/sessions/index.ts`.
 2. Configure authentication middleware (Supabase Auth) and disclaimer acceptance check.
 3. Create `src/lib/services/session.service.ts` with a `createSession` method.
@@ -103,4 +118,5 @@ Create a new muscle-testing session for an authenticated user, generate a person
 7. Log errors to `generation_error_logs` on generation failure.
 
 ---
-*All changes must comply with project guidelines (Astro 5, TypeScript 5, React 19, Tailwind 4, Shadcn/ui, Supabase, Zod).*
+
+_All changes must comply with project guidelines (Astro 5, TypeScript 5, React 19, Tailwind 4, Shadcn/ui, Supabase, Zod)._

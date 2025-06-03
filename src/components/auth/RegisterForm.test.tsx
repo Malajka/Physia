@@ -10,7 +10,11 @@ vi.mock("@/hooks/useRegister", () => ({
 
 // Mock Spinner component
 vi.mock("@/components/ui/Spinner", () => ({
-  Spinner: (props: any) => <span data-testid="spinner" {...props}>spinner</span>,
+  Spinner: (props: any) => (
+    <span data-testid="spinner" {...props}>
+      spinner
+    </span>
+  ),
 }));
 
 describe("RegisterForm", () => {
@@ -33,7 +37,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByPlaceholderText(/min\. 8 characters/i)).toBeInTheDocument();
       expect(screen.getByPlaceholderText(/confirm your password/i)).toBeInTheDocument();
@@ -49,7 +53,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByText(/already have an account/i)).toBeInTheDocument();
       expect(screen.getByText(/log in here/i)).toBeInTheDocument();
     });
@@ -63,7 +67,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByText(/password must be at least 8 characters long/i)).toBeInTheDocument();
     });
 
@@ -76,7 +80,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm initialError="Initial error message" />);
-      
+
       expect(screen.getByText(/initial error message/i)).toBeInTheDocument();
     });
 
@@ -89,7 +93,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm initialError="Initial error message" />);
-      
+
       expect(screen.getByText(/hook error message/i)).toBeInTheDocument();
       expect(screen.queryByText(/initial error message/i)).not.toBeInTheDocument();
     });
@@ -105,7 +109,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByText(/registration successful/i)).toBeInTheDocument();
       expect(screen.getByText(/thank you for registering/i)).toBeInTheDocument();
       expect(screen.getByTestId("create-new-session-link")).toBeInTheDocument();
@@ -120,7 +124,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       const link = screen.getByTestId("create-new-session-link");
       expect(link).toHaveTextContent("Create First Session");
       expect(link).toHaveAttribute("href", "/body-parts");
@@ -135,7 +139,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.queryByRole("button", { name: /register/i })).not.toBeInTheDocument();
       expect(screen.queryByLabelText(/email/i)).not.toBeInTheDocument();
     });
@@ -152,7 +156,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       fireEvent.change(screen.getByLabelText(/email/i), { target: { value: "test@example.com" } });
       fireEvent.change(screen.getByPlaceholderText(/min\. 8 characters/i), { target: { value: "password123" } });
       fireEvent.change(screen.getByPlaceholderText(/confirm your password/i), { target: { value: "password123" } });
@@ -171,7 +175,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       const emailInput = screen.getByTestId("register-email");
       const passwordInput = screen.getByTestId("register-password");
       const confirmInput = screen.getByTestId("register-passwordConfirm");
@@ -196,7 +200,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       const submitButton = screen.getByTestId("register-submit");
       expect(submitButton).toHaveTextContent("Register");
       expect(submitButton).toHaveAttribute("type", "submit");
@@ -213,13 +217,13 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(useRegisterMock).toHaveBeenCalled();
     });
 
     it("reflects different hook states", async () => {
       const useRegisterMock = await getUseRegisterMock();
-      
+
       // Test error state
       useRegisterMock.mockReturnValue({
         registrationSuccess: false,
@@ -252,7 +256,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm initialError="Initial error" />);
-      
+
       // Should prioritize hook error over initialError
       expect(screen.getByText(/test error/i)).toBeInTheDocument();
       expect(screen.queryByText(/initial error/i)).not.toBeInTheDocument();
@@ -269,7 +273,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByRole("button", { name: /register/i })).toBeInTheDocument();
     });
 
@@ -282,7 +286,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm initialError={null} />);
-      
+
       expect(screen.getByRole("button", { name: /register/i })).toBeInTheDocument();
     });
   });
@@ -297,7 +301,7 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByTestId("register-password")).toBeInTheDocument();
       expect(screen.getByTestId("register-passwordConfirm")).toBeInTheDocument();
@@ -312,10 +316,10 @@ describe("RegisterForm", () => {
       });
 
       render(<RegisterForm />);
-      
+
       const heading = screen.getByRole("heading", { level: 2 });
       expect(heading).toHaveTextContent("Registration Successful!");
-      
+
       const link = screen.getByRole("link");
       expect(link).toHaveAttribute("href", "/body-parts");
     });

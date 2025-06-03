@@ -17,20 +17,9 @@ function StatusMessage({ text, error = false, children }: { text: string; error?
 }
 
 export default function BodyPartSelector() {
-  const {
-    disclaimerText,
-    acceptedAt,
-    loading: discLoading,
-    error: discError,
-    accept
-  } = useDisclaimer();
+  const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();
 
-  const {
-    bodyParts,
-    loading: bpLoading,
-    error: bpError,
-    refetch
-  } = useBodyParts({ disclaimerAccepted: acceptedAt });
+  const { bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts({ disclaimerAccepted: acceptedAt });
 
   const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
   const handleSelect = useCallback((id: number) => toggle(id), [toggle]);

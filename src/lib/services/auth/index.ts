@@ -4,33 +4,29 @@ import { JSON_HEADERS } from "@/lib/utils/api";
 /**
  * Generic function for authentication requests (login/register)
  */
-async function authRequest(
-  endpoint: string, 
-  data: AuthCredentialsDto, 
-  defaultErrorMessage: string
-): Promise<AuthFormSubmitResult> {
+async function authRequest(endpoint: string, data: AuthCredentialsDto, defaultErrorMessage: string): Promise<AuthFormSubmitResult> {
   try {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });
-    
+
     if (!response.ok) {
       const json = await response.json();
       let errorMessage = json.error || json.message || defaultErrorMessage;
-      
+
       // Add error code for special handling in forms
       if (json.code) {
         errorMessage = `${errorMessage}|${json.code}`;
       }
-      
-      return { 
-        success: false, 
-        error: errorMessage 
+
+      return {
+        success: false,
+        error: errorMessage,
       };
     }
-    
+
     return { success: true, error: "" };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "An unexpected error occurred";
@@ -57,4 +53,3 @@ export async function register(data: AuthCredentialsDto): Promise<AuthFormSubmit
 export { handleLoginSubmit } from "./loginForm";
 export { logoutUser } from "./logout";
 export { handleRegisterSubmit, type RegisterFormResult } from "./registerForm";
-

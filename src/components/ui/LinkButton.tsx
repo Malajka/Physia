@@ -22,7 +22,13 @@ const variantStyles: Record<"primary" | "secondary" | "text" | "nav-link" | "nav
   "nav-muted": "px-6 py-3 text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold",
 };
 
-export const LinkButton = React.memo(function LinkButton({ href, children, variant = "primary", className = "", "data-testid": dataTestId }: LinkButtonProps) {
+export const LinkButton = React.memo(function LinkButton({
+  href,
+  children,
+  variant = "primary",
+  className = "",
+  "data-testid": dataTestId,
+}: LinkButtonProps) {
   return (
     <a href={href} className={`${baseStyles} ${variantStyles[variant]} ${className}`} data-testid={dataTestId}>
       {children}

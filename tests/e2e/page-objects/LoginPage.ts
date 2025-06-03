@@ -1,6 +1,6 @@
-import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
-import { BasePage } from './BasePage';
+import type { Locator, Page } from "@playwright/test";
+import { expect } from "@playwright/test";
+import { BasePage } from "./BasePage";
 
 export class LoginPage extends BasePage {
   readonly emailInput: Locator;
@@ -10,14 +10,14 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.emailInput = this.getByTestId('email');
-    this.passwordInput = this.getByTestId('password');
-    this.submitButton = this.getByTestId('login-submit');
-    this.errorMessage = page.locator('text=Invalid login credentials');
+    this.emailInput = this.getByTestId("email");
+    this.passwordInput = this.getByTestId("password");
+    this.submitButton = this.getByTestId("login-submit");
+    this.errorMessage = page.locator("text=Invalid login credentials");
   }
 
   async navigateToLogin() {
-    await this.goto('/login');
+    await this.goto("/login");
     await expect(this.emailInput).toBeVisible();
   }
 
@@ -41,7 +41,7 @@ export class LoginPage extends BasePage {
 
   async expectSuccessfulLogin() {
     // After successful login, user should be redirected away from login page
-    await this.page.waitForURL(url => !url.toString().includes('/login'), { timeout: 10000 });
+    await this.page.waitForURL((url) => !url.toString().includes("/login"), { timeout: 10000 });
   }
 
   // Alias methods for consistency with other tests
@@ -68,4 +68,4 @@ export class LoginPage extends BasePage {
       sessionStorage.clear();
     });
   }
-} 
+}

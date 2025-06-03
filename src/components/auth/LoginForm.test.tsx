@@ -11,7 +11,7 @@ describe("LoginForm", () => {
   describe("UI Rendering", () => {
     it("renders all form elements correctly", () => {
       render(<LoginForm />);
-      
+
       expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
       expect(screen.getByTestId("email")).toBeInTheDocument();
       expect(screen.getByTestId("password")).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe("LoginForm", () => {
 
     it("renders email field with correct attributes", () => {
       render(<LoginForm />);
-      
+
       const emailField = screen.getByTestId("email");
       expect(emailField).toHaveAttribute("type", "email");
       expect(emailField).toHaveAttribute("name", "email");
@@ -30,7 +30,7 @@ describe("LoginForm", () => {
 
     it("renders password field with correct attributes", () => {
       render(<LoginForm />);
-      
+
       const passwordField = screen.getByTestId("password");
       expect(passwordField).toHaveAttribute("type", "password");
       expect(passwordField).toHaveAttribute("name", "password");
@@ -40,7 +40,7 @@ describe("LoginForm", () => {
 
     it("renders submit button with correct text", () => {
       render(<LoginForm />);
-      
+
       const submitButton = screen.getByTestId("login-submit");
       expect(submitButton).toHaveTextContent("Log In");
       expect(submitButton).toHaveAttribute("type", "submit");
@@ -49,13 +49,13 @@ describe("LoginForm", () => {
     it("displays initial error when provided", () => {
       const errorMessage = "Test error message";
       render(<LoginForm initialError={errorMessage} />);
-      
+
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
     it("does not display error when no initial error provided", () => {
       render(<LoginForm />);
-      
+
       // Should not have any error alert visible
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
@@ -64,24 +64,24 @@ describe("LoginForm", () => {
   describe("Form Structure", () => {
     it("renders form with correct attributes", () => {
       render(<LoginForm />);
-      
+
       const form = screen.getByTestId("auth-form");
       expect(form).toHaveAttribute("novalidate");
     });
 
     it("has proper form accessibility", () => {
       render(<LoginForm />);
-      
+
       const emailField = screen.getByTestId("email");
       const passwordField = screen.getByTestId("password");
-      
+
       expect(emailField).toHaveAttribute("aria-required", "true");
       expect(passwordField).toHaveAttribute("aria-required", "true");
     });
 
     it("integrates with AuthForm component", () => {
       render(<LoginForm />);
-      
+
       // Check that AuthForm elements are present
       expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
       expect(screen.getByTestId("auth-form")).toBeInTheDocument();
@@ -116,7 +116,7 @@ describe("LoginForm", () => {
     it("passes correct props to AuthForm", () => {
       const initialError = "Test error";
       render(<LoginForm initialError={initialError} />);
-      
+
       // Verify AuthForm receives correct props by checking rendered output
       expect(screen.getByRole("heading", { name: /log in/i })).toBeInTheDocument();
       expect(screen.getByText(initialError)).toBeInTheDocument();
@@ -125,7 +125,7 @@ describe("LoginForm", () => {
 
     it("renders all child components", () => {
       render(<LoginForm />);
-      
+
       // Check that all child components are rendered
       expect(screen.getByTestId("email")).toBeInTheDocument(); // InputField
       expect(screen.getByTestId("password")).toBeInTheDocument(); // PasswordField

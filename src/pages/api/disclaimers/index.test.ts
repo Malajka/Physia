@@ -18,8 +18,8 @@ function createMockSession(userMetadata = {}): Session {
       aud: "authenticated",
       created_at: new Date().toISOString(),
       email: "",
-      phone: ""
-    }
+      phone: "",
+    },
   };
 }
 
@@ -189,4 +189,4 @@ describe("/api/disclaimers POST", () => {
     const body = await response.json();
     expect(body.error).toMatch(/update failed/);
   });
-}); 
+});

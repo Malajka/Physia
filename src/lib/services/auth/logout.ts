@@ -20,19 +20,19 @@ export const logoutUser = async (): Promise<LogoutResult> => {
       const json = await response.json();
       return {
         success: false,
-        error: json.error || json.message || `Logout failed (status: ${response.status})`
+        error: json.error || json.message || `Logout failed (status: ${response.status})`,
       };
     }
 
     // Success - redirect to login page
     window.location.href = "/login";
-    
+
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     return {
       success: false,
-      error: `Logout error: ${message}`
+      error: `Logout error: ${message}`,
     };
   }
-}; 
+};

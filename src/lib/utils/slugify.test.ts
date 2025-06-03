@@ -10,4 +10,4 @@ describe("slugify", () => {
   it("does not change an already slugified string", () => {
     expect(slugify("already-slugified")).toBe("already-slugified");
   });
-}); 
+});

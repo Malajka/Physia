@@ -11,15 +11,8 @@ interface AuthFormProps {
   submitTestId?: string;
 }
 
-export const AuthForm = function AuthForm({
-  title,
-  onSubmit,
-  children,
-  submitText,
-  errors: initialErrors = null,
-  submitTestId,
-}: AuthFormProps) {
-   const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
+export const AuthForm = function AuthForm({ title, onSubmit, children, submitText, errors: initialErrors = null, submitTestId }: AuthFormProps) {
+  const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
 
   return (
     <div>

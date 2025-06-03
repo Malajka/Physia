@@ -34,7 +34,7 @@ export default defineConfig({
     // Increased timeouts
     navigationTimeout: 30000,
     actionTimeout: 20000,
-    
+
     // Improve browser stability
     viewport: { width: 1280, height: 720 },
     launchOptions: {
@@ -52,7 +52,7 @@ export default defineConfig({
     url: "http://localhost:4321",
     reuseExistingServer: true,
     timeout: 120000,
-    stdout: 'pipe',
-    stderr: 'pipe',
+    stdout: "pipe",
+    stderr: "pipe",
   },
 });

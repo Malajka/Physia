@@ -24,20 +24,20 @@ export const useRegister = (): UseRegisterReturn => {
 
     try {
       const result = await handleRegisterSubmit(formData);
-      
+
       if (result.success && result.registrationSuccess) {
         setRegistrationSuccess(true);
       } else if (!result.success && result.error) {
         setError(result.error);
       }
-      
+
       return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unexpected error during registration";
       setError(errorMessage);
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     } finally {
       setIsLoading(false);
@@ -57,4 +57,4 @@ export const useRegister = (): UseRegisterReturn => {
     submitRegistration,
     resetForm,
   };
-}; 
+};

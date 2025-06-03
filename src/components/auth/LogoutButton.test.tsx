@@ -9,7 +9,11 @@ vi.mock("@/hooks/useLogout", () => ({
 
 // Mock Spinner component
 vi.mock("@/components/ui/Spinner", () => ({
-  Spinner: (props: any) => <span data-testid="spinner" {...props}>spinner</span>,
+  Spinner: (props: any) => (
+    <span data-testid="spinner" {...props}>
+      spinner
+    </span>
+  ),
 }));
 
 describe("LogoutButton", () => {
@@ -32,7 +36,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toBeInTheDocument();
       expect(button).toHaveTextContent("Log out");
@@ -48,7 +52,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toHaveTextContent("Logging out...");
       expect(button).toBeDisabled();
@@ -65,7 +69,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton className="custom-class" />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toHaveClass("custom-class");
     });
@@ -79,7 +83,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toHaveAttribute("data-testid", "logout-button");
       expect(button).toHaveRole("button");
@@ -96,7 +100,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       expect(screen.getByTestId("spinner")).toBeInTheDocument();
     });
 
@@ -109,7 +113,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
     });
 
@@ -149,10 +153,10 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       button.click();
-      
+
       expect(mockLogout).toHaveBeenCalledTimes(1);
     });
 
@@ -166,13 +170,13 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toBeDisabled();
-      
+
       // Try to click disabled button
       button.click();
-      
+
       // Should not be called because button is disabled
       expect(mockLogout).not.toHaveBeenCalled();
     });
@@ -189,7 +193,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       expect(useLogoutMock).toHaveBeenCalled();
       expect(screen.getByTestId("logout-button")).toBeInTheDocument();
     });
@@ -197,7 +201,7 @@ describe("LogoutButton", () => {
     it("displays different states based on hook values", async () => {
       const useLogoutMock = await getUseLogoutMock();
       const mockLogout = vi.fn();
-      
+
       // Test loading state
       useLogoutMock.mockReturnValue({
         isLoggingOut: true,
@@ -209,7 +213,7 @@ describe("LogoutButton", () => {
       expect(screen.getByTestId("logout-button")).toHaveTextContent("Logging out...");
       unmount();
 
-      // Test normal state  
+      // Test normal state
       useLogoutMock.mockReturnValue({
         isLoggingOut: false,
         error: null,
@@ -231,7 +235,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton className="" />);
-      
+
       expect(screen.getByTestId("logout-button")).toBeInTheDocument();
     });
 
@@ -244,7 +248,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       expect(screen.getByTestId("logout-button")).toBeInTheDocument();
     });
   });
@@ -259,7 +263,7 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toHaveRole("button");
       expect(button).toHaveAttribute("aria-busy");
@@ -274,10 +278,10 @@ describe("LogoutButton", () => {
       });
 
       render(<LogoutButton />);
-      
+
       const button = screen.getByTestId("logout-button");
       expect(button).toHaveAttribute("aria-busy", "true");
       expect(button).toBeDisabled();
     });
   });
-}); 
+});

@@ -5,20 +5,20 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #E6F5EF;
+  --background: #e6f5ef;
   --foreground: #1ea39a;
-  --card: #FFFFFF;
+  --card: #ffffff;
   --card-foreground: #1ea39a;
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: #1ea39a;
   --primary: #1ea39a;
-  --primary-foreground: #FFFFFF;
-  --secondary: #E9C46A;
+  --primary-foreground: #ffffff;
+  --secondary: #e9c46a;
   --secondary-foreground: #212121;
-  --muted: #DFF3EC;
+  --muted: #dff3ec;
   --muted-foreground: #212121;
-  --accent: #F4A261;
-  --accent-foreground: #FFFFFF;
+  --accent: #f4a261;
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);

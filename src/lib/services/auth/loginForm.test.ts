@@ -48,7 +48,7 @@ describe("handleLoginSubmit", () => {
     it("extracts email and password from FormData", async () => {
       const schemaMock = await getSchemaMock();
       const loginMock = await getLoginMock();
-      
+
       schemaMock.mockReturnValue({ success: true, data: { email: "test@example.com", password: "password123" } });
       loginMock.mockResolvedValue({ success: true });
 
@@ -63,9 +63,9 @@ describe("handleLoginSubmit", () => {
 
     it("handles missing form fields gracefully", async () => {
       const schemaMock = await getSchemaMock();
-      schemaMock.mockReturnValue({ 
-        success: false, 
-        error: { errors: [{ message: "Email is required" }, { message: "Password is required" }] }
+      schemaMock.mockReturnValue({
+        success: false,
+        error: { errors: [{ message: "Email is required" }, { message: "Password is required" }] },
       });
 
       const emptyFormData = new FormData();
@@ -77,7 +77,7 @@ describe("handleLoginSubmit", () => {
       });
       expect(result).toEqual({
         success: false,
-        error: "Email is required, Password is required"
+        error: "Email is required, Password is required",
       });
     });
   });
@@ -87,12 +87,9 @@ describe("handleLoginSubmit", () => {
       const schemaMock = await getSchemaMock();
       schemaMock.mockReturnValue({
         success: false,
-        error: { 
-          errors: [
-            { message: "Please enter a valid email address" },
-            { message: "Password is required" }
-          ]
-        }
+        error: {
+          errors: [{ message: "Please enter a valid email address" }, { message: "Password is required" }],
+        },
       });
 
       const formData = createFormData("invalid-email", "");
@@ -100,7 +97,7 @@ describe("handleLoginSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Please enter a valid email address, Password is required"
+        error: "Please enter a valid email address, Password is required",
       });
     });
 
@@ -108,9 +105,9 @@ describe("handleLoginSubmit", () => {
       const schemaMock = await getSchemaMock();
       schemaMock.mockReturnValue({
         success: false,
-        error: { 
-          errors: [{ message: "Please enter a valid email address" }]
-        }
+        error: {
+          errors: [{ message: "Please enter a valid email address" }],
+        },
       });
 
       const formData = createFormData("invalid-email", "password123");
@@ -118,14 +115,14 @@ describe("handleLoginSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Please enter a valid email address"
+        error: "Please enter a valid email address",
       });
     });
 
     it("proceeds to login when validation passes", async () => {
       const schemaMock = await getSchemaMock();
       const loginMock = await getLoginMock();
-      
+
       const validCredentials = { email: "test@example.com", password: "password123" };
       schemaMock.mockReturnValue({ success: true, data: validCredentials });
       loginMock.mockResolvedValue({ success: true });
@@ -140,9 +137,9 @@ describe("handleLoginSubmit", () => {
   describe("Authentication", () => {
     beforeEach(async () => {
       const schemaMock = await getSchemaMock();
-      schemaMock.mockReturnValue({ 
-        success: true, 
-        data: { email: "test@example.com", password: "password123" }
+      schemaMock.mockReturnValue({
+        success: true,
+        data: { email: "test@example.com", password: "password123" },
       });
     });
 
@@ -168,9 +165,9 @@ describe("handleLoginSubmit", () => {
 
     it("returns error result when login fails", async () => {
       const loginMock = await getLoginMock();
-      loginMock.mockResolvedValue({ 
-        success: false, 
-        error: "Invalid credentials" 
+      loginMock.mockResolvedValue({
+        success: false,
+        error: "Invalid credentials",
       });
 
       const formData = createFormData("test@example.com", "wrong-password");
@@ -178,15 +175,15 @@ describe("handleLoginSubmit", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Invalid credentials"
+        error: "Invalid credentials",
       });
     });
 
     it("does not redirect on failed login", async () => {
       const loginMock = await getLoginMock();
-      loginMock.mockResolvedValue({ 
-        success: false, 
-        error: "Invalid credentials" 
+      loginMock.mockResolvedValue({
+        success: false,
+        error: "Invalid credentials",
       });
 
       const formData = createFormData("test@example.com", "wrong-password");
@@ -209,7 +206,7 @@ describe("handleLoginSubmit", () => {
     it("handles complete successful flow", async () => {
       const schemaMock = await getSchemaMock();
       const loginMock = await getLoginMock();
-      
+
       const credentials = { email: "user@example.com", password: "validpass" };
       schemaMock.mockReturnValue({ success: true, data: credentials });
       loginMock.mockResolvedValue({ success: true });
@@ -226,10 +223,10 @@ describe("handleLoginSubmit", () => {
     it("handles complete failed validation flow", async () => {
       const schemaMock = await getSchemaMock();
       const loginMock = await getLoginMock();
-      
+
       schemaMock.mockReturnValue({
         success: false,
-        error: { errors: [{ message: "Invalid email" }] }
+        error: { errors: [{ message: "Invalid email" }] },
       });
 
       const formData = createFormData("bad-email", "password");
@@ -239,9 +236,9 @@ describe("handleLoginSubmit", () => {
       expect(loginMock).not.toHaveBeenCalled();
       expect(result).toEqual({
         success: false,
-        error: "Invalid email"
+        error: "Invalid email",
       });
       expect(window.location.href).toBe("");
     });
   });
-}); 
+});

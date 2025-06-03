@@ -19,15 +19,8 @@ export const RegisterForm = function RegisterForm({ initialError = null }: Regis
           <p className="text-green-800 mb-4 text-xl">
             <strong>Thank you for registering!</strong>
           </p>
-          <p className="text-green-700 mb-4 text-lg">
-            Now you can start creating your own sessions and muscle tests!
-          </p>
-          <LinkButton 
-            href="/body-parts" 
-            variant="nav-primary" 
-            className="text-lg block w-full" 
-            data-testid="create-new-session-link"
-          >
+          <p className="text-green-700 mb-4 text-lg">Now you can start creating your own sessions and muscle tests!</p>
+          <LinkButton href="/body-parts" variant="nav-primary" className="text-lg block w-full" data-testid="create-new-session-link">
             Create First Session
           </LinkButton>
         </div>
@@ -37,37 +30,22 @@ export const RegisterForm = function RegisterForm({ initialError = null }: Regis
 
   return (
     <>
-      <AuthForm 
-        title="Create Account" 
-        onSubmit={submitRegistration} 
-        submitText="Register" 
-        errors={error || initialError} 
+      <AuthForm
+        title="Create Account"
+        onSubmit={submitRegistration}
+        submitText="Register"
+        errors={error || initialError}
         submitTestId="register-submit"
       >
-        <InputField 
-          id="email" 
-          name="email" 
-          label="Email" 
-          type="email" 
-          placeholder="your@email.com" 
-          required 
-          data-testid="register-email" 
-        />
-        <PasswordField 
-          id="password" 
-          name="password" 
-          label="Password" 
-          placeholder="Min. 8 characters" 
-          required 
-          data-testid="register-password" 
-        />
-        <PasswordField 
-          id="passwordConfirm" 
-          name="passwordConfirm" 
-          label="Confirm Password" 
-          placeholder="Confirm your password" 
-          required 
-          data-testid="register-passwordConfirm" 
+        <InputField id="email" name="email" label="Email" type="email" placeholder="your@email.com" required data-testid="register-email" />
+        <PasswordField id="password" name="password" label="Password" placeholder="Min. 8 characters" required data-testid="register-password" />
+        <PasswordField
+          id="passwordConfirm"
+          name="passwordConfirm"
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          required
+          data-testid="register-passwordConfirm"
         />
         <p className="text-sm text-gray-600 mt-2">Password must be at least 8 characters long.</p>
       </AuthForm>

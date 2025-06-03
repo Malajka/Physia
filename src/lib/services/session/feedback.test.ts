@@ -38,4 +38,4 @@ describe("session feedback service", () => {
     mockFetch({ error: "fail" }, false);
     await expect(submitFeedback(sessionId, 1)).rejects.toThrow("fail");
   });
-}); 
+});

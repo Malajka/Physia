@@ -2,7 +2,6 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { InfoBar } from "./InfoBar";
 
-
 describe("InfoBar", () => {
   it("renders children", () => {
     const { getByText } = render(<InfoBar>Info content</InfoBar>);
@@ -25,4 +24,4 @@ describe("InfoBar", () => {
     const div = container.querySelector("div");
     expect(div).toHaveClass("custom-class");
   });
-}); 
+});
