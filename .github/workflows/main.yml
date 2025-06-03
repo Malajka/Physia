@@ -1,0 +1,163 @@
+name: Test & Build Main
+
+# Uruchamianie workflow
+on:
+  # Automatycznie po push do main (zgodnie z aktualną konfiguracją repo)
+  push:
+    branches: [ main ]
+  
+  # Automatycznie po pull request do main
+  pull_request:
+    branches: [ main ]
+  
+  # Ręczne uruchamianie z GitHub UI
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        required: false
+        default: 'development'
+        type: choice
+        options:
+        - development
+        - staging
+        - production
+
+# Uprawnienia dla GITHUB_TOKEN (minimal permissions)
+permissions:
+  contents: read
+  pull-requests: read
+
+# Zmienne środowiskowe
+env:
+  NODE_ENV: development
+  CI: true
+
+jobs:
+  # Job dla lint i formatowania
+  lint:
+    name: Lint & Format Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+      
+      - name: Check Prettier formatting
+        run: npx prettier --check .
+
+  # Job dla typowania TypeScript
+  typecheck:
+    name: TypeScript Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+  # Job dla buildu aplikacji
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [lint, typecheck]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+
+  # Job dla testów (jeśli zostaną dodane w przyszłości)
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: false # Wyłączone dopóki nie ma testów
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test # Dodać gdy testy będą dostępne
+
+  # Job podsumowujący - będzie wymagany dla branch protection
+  ci-success:
+    name: CI Success
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [lint, typecheck, build]
+    if: always()
+    
+    steps:
+      - name: Check all jobs status
+        run: |
+          echo "Job results:"
+          echo "- Lint: ${{ needs.lint.result }}"
+          echo "- TypeCheck: ${{ needs.typecheck.result }}"
+          echo "- Build: ${{ needs.build.result }}"
+          
+          if [[ "${{ needs.lint.result }}" != "success" ]] || \
+             [[ "${{ needs.typecheck.result }}" != "success" ]] || \
+             [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ Some CI jobs failed"
+            exit 1
+          else
+            echo "✅ All CI jobs passed successfully"
+          fi 
