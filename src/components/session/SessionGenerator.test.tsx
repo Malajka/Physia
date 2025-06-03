@@ -15,16 +15,16 @@ describe("SessionGenerator", () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    // @ts-ignore
+    // @ts-expect-error - Mocking window.location for testing
     originalLocation = window.location;
-    // @ts-ignore
+    // @ts-expect-error - Need to delete window.location to mock it
     delete window.location;
-    // @ts-ignore
+    // @ts-expect-error - Setting up mock window.location object
     window.location = { href: "" };
   });
 
   afterEach(() => {
-    // @ts-ignore
+    // @ts-expect-error - Restoring original window.location after test
     window.location = originalLocation;
   });
 
@@ -54,7 +54,7 @@ describe("SessionGenerator", () => {
     render(<SessionGenerator {...defaultProps} />);
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => {
-      // @ts-ignore
+      // @ts-expect-error - Accessing mocked window.location.href property
       expect(window.location.href).toBe("/sessions/123");
     });
   });

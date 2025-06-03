@@ -10,7 +10,7 @@ vi.mock("@/hooks/useRegister", () => ({
 
 // Mock Spinner component
 vi.mock("@/components/ui/Spinner", () => ({
-  Spinner: (props: any) => (
+  Spinner: (props: Record<string, unknown>) => (
     <span data-testid="spinner" {...props}>
       spinner
     </span>

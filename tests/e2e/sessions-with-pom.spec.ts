@@ -1,3 +1,4 @@
+import type { BrowserContext, Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 import { TEST_USER } from "./config";
 import { AuthHelper } from "./page-objects/AuthHelper";
@@ -5,8 +6,8 @@ import { LoginPage } from "./page-objects/LoginPage";
 import { SessionsPage } from "./page-objects/SessionsPage";
 
 test.describe("User Session Functionality (with POM)", () => {
-  let page: any;
-  let context: any;
+  let page: Page;
+  let context: BrowserContext;
   let loginPage: LoginPage;
   let sessionsPage: SessionsPage;
 
@@ -51,11 +52,13 @@ test.describe("User Session Functionality (with POM)", () => {
       const sessionId = await sessionsPage.getSessionId(firstSessionItem);
       expect(sessionId, "Session ID should be available").toBeTruthy();
 
-      // Click on session details link to open session details
-      await sessionsPage.clickSessionDetailsLink(sessionId!);
+      if (sessionId) {
+        // Click on session details link to open session details
+        await sessionsPage.clickSessionDetailsLink(sessionId);
 
-      // Verify session details page is displayed with all required elements
-      await sessionsPage.expectSessionDetailsVisible();
+        // Verify session details page is displayed with all required elements
+        await sessionsPage.expectSessionDetailsVisible();
+      }
     } else {
       expect(isSessionItemVisible).toBeFalsy();
     }

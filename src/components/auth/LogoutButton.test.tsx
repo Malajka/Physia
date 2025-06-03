@@ -9,7 +9,7 @@ vi.mock("@/hooks/useLogout", () => ({
 
 // Mock Spinner component
 vi.mock("@/components/ui/Spinner", () => ({
-  Spinner: (props: any) => (
+  Spinner: (props: Record<string, unknown>) => (
     <span data-testid="spinner" {...props}>
       spinner
     </span>
@@ -19,7 +19,7 @@ vi.mock("@/components/ui/Spinner", () => ({
 describe("LogoutButton", () => {
   const getUseLogoutMock = async () => {
     const { useLogout } = await import("@/hooks/useLogout");
-    return useLogout as any;
+    return useLogout as ReturnType<typeof vi.fn>;
   };
 
   afterEach(() => {

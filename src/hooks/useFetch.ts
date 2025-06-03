@@ -49,7 +49,6 @@ export function useFetch<T>(fetcher: (signal: AbortSignal) => Promise<T>, skipIn
       }
       const message = error instanceof Error ? error.message : String(error);
       dispatch({ type: "FAILURE", error: message });
-      console.error("useFetch error:", error);
     }
   }, [fetcher]);
 

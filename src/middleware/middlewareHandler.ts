@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import type { APIContext, MiddlewareNext } from "astro";
 
 const LOGIN_PATH = "/login";
@@ -68,17 +68,17 @@ async function fetchSession(supabase: SupabaseClient, pathname: string) {
   return session;
 }
 
-function shouldRedirectToLogin(session: any, pathname: string): boolean {
+function shouldRedirectToLogin(session: Session | null, pathname: string): boolean {
   return !session && isPathProtected(pathname);
 }
 
-function shouldRedirectToDefault(session: any, pathname: string): boolean {
-  return session && (pathname === LOGIN_PATH || pathname === REGISTER_PATH);
+function shouldRedirectToDefault(session: Session | null, pathname: string): boolean {
+  return Boolean(session) && (pathname === LOGIN_PATH || pathname === REGISTER_PATH);
 }
 
-function shouldRedirectToDisclaimer(session: any, pathname: string): boolean {
-  const isDisclaimerAccepted = !!session?.user?.user_metadata?.disclaimer_accepted_at;
-  return session && doesPathRequireDisclaimerAcceptance(pathname) && !isDisclaimerAccepted && pathname !== DISCLAIMER_ACCEPTANCE_PATH;
+function shouldRedirectToDisclaimer(session: Session | null, pathname: string): boolean {
+  const isDisclaimerAccepted = Boolean(session?.user?.user_metadata?.disclaimer_accepted_at);
+  return Boolean(session) && doesPathRequireDisclaimerAcceptance(pathname) && !isDisclaimerAccepted && pathname !== DISCLAIMER_ACCEPTANCE_PATH;
 }
 
 async function handleSessionOwnership(supabase: SupabaseClient, userId: string, pathname: string): Promise<Response | undefined> {
