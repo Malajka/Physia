@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 
 export function Spinner({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
