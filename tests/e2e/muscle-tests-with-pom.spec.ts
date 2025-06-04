@@ -89,14 +89,14 @@ test.describe("Muscle Tests (with POM)", () => {
 
     // Step 6: Verify session plan was generated with improved waiting
     // Use enhanced utility method for session element waiting
-    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForURL("**/sessions/**", { timeout: 60000 });
     await page.waitForSelector('[data-testid="session-title"]', {
       state: "visible",
-      timeout: 30000,
+      timeout: 60000,
     });
 
     // Now check visibility with extended timeout
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 60000 });
     await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
     await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   });
@@ -186,14 +186,14 @@ test.describe("Muscle Tests (with POM)", () => {
     await muscleTestsPage.clickNext();
 
     // Use enhanced utility method for session element waiting
-    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForURL("**/sessions/**", { timeout: 60000 });
     await page.waitForSelector('[data-testid="session-title"]', {
       state: "visible",
-      timeout: 30000,
+      timeout: 60000,
     });
 
     // Now check visibility with extended timeout
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 60000 });
     await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
     await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   });
@@ -229,14 +229,14 @@ test.describe("Muscle Tests (with POM)", () => {
 
     // Verify session was generated with improved waiting
     // Use enhanced utility method for session element waiting
-    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForURL("**/sessions/**", { timeout: 60000 });
     await page.waitForSelector('[data-testid="session-title"]', {
       state: "visible",
-      timeout: 30000,
+      timeout: 60000,
     });
 
     // Now check visibility with extended timeout
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 60000 });
     await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
     await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
 

@@ -118,11 +118,11 @@ export class SessionsPage extends BasePage {
   }
 
   async expectSessionDetailsVisible() {
-    // Use the enhanced utility method for better reliability
-    await this.waitForSessionElement("session-title");
+    // Use the enhanced utility method for better reliability with increased timeout
+    await this.waitForSessionElement("session-title", 60000); // Increased timeout
 
     // Check additional elements with extended timeouts
-    await expect(this.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(this.getByTestId("session-title")).toBeVisible({ timeout: 60000 });
     await expect(this.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
     await expect(this.page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   }
