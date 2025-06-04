@@ -6,9 +6,10 @@ global.fetch = vi.fn();
 const mockedFetch = vi.mocked(fetch);
 
 beforeEach(() => {
-  // @ts-expect-error: Need to delete window.location to mock it
-  delete window.location;
-  window.location = { href: "" } as Location;
+  Object.defineProperty(window, 'location', {
+    value: { href: "" },
+    writable: true,
+  });
 });
 
 afterEach(() => {

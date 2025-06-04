@@ -15,17 +15,19 @@ describe("SessionGenerator", () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    // @ts-expect-error - Mocking window.location for testing
     originalLocation = window.location;
-    // @ts-expect-error - Need to delete window.location to mock it
-    delete window.location;
-    // @ts-expect-error - Setting up mock window.location object
-    window.location = { href: "" };
+    
+    Object.defineProperty(window, 'location', {
+      value: { href: "" },
+      writable: true,
+    });
   });
 
   afterEach(() => {
-    // @ts-expect-error - Restoring original window.location after test
-    window.location = originalLocation;
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+    });
   });
 
   it("renders the button", () => {
@@ -54,7 +56,6 @@ describe("SessionGenerator", () => {
     render(<SessionGenerator {...defaultProps} />);
     fireEvent.click(screen.getByRole("button"));
     await waitFor(() => {
-      // @ts-expect-error - Accessing mocked window.location.href property
       expect(window.location.href).toBe("/sessions/123");
     });
   });

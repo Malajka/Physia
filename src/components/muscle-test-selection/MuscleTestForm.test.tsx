@@ -51,10 +51,11 @@ describe("MuscleTestForm", () => {
 
   it("redirects with correct URL when form is valid", () => {
     const originalLocation = window.location;
-    // @ts-expect-error: This is required to mock window.location for the test
-    delete window.location;
-    // @ts-expect-error: This is required to mock window.location for the test
-    window.location = { href: "" };
+    
+    Object.defineProperty(window, 'location', {
+      value: { href: "" },
+      writable: true,
+    });
 
     render(<MuscleTestForm bodyPartId={1} muscleTests={muscleTests} />);
     // Set painIntensity for first test
@@ -62,6 +63,10 @@ describe("MuscleTestForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /create session/i }));
     expect(window.location.href).toMatch(/\/session\/generate\?bodyPartId=1&tests=/);
 
-    window.location = originalLocation;
+    // Restore the original location
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+    });
   });
 });

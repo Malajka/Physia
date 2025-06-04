@@ -29,14 +29,20 @@ describe("NavigationNextButton", () => {
 
   it("falls back to window.location when onNavigate is not provided", () => {
     const originalLocation = window.location;
-    // @ts-expect-error: This is required to mock window.location for the test
-    delete window.location;
-    // @ts-expect-error: This is required to mock window.location for the test
-    window.location = { pathname: "" };
+    
+    Object.defineProperty(window, 'location', {
+      value: { pathname: "" },
+      writable: true,
+    });
+    
     render(<NavigationNextButton selectedBodyPartId={7} />);
     const button = screen.getByRole("button", { name: /next/i });
     fireEvent.click(button);
     expect(window.location.pathname).toBe("/muscle-tests/7");
-    window.location = originalLocation;
+    
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+    });
   });
 });

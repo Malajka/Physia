@@ -1,7 +1,6 @@
 import { useSessionGeneration } from "@/hooks/useSessionGeneration";
 import { render, screen } from "@testing-library/react";
 import type React from "react";
-import type { MockedFunction } from "vitest";
 import { describe, expect, it, vi } from "vitest";
 import { SessionGenerationLoading } from "./SessionGenerationLoading";
 
@@ -23,7 +22,7 @@ vi.mock("@/hooks/useSessionGeneration", () => ({
   useSessionGeneration: vi.fn(),
 }));
 
-const useSessionGenerationMock = useSessionGeneration as MockedFunction<typeof useSessionGeneration>;
+const useSessionGenerationMock = vi.mocked(useSessionGeneration);
 
 describe("SessionGenerationLoading", () => {
   it("shows loading skeleton and status message", () => {

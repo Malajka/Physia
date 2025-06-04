@@ -13,9 +13,10 @@ vi.mock("@/lib/validators/auth.validator", () => ({
 }));
 
 beforeEach(() => {
-  // @ts-expect-error: Need to delete window.location to mock it
-  delete window.location;
-  window.location = { href: "" } as Location;
+  Object.defineProperty(window, 'location', {
+    value: { href: "" },
+    writable: true,
+  });
 });
 
 afterEach(() => {
