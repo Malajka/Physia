@@ -42,7 +42,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
           max={10}
           step={1}
           value={[value]}
-          onValueChange={([v]) => onChange(v)}
+          onValueChange={([v]: number[]) => onChange(v)}
           aria-label="Pain intensity"
           data-testid={`slider-${test.id}`}
         />
