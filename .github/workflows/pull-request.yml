@@ -24,6 +24,9 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      - name: Clean install environment
+        run: rm -rf node_modules
+
       - name: Install dependencies
         run: npm ci
 
@@ -52,8 +55,41 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug - List src/components/ui files
+        run: |
+          echo "=== Contents of src/components/ui ==="
+          ls -la src/components/ui/
+          echo ""
+          echo "=== Check specific files ==="
+          ls -la src/components/ui/Button.tsx || echo "Button.tsx not found"
+          ls -la src/components/ui/Slider.tsx || echo "Slider.tsx not found"
+          ls -la src/components/ui/Spinner.tsx || echo "Spinner.tsx not found"
+          ls -la src/components/ui/Skeleton.tsx || echo "Skeleton.tsx not found"
+
+      - name: Debug - Verify file integrity
+        run: |
+          echo "=== Working directory ==="
+          pwd
+          echo ""
+          echo "=== Git status ==="
+          git status --porcelain
+          echo ""
+          echo "=== Check tsconfig.json ==="
+          cat tsconfig.json
+          echo ""
+          echo "=== Verify file contents ==="
+          head -n 5 src/components/ui/Button.tsx || echo "Cannot read Button.tsx"
+
       - name: Generate Astro types
         run: npx astro sync
+
+      - name: Debug - Check .astro directory
+        run: |
+          echo "=== Contents of .astro directory ==="
+          ls -la .astro/ || echo ".astro directory not found"
+
+      - name: Generate TypeScript types
+        run: npx tsc --declaration --emitDeclarationOnly --skipLibCheck
 
       - name: TypeScript check
         id: typecheck-step
