@@ -1,6 +1,6 @@
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import { cn } from "@/lib/utils";
 import React, { useCallback, useState, type ChangeEvent } from "react";
+import { ErrorAlert } from "./ErrorAlert";
 
 export interface InputFieldProps {
   id: string;

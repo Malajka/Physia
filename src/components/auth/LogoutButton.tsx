@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/Button";
-import { Spinner } from "@/components/ui/Spinner";
+import { Button, Spinner } from "@/components/ui";
 import { useLogout } from "@/hooks/useLogout";
 import { cn } from "@/lib/utils";
 

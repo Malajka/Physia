@@ -1,5 +1,4 @@
-import { ErrorAlert } from "@/components/ui/ErrorAlert";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { ErrorAlert, SubmitButton } from "@/components/ui";
 import { useAuthForm, type AuthFormSubmitResult } from "@/hooks/useAuthForm";
 
 interface AuthFormProps {

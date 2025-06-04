@@ -1,7 +1,6 @@
 import { AuthForm } from "@/components/auth/AuthForm";
 import { PasswordField } from "@/components/auth/PasswordField";
-import { InputField } from "@/components/ui/InputField";
-import { LinkButton } from "@/components/ui/LinkButton";
+import { InputField, LinkButton } from "@/components/ui";
 import { useRegister } from "@/hooks/useRegister";
 
 interface RegisterFormProps {

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 import { fetchFeedback, submitFeedback } from "@/lib/services/session/feedback";
 import type { FeedbackRatingDto } from "@/types";
 import React, { useCallback, useEffect, useState } from "react";

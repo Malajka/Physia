@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui";
 import type { MuscleTestDto } from "@/types";
 import { ChevronLeft } from "lucide-react";
 import { useCallback, useState } from "react";

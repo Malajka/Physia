@@ -1,6 +1,6 @@
 import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
-import { InfoBar } from "@/components/ui/InfoBar";
+import { InfoBar } from "@/components/ui";
 import { useBodyParts } from "@/hooks/useBodyParts";
 import { useDisclaimer } from "@/hooks/useDisclaimer";
 import { useSingleSelection } from "@/hooks/useSingleSelection";

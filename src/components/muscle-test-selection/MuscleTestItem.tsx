@@ -1,4 +1,4 @@
-import { Slider } from "@/components/ui/Slider";
+import { Slider } from "@/components/ui";
 import type { MuscleTestDto } from "@/types";
 
 interface MuscleTestItemProps {

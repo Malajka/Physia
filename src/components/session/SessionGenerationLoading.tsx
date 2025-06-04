@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/Button";
-import { Skeleton } from "@/components/ui/Skeleton";
-import { Spinner } from "@/components/ui/Spinner";
+import { Button, Skeleton, Spinner } from "@/components/ui";
 import { useSessionGeneration } from "@/hooks/useSessionGeneration";
 import { useEffect } from "react";
 
