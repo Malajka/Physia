@@ -94,18 +94,6 @@ describe("useBodyParts", () => {
 
       expect(mockFetchAllBodyParts).toHaveBeenCalledWith(customUrl, expect.objectContaining({ signal: expect.any(AbortSignal) }));
     });
-
-    it("should fallback to env variable when window is not available", () => {
-      // Mock the hook to test server-side rendering scenario
-      const { result } = renderHook(() =>
-        useBodyParts({
-          baseUrl: "https://test-api.com", // Explicitly provide the fallback URL
-          disclaimerAccepted: "2024-01-01T00:00:00Z",
-        })
-      );
-
-      expect(mockFetchAllBodyParts).toHaveBeenCalledWith("https://test-api.com", expect.objectContaining({ signal: expect.any(AbortSignal) }));
-    });
   });
 
   describe("Successful Data Fetching", () => {

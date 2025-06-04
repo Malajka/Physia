@@ -1,12 +1,12 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { AuthHelper } from "./page-objects/AuthHelper";
 import { LoginPage } from "./page-objects/LoginPage";
 import { SessionsPage } from "./page-objects/SessionsPage";
 import { TestDataHelper } from "./page-objects/TestDataHelper";
 
 test.describe("User Login (with POM)", () => {
-  let page: any;
-  let context: any;
+  let page: Page;
+  let context: BrowserContext;
   let loginPage: LoginPage;
   let sessionsPage: SessionsPage;
 

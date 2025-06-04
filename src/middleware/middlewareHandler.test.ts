@@ -1,8 +1,10 @@
 import type { Session } from "@supabase/supabase-js";
+import type { APIContext, MiddlewareNext } from "astro";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { SupabaseClient } from "../db/supabase.client";
 import { handleRequest } from "./middlewareHandler";
 
-let mockNext: any;
+let mockNext: MiddlewareNext;
 beforeEach(() => {
   mockNext = vi.fn().mockResolvedValue(new Response("ok"));
   vi.clearAllMocks();
@@ -29,13 +31,11 @@ function createMockSession(userMetadata = {}): Session {
 function makeContext({
   pathname = "/sessions/1",
   session = null,
-  disclaimerAccepted = true,
   sessionOwner = true,
   cookies = {} as Record<string, string>,
 }: {
   pathname?: string;
   session?: Session | null;
-  disclaimerAccepted?: boolean;
   sessionOwner?: boolean;
   cookies?: Record<string, string>;
 } = {}) {
@@ -52,7 +52,7 @@ function makeContext({
   });
   const from = vi.fn().mockReturnValue({ select, eq, single });
 
-  const supabase = { auth: { getSession, setSession }, from };
+  const supabase = { auth: { getSession, setSession }, from } as unknown as SupabaseClient;
 
   const context = {
     locals: { supabase },
@@ -60,7 +60,8 @@ function makeContext({
       get: vi.fn((key) => ({ value: cookies[key] })),
     },
     request: { url: `http://localhost${pathname}` },
-  };
+  } as unknown as APIContext;
+
   return { context, supabase, getSession, setSession, select, eq, single };
 }
 
@@ -71,7 +72,7 @@ describe("middlewareHandler", () => {
 
   it("redirects to /login if not authenticated", async () => {
     const { context } = makeContext({ session: null });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context, mockNext)) as Response;
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/login");
   });
@@ -79,7 +80,7 @@ describe("middlewareHandler", () => {
   it("redirects to /sessions if not session owner", async () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session, sessionOwner: false });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context, mockNext)) as Response;
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/sessions");
   });
@@ -87,7 +88,7 @@ describe("middlewareHandler", () => {
   it("calls next() for valid session and owner", async () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context, mockNext)) as Response;
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
     const body = await res.text();
@@ -96,7 +97,7 @@ describe("middlewareHandler", () => {
 
   it("calls next() for unprotected route", async () => {
     const { context } = makeContext({ pathname: "/public" });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context, mockNext)) as Response;
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
   });
@@ -109,7 +110,7 @@ describe("middlewareHandler", () => {
       data: { session },
       error: null,
     });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context, mockNext)) as Response;
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
     const body = await res.text();
@@ -120,10 +121,15 @@ describe("middlewareHandler", () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session });
     const setSessionError = { message: "setSession failed" };
-    context.cookies.get = vi.fn((key) => ({ value: "token" }));
+    context.cookies.get = vi.fn(() => ({
+      value: "token",
+      json: vi.fn(),
+      number: vi.fn(),
+      boolean: vi.fn(),
+    }));
     context.locals.supabase.auth.setSession = vi.fn().mockResolvedValue({ error: setSessionError });
-    const logSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    await handleRequest(context as any, mockNext);
+    const logSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await handleRequest(context, mockNext);
     expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("[MW_HANDLER_SESSION_SET_ERROR]"), setSessionError.message);
     logSpy.mockRestore();
   });
@@ -133,8 +139,8 @@ describe("middlewareHandler", () => {
     const { context } = makeContext({ session });
     const sessionFetchError = { message: "fetchSession failed" };
     context.locals.supabase.auth.getSession = vi.fn().mockResolvedValue({ data: { session }, error: sessionFetchError });
-    const logSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    await handleRequest(context as any, mockNext);
+    const logSpy = vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await handleRequest(context, mockNext);
     expect(logSpy).toHaveBeenCalledWith(
       expect.stringContaining("[MW_HANDLER_SESSION_FETCH_ERROR] Error fetching session for /sessions/1: fetchSession failed")
     );
@@ -144,21 +150,21 @@ describe("middlewareHandler", () => {
   it("handleSessionOwnership returns undefined if path does not start with /sessions/", async () => {
     const { context } = makeContext({ pathname: "/not-sessions/1" });
     const fn = await import("./middlewareHandler");
-    const result = await fn.handleRequest(context as any, mockNext);
+    const result = await fn.handleRequest(context, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
 
   it("handleSessionOwnership returns undefined if pathSegments.length < 3", async () => {
     const { context } = makeContext({ pathname: "/sessions/" });
     const fn = await import("./middlewareHandler");
-    const result = await fn.handleRequest(context as any, mockNext);
+    const result = await fn.handleRequest(context, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
 
   it("handleSessionOwnership returns undefined if pathSegments[2] is NaN", async () => {
     const { context } = makeContext({ pathname: "/sessions/abc" });
     const fn = await import("./middlewareHandler");
-    const result = await fn.handleRequest(context as any, mockNext);
+    const result = await fn.handleRequest(context, mockNext);
     expect(result).toBeInstanceOf(Response);
   });
 
@@ -171,7 +177,7 @@ describe("middlewareHandler", () => {
       eq: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: { user_id: "other" }, error: null }),
     });
-    const res = await handleRequest(context as any, mockNext);
+    const res = await handleRequest(context, mockNext);
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/sessions");
   });
@@ -179,7 +185,7 @@ describe("middlewareHandler", () => {
   it("redirects to /sessions if logged in and pathname is /login", async () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session, pathname: "/login" });
-    const res = await handleRequest(context as any, mockNext);
+    const res = await handleRequest(context, mockNext);
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/sessions");
   });
@@ -187,14 +193,14 @@ describe("middlewareHandler", () => {
   it("redirects to /body-parts if disclaimer not accepted and path requires disclaimer", async () => {
     const session = createMockSession({});
     const { context } = makeContext({ session, pathname: "/muscle-tests" });
-    const res = await handleRequest(context as any, mockNext);
+    const res = await handleRequest(context, mockNext);
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/body-parts");
   });
 
   it("redirects to /login if not authenticated and path is protected", async () => {
     const { context } = makeContext({ session: null, pathname: "/muscle-tests" });
-    const res = await handleRequest(context as any, mockNext);
+    const res = await handleRequest(context, mockNext);
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/login");
   });
@@ -202,7 +208,7 @@ describe("middlewareHandler", () => {
   it("calls next for /body-parts if disclaimer not accepted", async () => {
     const session = createMockSession({});
     const { context } = makeContext({ session, pathname: "/body-parts" });
-    const res = await handleRequest(context as any, mockNext);
+    const res = await handleRequest(context, mockNext);
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
   });

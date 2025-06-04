@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { TEST_USER } from "./config";
 import { AuthHelper } from "./page-objects/AuthHelper";
 import { BodyPartsPage } from "./page-objects/BodyPartsPage";
@@ -7,8 +7,8 @@ import { MuscleTestsPage } from "./page-objects/MuscleTestsPage";
 import { SessionsPage } from "./page-objects/SessionsPage";
 
 test.describe("Muscle Tests (with POM)", () => {
-  let page: any;
-  let context: any;
+  let page: Page;
+  let context: BrowserContext;
   let loginPage: LoginPage;
   let sessionsPage: SessionsPage;
   let bodyPartsPage: BodyPartsPage;
@@ -64,8 +64,8 @@ test.describe("Muscle Tests (with POM)", () => {
           selected = true;
           break;
         }
-      } catch (error) {
-        console.log(`${testId} not found, trying next...`);
+      } catch {
+        // Body part not found, trying next
       }
     }
 
@@ -169,8 +169,8 @@ test.describe("Muscle Tests (with POM)", () => {
         if (await slider.isVisible({ timeout: 2000 })) {
           await muscleTestsPage.setSliderValue(sliderId, value);
         }
-      } catch (error) {
-        console.log(`Slider ${sliderId} not found, skipping...`);
+      } catch {
+        // Slider not found, skipping
       }
     }
 

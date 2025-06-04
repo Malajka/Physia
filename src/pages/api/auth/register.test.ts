@@ -10,8 +10,6 @@ interface MockRequest {
   url?: string;
 }
 
-interface MockCookies {}
-
 interface SupabaseAuth {
   signUp: (params: {
     email: string;
@@ -37,10 +35,8 @@ function createMockRequest(json: unknown, url = "http://localhost/register"): Mo
 
 describe("POST /api/auth/register", () => {
   let locals: Locals;
-  let cookies: MockCookies;
 
   beforeEach(() => {
-    cookies = {};
     locals = {
       supabase: {
         auth: {

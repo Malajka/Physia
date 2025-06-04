@@ -142,7 +142,11 @@ export class RegisterPage extends BasePage {
         sessionStorage.clear();
         if ("indexedDB" in window) {
           window.indexedDB.databases().then((dbs) => {
-            dbs.forEach((db) => window.indexedDB.deleteDatabase(db.name!));
+            dbs.forEach((db) => {
+              if (db.name) {
+                window.indexedDB.deleteDatabase(db.name);
+              }
+            });
           });
         }
       });

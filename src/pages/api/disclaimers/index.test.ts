@@ -3,6 +3,22 @@ import type { Session } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "./index";
 
+// Types for the mock context and API calls
+interface MockSupabase {
+  from: ReturnType<typeof vi.fn>;
+  auth: {
+    getSession: ReturnType<typeof vi.fn>;
+    setSession?: ReturnType<typeof vi.fn>;
+    updateUser: ReturnType<typeof vi.fn>;
+  };
+}
+
+interface MockLocals {
+  supabase: MockSupabase;
+}
+
+type GetPostArgs = Parameters<typeof GET>[0];
+
 const mockNext = vi.fn().mockResolvedValue(new Response("ok"));
 
 function createMockSession(userMetadata = {}): Session {
@@ -26,13 +42,11 @@ function createMockSession(userMetadata = {}): Session {
 function makeContext({
   pathname = "/sessions/1",
   session = null,
-  disclaimerAccepted = true,
   sessionOwner = true,
   cookies = {} as Record<string, string>,
 }: {
   pathname?: string;
   session?: Session | null;
-  disclaimerAccepted?: boolean;
   sessionOwner?: boolean;
   cookies?: Record<string, string>;
 } = {}) {
@@ -49,12 +63,12 @@ function makeContext({
   });
   const from = vi.fn().mockReturnValue({ select, eq, single });
 
-  const supabase = { auth: { getSession, setSession }, from };
+  const supabase = { auth: { getSession, setSession, updateUser: vi.fn() }, from };
 
   const context = {
     locals: { supabase },
     cookies: {
-      get: vi.fn((key) => ({ value: cookies[key] })),
+      get: vi.fn((key: string) => ({ value: cookies[key] })),
     },
     request: { url: `http://localhost${pathname}` },
   };
@@ -68,7 +82,7 @@ describe("middlewareHandler", () => {
 
   it("redirects to /login if not authenticated", async () => {
     const { context } = makeContext({ session: null });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/login");
   });
@@ -76,7 +90,7 @@ describe("middlewareHandler", () => {
   it("redirects to /sessions if not session owner", async () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session, sessionOwner: false });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
     expect(res.status).toBe(302);
     expect(res.headers.get("Location")).toBe("/sessions");
   });
@@ -84,7 +98,7 @@ describe("middlewareHandler", () => {
   it("calls next() for valid session and owner", async () => {
     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
     const { context } = makeContext({ session });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
     expect(res.status).toBe(200);
@@ -92,7 +106,7 @@ describe("middlewareHandler", () => {
 
   it("calls next() for unprotected route", async () => {
     const { context } = makeContext({ pathname: "/public" });
-    const res = (await handleRequest(context as any, mockNext)) as Response;
+    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
     expect(mockNext).toHaveBeenCalled();
     expect(res).toBeInstanceOf(Response);
   });
@@ -104,7 +118,7 @@ function createMockSupabase({
   getSessionError = null,
   disclaimerError = null,
   updateUserError = null,
-} = {}) {
+} = {}): MockSupabase {
   return {
     from: vi.fn().mockReturnValue({
       select: vi.fn().mockReturnThis(),
@@ -126,14 +140,14 @@ function createMockSupabase({
 }
 
 describe("/api/disclaimers GET", () => {
-  let locals;
+  let locals: MockLocals;
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("returns disclaimer text and accepted_at on success", async () => {
     locals = { supabase: createMockSupabase() };
-    const response = await GET({ locals } as any);
+    const response = await GET({ locals } as unknown as GetPostArgs);
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.text).toBe("Test disclaimer text");
@@ -141,8 +155,28 @@ describe("/api/disclaimers GET", () => {
   });
 
   it("returns accepted_at as null if not accepted", async () => {
-    locals = { supabase: createMockSupabase({ getSessionData: { session: { user: { user_metadata: {} as any } } } }) };
-    const response = await GET({ locals } as any);
+    const sessionWithoutDisclaimer = createMockSession({});
+    locals = {
+      supabase: {
+        from: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnThis(),
+          order: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({
+            data: { content: "Test disclaimer text" },
+            error: null,
+          }),
+        }),
+        auth: {
+          getSession: vi.fn().mockResolvedValue({
+            data: { session: sessionWithoutDisclaimer },
+            error: null,
+          }),
+          updateUser: vi.fn().mockResolvedValue({ error: null }),
+        },
+      },
+    };
+    const response = await GET({ locals } as unknown as GetPostArgs);
     expect(response.status).toBe(200);
     const body = await response.json();
     expect(body.accepted_at).toBeNull();
@@ -156,7 +190,7 @@ describe("/api/disclaimers GET", () => {
       limit: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: { message: "fail" } }),
     });
-    const response = await GET({ locals } as any);
+    const response = await GET({ locals } as unknown as GetPostArgs);
     expect(response.status).toBe(500);
     const body = await response.json();
     expect(body.error).toMatch(/fail/);
@@ -164,7 +198,7 @@ describe("/api/disclaimers GET", () => {
 });
 
 describe("/api/disclaimers POST", () => {
-  let locals;
+  let locals: MockLocals;
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -174,7 +208,7 @@ describe("/api/disclaimers POST", () => {
     const now = new Date("2024-05-25T12:00:00.000Z");
     vi.setSystemTime(now);
     locals = { supabase: createMockSupabase() };
-    const response = await POST({ locals } as any);
+    const response = await POST({ locals } as unknown as GetPostArgs);
     expect(response.status).toBe(201);
     const body = await response.json();
     expect(body.accepted_at).toBe(now.toISOString());
@@ -184,7 +218,7 @@ describe("/api/disclaimers POST", () => {
   it("returns 500 if updateUser fails", async () => {
     locals = { supabase: createMockSupabase({ updateUserError: null }) };
     locals.supabase.auth.updateUser = vi.fn().mockResolvedValue({ error: { message: "update failed" } });
-    const response = await POST({ locals } as any);
+    const response = await POST({ locals } as unknown as GetPostArgs);
     expect(response.status).toBe(500);
     const body = await response.json();
     expect(body.error).toMatch(/update failed/);

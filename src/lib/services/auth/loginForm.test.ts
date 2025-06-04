@@ -12,9 +12,6 @@ vi.mock("@/lib/validators/auth.validator", () => ({
   },
 }));
 
-// Mock window.location
-const originalLocation = window.location;
-
 beforeEach(() => {
   // @ts-expect-error: Need to delete window.location to mock it
   delete window.location;

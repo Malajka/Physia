@@ -13,13 +13,15 @@ const sessionDetail: SessionDetailDto = {
   feedback_rating: null,
 };
 
-function mockFetch(response: any, ok = true, status = 200) {
+type MockResponse = SessionDetailDto | { error: string | { code?: string; message?: string; details?: { reason?: string } } } | Record<string, never>;
+
+function mockFetch(response: MockResponse, ok = true, status = 200) {
   global.fetch = vi.fn().mockResolvedValue({
     ok,
     status,
     statusText: ok ? "OK" : "Server Error",
     json: async () => response,
-  }) as any;
+  } as Partial<Response> as Response);
 }
 
 describe("session generation service", () => {
@@ -36,7 +38,7 @@ describe("session generation service", () => {
   });
 
   it("redirects to disclaimer on 403 with disclaimer_required", async () => {
-    const locationSpy = vi.spyOn(window, "location", "get").mockReturnValue({ href: "" } as any);
+    vi.spyOn(window, "location", "get").mockReturnValue({ href: "" } as Partial<Location> as Location);
     mockFetch({ error: "disclaimer_required" }, false, 403);
     const result = await startSessionGeneration(2, []);
     expect(result.error).toBe("disclaimer_required");

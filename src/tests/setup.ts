@@ -9,8 +9,14 @@ afterEach(() => {
 
 // Mock ResizeObserver for Radix and other UI libs
 class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe(): void {
+    // Mock implementation
+  }
+  unobserve(): void {
+    // Mock implementation
+  }
+  disconnect(): void {
+    // Mock implementation
+  }
 }
-(globalThis as any).ResizeObserver = ResizeObserver;
+(globalThis as typeof globalThis & { ResizeObserver: typeof ResizeObserver }).ResizeObserver = ResizeObserver;

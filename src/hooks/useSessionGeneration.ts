@@ -33,7 +33,7 @@ export function useSessionGeneration(
 ) {
   // Handle both parameter formats
   const { bodyPartId, tests: testsArray } =
-    typeof paramsOrBodyPartId === "object" ? paramsOrBodyPartId : { bodyPartId: paramsOrBodyPartId, tests: tests! };
+    typeof paramsOrBodyPartId === "object" ? paramsOrBodyPartId : { bodyPartId: paramsOrBodyPartId, tests: tests || [] };
 
   const [statusMessage, setStatusMessage] = useState("Preparing session data...");
   const [error, setError] = useState<string | null>(null);

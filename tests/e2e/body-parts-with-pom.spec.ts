@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { TEST_USER } from "./config";
 import { AuthHelper } from "./page-objects/AuthHelper";
 import { BodyPartsPage } from "./page-objects/BodyPartsPage";
@@ -6,8 +6,8 @@ import { LoginPage } from "./page-objects/LoginPage";
 import { SessionsPage } from "./page-objects/SessionsPage";
 
 test.describe("Body Parts Selection (with POM)", () => {
-  let page: any;
-  let context: any;
+  let page: Page;
+  let context: BrowserContext;
   let loginPage: LoginPage;
   let sessionsPage: SessionsPage;
   let bodyPartsPage: BodyPartsPage;
@@ -142,8 +142,8 @@ test.describe("Body Parts Selection (with POM)", () => {
           selected = true;
           break;
         }
-      } catch (error) {
-        console.log(`${testId} not found, trying next...`);
+      } catch {
+        // Body part not found, trying next
       }
     }
 
@@ -193,24 +193,14 @@ test.describe("Body Parts Selection (with POM)", () => {
           selected = true;
           break;
         }
-      } catch (error) {
-        console.log(`${testId} not found, trying next...`);
+      } catch {
+        // Body part not found, trying next
       }
     }
 
     if (!selected) {
       // Take a screenshot for debugging
       await page.screenshot({ path: `debug-no-body-parts-${Date.now()}.png`, fullPage: true });
-
-      // Log all elements with data-testid that start with "body-part-"
-      const bodyPartElements = await page.locator('[data-testid^="body-part-"]').all();
-      console.log(`Found ${bodyPartElements.length} body part elements`);
-
-      for (let i = 0; i < bodyPartElements.length; i++) {
-        const testId = await bodyPartElements[i].getAttribute("data-testid");
-        const isVisible = await bodyPartElements[i].isVisible();
-        console.log(`Body part ${i}: ${testId}, visible: ${isVisible}`);
-      }
 
       throw new Error("No body parts available for selection");
     }

@@ -3,9 +3,7 @@ import { logoutUser } from "./logout";
 
 // Mock fetch
 global.fetch = vi.fn();
-
-// Mock window.location
-const originalLocation = window.location;
+const mockedFetch = vi.mocked(fetch);
 
 beforeEach(() => {
   // @ts-expect-error: Need to delete window.location to mock it
@@ -20,9 +18,9 @@ afterEach(() => {
 describe("logoutUser", () => {
   describe("Successful logout", () => {
     it("returns success when API call succeeds", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: true,
-      });
+      } as Partial<Response> as Response);
 
       const result = await logoutUser();
 
@@ -35,9 +33,9 @@ describe("logoutUser", () => {
     });
 
     it("redirects to login page on success", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: true,
-      });
+      } as Partial<Response> as Response);
 
       await logoutUser();
 
@@ -48,11 +46,11 @@ describe("logoutUser", () => {
   describe("Failed logout", () => {
     it("returns error when API returns error response", async () => {
       const errorMessage = "Session expired";
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: false,
         status: 401,
         json: vi.fn().mockResolvedValue({ error: errorMessage }),
-      });
+      } as Partial<Response> as Response);
 
       const result = await logoutUser();
 
@@ -64,11 +62,11 @@ describe("logoutUser", () => {
     });
 
     it("returns default error when API returns no error text", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: false,
         status: 500,
         json: vi.fn().mockResolvedValue({}),
-      });
+      } as Partial<Response> as Response);
 
       const result = await logoutUser();
 
@@ -80,7 +78,7 @@ describe("logoutUser", () => {
 
     it("handles fetch network errors", async () => {
       const networkError = new Error("Network connection failed");
-      (fetch as any).mockRejectedValue(networkError);
+      mockedFetch.mockRejectedValue(networkError);
 
       const result = await logoutUser();
 
@@ -92,7 +90,7 @@ describe("logoutUser", () => {
     });
 
     it("handles non-Error exceptions", async () => {
-      (fetch as any).mockRejectedValue("String error");
+      mockedFetch.mockRejectedValue("String error");
 
       const result = await logoutUser();
 
@@ -103,11 +101,11 @@ describe("logoutUser", () => {
     });
 
     it("does not redirect on failed logout", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: false,
         status: 400,
         json: vi.fn().mockResolvedValue({ error: "Bad request" }),
-      });
+      } as Partial<Response> as Response);
 
       await logoutUser();
 
@@ -117,9 +115,9 @@ describe("logoutUser", () => {
 
   describe("API call configuration", () => {
     it("makes POST request with correct headers", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: true,
-      });
+      } as Partial<Response> as Response);
 
       await logoutUser();
 
@@ -130,9 +128,9 @@ describe("logoutUser", () => {
     });
 
     it("calls correct endpoint", async () => {
-      (fetch as any).mockResolvedValue({
+      mockedFetch.mockResolvedValue({
         ok: true,
-      });
+      } as Partial<Response> as Response);
 
       await logoutUser();
 

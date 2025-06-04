@@ -10,10 +10,16 @@ vi.mock("@/lib/utils/api", () => ({
 
 type APIRouteContext = Parameters<APIRoute>[0];
 
+interface MockSupabaseClient {
+  auth: {
+    getSession: Mock;
+  };
+}
+
 describe("withAuth", () => {
   let mockHandler: Mock;
   let mockContext: APIRouteContext;
-  let mockSupabase: any;
+  let mockSupabase: MockSupabaseClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -29,7 +35,7 @@ describe("withAuth", () => {
       locals: {
         supabase: mockSupabase,
       },
-    } as APIRouteContext;
+    } as unknown as APIRouteContext;
   });
 
   describe("Success scenarios", () => {
@@ -83,7 +89,7 @@ describe("withAuth", () => {
         locals: {
           supabase: null,
         },
-      } as APIRouteContext;
+      } as unknown as APIRouteContext;
 
       const wrappedHandler = withAuth(mockHandler);
       const result = await wrappedHandler(contextWithoutSupabase);
@@ -107,7 +113,7 @@ describe("withAuth", () => {
         locals: {
           supabase: undefined,
         },
-      } as APIRouteContext;
+      } as unknown as APIRouteContext;
 
       const wrappedHandler = withAuth(mockHandler);
       const result = await wrappedHandler(contextWithUndefinedSupabase);
@@ -272,7 +278,7 @@ describe("withAuth", () => {
 
       const contextWithoutSupabase = {
         locals: { supabase: null },
-      } as APIRouteContext;
+      } as unknown as APIRouteContext;
 
       const wrappedHandler = withAuth(mockHandler);
       await wrappedHandler(contextWithoutSupabase);

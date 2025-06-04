@@ -1,15 +1,15 @@
 import type { FeedbackRatingDto } from "@/types";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fetchFeedback, submitFeedback } from "./feedback";
+import { fetchFeedback, submitFeedback, type FeedbackApiResponse } from "./feedback";
 
 const sessionId = 123;
 const feedback: FeedbackRatingDto = { rating: 1, rated_at: "2024-01-01T00:00:00Z" };
 
-function mockFetch(response: any, ok = true) {
+function mockFetch(response: FeedbackApiResponse, ok = true) {
   global.fetch = vi.fn().mockResolvedValue({
     ok,
     json: async () => response,
-  }) as any;
+  } as Partial<Response> as Response);
 }
 
 describe("session feedback service", () => {
@@ -24,7 +24,7 @@ describe("session feedback service", () => {
   });
 
   it("throws on fetch feedback error", async () => {
-    mockFetch({ error: "fail" }, false);
+    mockFetch({ error: "fail" } as FeedbackApiResponse, false);
     await expect(fetchFeedback(sessionId)).rejects.toThrow("fail");
   });
 
@@ -35,7 +35,7 @@ describe("session feedback service", () => {
   });
 
   it("throws on submit feedback error", async () => {
-    mockFetch({ error: "fail" }, false);
+    mockFetch({ error: "fail" } as FeedbackApiResponse, false);
     await expect(submitFeedback(sessionId, 1)).rejects.toThrow("fail");
   });
 });

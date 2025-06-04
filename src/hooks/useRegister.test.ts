@@ -1,3 +1,4 @@
+import type { RegisterFormResult } from "@/lib/services/auth";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRegister } from "./useRegister";
@@ -10,7 +11,7 @@ vi.mock("@/lib/services/auth/registerForm", () => ({
 describe("useRegister", () => {
   const getRegisterService = async () => {
     const { handleRegisterSubmit } = await import("@/lib/services/auth/registerForm");
-    return handleRegisterSubmit as any;
+    return handleRegisterSubmit as ReturnType<typeof vi.fn<[FormData], Promise<RegisterFormResult>>>;
   };
 
   beforeEach(() => {

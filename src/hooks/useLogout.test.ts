@@ -1,3 +1,4 @@
+import type { LogoutResult } from "@/lib/services/auth/logout";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useLogout } from "./useLogout";
@@ -13,7 +14,7 @@ global.alert = vi.fn();
 describe("useLogout", () => {
   const getLogoutService = async () => {
     const { logoutUser } = await import("@/lib/services/auth/logout");
-    return logoutUser as any;
+    return logoutUser as ReturnType<typeof vi.fn<[], Promise<LogoutResult>>>;
   };
 
   beforeEach(() => {

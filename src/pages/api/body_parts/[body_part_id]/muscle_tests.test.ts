@@ -22,6 +22,25 @@ interface Locals {
   supabase: Supabase;
 }
 
+// Typy dla odpowiedzi API na podstawie jsonResponse z muscle_tests.ts
+interface ApiSuccessResponse {
+  data: MuscleTestDto[];
+}
+
+interface ApiErrorResponse {
+  error: string;
+  details?: unknown;
+}
+
+interface ApiAuthErrorResponse {
+  error: {
+    code: string;
+    message: string;
+  };
+}
+
+type ApiResponse = ApiSuccessResponse | ApiErrorResponse | ApiAuthErrorResponse;
+
 // Funkcja do tworzenia mocka Supabase
 function createMockSupabase({ data, error }: { data?: MuscleTestDto[] | null; error?: { message: string } | null }) {
   return {
@@ -42,12 +61,12 @@ function createMockSupabase({ data, error }: { data?: MuscleTestDto[] | null; er
 function createMockApiContext(
   params: Record<string, string | undefined>, // Oczekujemy params jako obiektu
   locals: Locals,
-  method: string = "GET",
-  pathnameSuffix: string = "" // Dla dynamicznych ścieżek
+  method = "GET",
+  pathnameSuffix = "" // Dla dynamicznych ścieżek
 ): APIContext {
   const requestUrl = `http://localhost/api/body_parts/${params.body_part_id || "test"}${pathnameSuffix}`;
   const request = new Request(requestUrl, { method, headers: new Headers() }) as Request & {
-    json: () => Promise<any>;
+    json: () => Promise<ApiResponse>;
     text: () => Promise<string>;
     arrayBuffer: () => Promise<ArrayBuffer>;
     formData: () => Promise<FormData>;
@@ -66,7 +85,7 @@ function createMockApiContext(
       set: vi.fn(),
       delete: vi.fn(),
       has: vi.fn(),
-    } as any, // Uproszczone dla mocka
+    } as Partial<APIContext["cookies"]>, // Bardziej precyzyjny typ dla mocka
     redirect: vi.fn((path: string, status?: number) => new Response(null, { status: status || 302, headers: { Location: path } })),
     clientAddress: "127.0.0.1",
     // site: new URL("http://localhost"),

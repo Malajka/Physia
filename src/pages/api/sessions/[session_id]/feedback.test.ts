@@ -57,7 +57,7 @@ function createMockContext({
       set: vi.fn(),
       delete: vi.fn(),
       has: vi.fn(),
-    } as any,
+    } as Partial<APIContext["cookies"]>,
     site: undefined,
     generator: undefined,
     url: new URL(`http://localhost:4321${urlPath}`),

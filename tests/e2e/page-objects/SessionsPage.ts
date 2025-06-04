@@ -29,7 +29,6 @@ export class SessionsPage extends BasePage {
     for (const btn of buttons) {
       if (await btn.isVisible()) {
         // Wait for logout response if available
-        const logoutResponsePromise = this.page.waitForResponse("**/api/auth/logout").catch(() => null);
         await btn.click();
         logoutButtonClicked = true;
         break;
@@ -99,7 +98,7 @@ export class SessionsPage extends BasePage {
     try {
       await this.waitForSessionItems();
       return await this.sessionItems.first().isVisible({ timeout: 5000 });
-    } catch (error) {
+    } catch {
       return false;
     }
   }
