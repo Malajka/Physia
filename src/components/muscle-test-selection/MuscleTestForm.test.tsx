@@ -51,8 +51,8 @@ describe("MuscleTestForm", () => {
 
   it("redirects with correct URL when form is valid", () => {
     const originalLocation = window.location;
-    
-    Object.defineProperty(window, 'location', {
+
+    Object.defineProperty(window, "location", {
       value: { href: "" },
       writable: true,
     });
@@ -64,7 +64,7 @@ describe("MuscleTestForm", () => {
     expect(window.location.href).toMatch(/\/session\/generate\?bodyPartId=1&tests=/);
 
     // Restore the original location
-    Object.defineProperty(window, 'location', {
+    Object.defineProperty(window, "location", {
       value: originalLocation,
       writable: true,
     });

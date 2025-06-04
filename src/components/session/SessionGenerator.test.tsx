@@ -16,15 +16,15 @@ describe("SessionGenerator", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     originalLocation = window.location;
-    
-    Object.defineProperty(window, 'location', {
+
+    Object.defineProperty(window, "location", {
       value: { href: "" },
       writable: true,
     });
   });
 
   afterEach(() => {
-    Object.defineProperty(window, 'location', {
+    Object.defineProperty(window, "location", {
       value: originalLocation,
       writable: true,
     });

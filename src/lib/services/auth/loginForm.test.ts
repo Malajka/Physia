@@ -13,7 +13,7 @@ vi.mock("@/lib/validators/auth.validator", () => ({
 }));
 
 beforeEach(() => {
-  Object.defineProperty(window, 'location', {
+  Object.defineProperty(window, "location", {
     value: { href: "" },
     writable: true,
   });

@@ -6,7 +6,7 @@ global.fetch = vi.fn();
 const mockedFetch = vi.mocked(fetch);
 
 beforeEach(() => {
-  Object.defineProperty(window, 'location', {
+  Object.defineProperty(window, "location", {
     value: { href: "" },
     writable: true,
   });

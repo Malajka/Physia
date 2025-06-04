@@ -29,18 +29,18 @@ describe("NavigationNextButton", () => {
 
   it("falls back to window.location when onNavigate is not provided", () => {
     const originalLocation = window.location;
-    
-    Object.defineProperty(window, 'location', {
+
+    Object.defineProperty(window, "location", {
       value: { pathname: "" },
       writable: true,
     });
-    
+
     render(<NavigationNextButton selectedBodyPartId={7} />);
     const button = screen.getByRole("button", { name: /next/i });
     fireEvent.click(button);
     expect(window.location.pathname).toBe("/muscle-tests/7");
-    
-    Object.defineProperty(window, 'location', {
+
+    Object.defineProperty(window, "location", {
       value: originalLocation,
       writable: true,
     });
