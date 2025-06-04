@@ -1,16 +1,9 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "include": ["**/*"],
+  "include": [".astro/types.d.ts", "**/*"],
   "exclude": ["dist"],
   "compilerOptions": {
-    "types": ["@types/babel__core", "@types/babel__generator", "@types/babel__template", "@types/babel__traverse", "@types/phoenix"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
     "baseUrl": ".",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"]
     }
