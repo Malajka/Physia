@@ -180,6 +180,25 @@ jobs:
             test-results/
           retention-days: 7
 
+      - name: Upload debug screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-debug-screenshots
+          path: |
+            debug-*.png
+            test-results/**/*.png
+          retention-days: 7
+
+      - name: Upload trace files
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-trace-files
+          path: |
+            test-results/**/*.zip
+          retention-days: 7
+
   status-comment:
     name: Status Comment
     runs-on: ubuntu-latest

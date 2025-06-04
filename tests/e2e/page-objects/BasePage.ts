@@ -1,21 +1,47 @@
 import type { Page } from "@playwright/test";
 
 export class BasePage {
-  readonly page: Page;
+  protected page: Page;
 
   constructor(page: Page) {
     this.page = page;
   }
 
-  async goto(path: string) {
-    await this.page.goto(path);
-  }
-
-  getByTestId(testId: string) {
+  protected getByTestId(testId: string) {
     return this.page.getByTestId(testId);
   }
 
-  async waitForUrl(url: string | RegExp) {
-    await this.page.waitForURL(url);
+  protected async goto(url: string) {
+    await this.page.goto(url);
+  }
+
+  protected async waitForUrl(url: string, timeout = 10000) {
+    await this.page.waitForURL(url, { timeout });
+  }
+
+  /**
+   * Enhanced utility method for waiting for session elements to appear.
+   * This addresses common timeout issues with session generation.
+   */
+  protected async waitForSessionElement(testId: string, timeout = 30000) {
+    try {
+      // First wait for URL to indicate session page
+      await this.page.waitForURL("**/sessions/**", { timeout });
+
+      // Then wait for the specific element to be visible
+      await this.page.waitForSelector(`[data-testid="${testId}"]`, {
+        state: "visible",
+        timeout,
+      });
+
+      return this.getByTestId(testId);
+    } catch (error) {
+      // Take screenshot for debugging
+      await this.page.screenshot({
+        path: `debug-${testId}-timeout-${Date.now()}.png`,
+        fullPage: true,
+      });
+      throw new Error(`Element with testId "${testId}" not found within ${timeout}ms. ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
 }

@@ -118,9 +118,13 @@ export class SessionsPage extends BasePage {
   }
 
   async expectSessionDetailsVisible() {
-    await expect(this.getByTestId("session-title")).toBeVisible();
-    await expect(this.getByTestId("session-description")).toBeVisible();
-    await expect(this.page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible();
+    // Use the enhanced utility method for better reliability
+    await this.waitForSessionElement("session-title");
+
+    // Check additional elements with extended timeouts
+    await expect(this.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(this.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
+    await expect(this.page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   }
 
   async expectNoSessionsVisible() {

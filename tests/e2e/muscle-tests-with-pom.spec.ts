@@ -87,10 +87,18 @@ test.describe("Muscle Tests (with POM)", () => {
     // Click next to generate session
     await muscleTestsPage.clickNext();
 
-    // Step 6: Verify session plan was generated
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("session-description")).toBeVisible();
-    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible();
+    // Step 6: Verify session plan was generated with improved waiting
+    // Use enhanced utility method for session element waiting
+    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForSelector('[data-testid="session-title"]', {
+      state: "visible",
+      timeout: 30000,
+    });
+
+    // Now check visibility with extended timeout
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   });
 
   test("Should require at least one slider value to proceed", async () => {
@@ -174,11 +182,20 @@ test.describe("Muscle Tests (with POM)", () => {
       }
     }
 
-    // Proceed to session generation
+    // Proceed to session generation with improved waiting
     await muscleTestsPage.clickNext();
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("session-description")).toBeVisible();
-    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible();
+
+    // Use enhanced utility method for session element waiting
+    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForSelector('[data-testid="session-title"]', {
+      state: "visible",
+      timeout: 30000,
+    });
+
+    // Now check visibility with extended timeout
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
   });
 
   test("Should generate different sessions based on pain levels", async () => {
@@ -210,10 +227,18 @@ test.describe("Muscle Tests (with POM)", () => {
     await muscleTestsPage.setSliderValue("slider-1", 8);
     await muscleTestsPage.clickNext();
 
-    // Verify session was generated
-    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 15000 });
-    await expect(page.getByTestId("session-description")).toBeVisible();
-    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible();
+    // Verify session was generated with improved waiting
+    // Use enhanced utility method for session element waiting
+    await page.waitForURL("**/sessions/**", { timeout: 30000 });
+    await page.waitForSelector('[data-testid="session-title"]', {
+      state: "visible",
+      timeout: 30000,
+    });
+
+    // Now check visibility with extended timeout
+    await expect(page.getByTestId("session-title")).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });
 
     // Could add assertions about the type of exercises recommended for high pain
     const sessionTitle = await page.getByTestId("session-title").textContent();

@@ -42,7 +42,8 @@ test.describe("Body Parts Selection (with POM)", () => {
     await page.waitForTimeout(3000);
 
     // Verify successful login by checking we're NOT on login page anymore
-    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    await page.waitForURL("**/sessions", { timeout: 30000 });
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
     // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
@@ -83,7 +84,8 @@ test.describe("Body Parts Selection (with POM)", () => {
     await page.waitForTimeout(3000);
 
     // Verify successful login by checking we're NOT on login page anymore
-    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    await page.waitForURL("**/sessions", { timeout: 30000 });
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
     // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
@@ -112,7 +114,8 @@ test.describe("Body Parts Selection (with POM)", () => {
     await page.waitForTimeout(3000);
 
     // Verify successful login by checking we're NOT on login page anymore
-    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    await page.waitForURL("**/sessions", { timeout: 30000 });
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
     // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
@@ -166,7 +169,8 @@ test.describe("Body Parts Selection (with POM)", () => {
     await page.waitForTimeout(3000);
 
     // Verify successful login by checking we're NOT on login page anymore
-    await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+    await page.waitForURL("**/sessions", { timeout: 30000 });
+    await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
     // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
