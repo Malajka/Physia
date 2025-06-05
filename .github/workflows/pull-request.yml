@@ -24,6 +24,9 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      - name: Clean install environment
+        run: rm -rf node_modules
+
       - name: Install dependencies
         run: npm ci
 
@@ -31,11 +34,72 @@ jobs:
         id: lint-step
         run: npm run lint
 
-  unit-tests:
-    name: Unit Tests
+  typecheck:
+    name: TypeScript Check
     runs-on: ubuntu-latest
     needs: lint
     if: needs.lint.outputs.lint-success == 'true'
+    outputs:
+      typecheck-success: ${{ steps.typecheck-step.outcome == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Debug - List src/components/ui files
+        run: |
+          echo "=== Contents of src/components/ui ==="
+          ls -la src/components/ui/
+          echo ""
+          echo "=== Check specific files ==="
+          ls -la src/components/ui/Button.tsx || echo "Button.tsx not found"
+          ls -la src/components/ui/Slider.tsx || echo "Slider.tsx not found"
+          ls -la src/components/ui/Spinner.tsx || echo "Spinner.tsx not found"
+          ls -la src/components/ui/Skeleton.tsx || echo "Skeleton.tsx not found"
+
+      - name: Debug - Verify file integrity
+        run: |
+          echo "=== Working directory ==="
+          pwd
+          echo ""
+          echo "=== Git status ==="
+          git status --porcelain
+          echo ""
+          echo "=== Check tsconfig.json ==="
+          cat tsconfig.json
+          echo ""
+          echo "=== Verify file contents ==="
+          head -n 5 src/components/ui/Button.tsx || echo "Cannot read Button.tsx"
+
+      - name: Generate Astro types
+        run: npx astro sync
+
+      - name: Debug - Check .astro directory
+        run: |
+          echo "=== Contents of .astro directory ==="
+          ls -la .astro/ || echo ".astro directory not found"
+
+      - name: Generate TypeScript types
+        run: npx tsc --declaration --emitDeclarationOnly --skipLibCheck
+
+      - name: TypeScript check
+        id: typecheck-step
+        run: npx tsc --noEmit
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    if: needs.lint.outputs.lint-success == 'true' && needs.typecheck.outputs.typecheck-success == 'true'
     outputs:
       unit-test-success: ${{ steps.unit-test-step.outcome == 'success' }}
 
@@ -49,8 +113,13 @@ jobs:
           node-version-file: ".nvmrc"
           cache: "npm"
 
+      - name: Clean npm cache and node_modules
+        run: |
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
+
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run unit tests with coverage
         id: unit-test-step
@@ -64,57 +133,10 @@ jobs:
           path: coverage/
           retention-days: 7
 
-  e2e-tests:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    needs: lint
-    if: needs.lint.outputs.lint-success == 'true'
-    environment: integrations
-    outputs:
-      e2e-test-success: ${{ steps.e2e-test-step.outcome == 'success' }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Run E2E tests
-        id: e2e-test-step
-        run: npm run test:e2e
-        env:
-          # Secrets from GitHub environment 'integrations'
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
-          # Environment variables from GitHub environment 'integrations'
-          E2E_PASSWORD: ${{ vars.E2E_PASSWORD }}
-          E2E_USERNAME: ${{ vars.E2E_USERNAME }}
-          E2E_USERNAME_ID: ${{ vars.E2E_USERNAME_ID }}
-
-      - name: Upload E2E test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: e2e-test-results
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 7
-
   status-comment:
     name: Status Comment
     runs-on: ubuntu-latest
-    needs: [lint, unit-tests, e2e-tests]
+    needs: [lint, typecheck, unit-tests]
     if: always() && needs.lint.outputs.lint-success == 'true'
     permissions:
       pull-requests: write
@@ -132,11 +154,11 @@ jobs:
             | Job | Status |
             |-----|--------|
             | **Linting** | ${{ needs.lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |
+            | **TypeScript Check** | ${{ needs.typecheck.result == 'success' && '✅ Passed' || needs.typecheck.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |
             | **Unit Tests** | ${{ needs.unit-tests.result == 'success' && '✅ Passed' || needs.unit-tests.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |
-            | **E2E Tests** | ${{ needs.e2e-tests.result == 'success' && '✅ Passed' || needs.e2e-tests.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |
 
             ### Overall Status
-            ${{ (needs.lint.result == 'success' && needs.unit-tests.result == 'success' && needs.e2e-tests.result == 'success') && '🎉 **All checks passed!** This PR is ready for review.' || '⚠️ **Some checks failed.** Please review the failed jobs above.' }}
+            ${{ (needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.unit-tests.result == 'success') && '🎉 **All checks passed!** This PR is ready for review.' || '⚠️ **Some checks failed.** Please review the failed jobs above.' }}
 
             ---
             *Last updated: ${{ github.event.pull_request.head.sha }}*

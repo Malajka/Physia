@@ -1,0 +1,137 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Test Plan for "Physia" Physiotherapeutic Pain-Relief Exercise Generator
+
+## 1. Introduction and Objectives  
+**Purpose:** Validate that the Physia web application correctly guides users with overload-related muscle pain to a tailored physiotherapeutic pain-relief exercise plan based on selected body part and pain intensity.  
+**Objectives:**  
+- Ensure UI components render and behave correctly.  
+- Verify correct data flow between frontend, Astro pages, React components, and Supabase backend.  
+- Confirm business logic for exercise selection matches physiotherapist-provided rules.  
+- Validate performance, accessibility, security, and reliability of the application.  
+
+## 2. Scope of Testing  
+**In scope:**  
+- Frontend unit tests (components, hooks, helpers)  
+- Integration tests (API routes, Supabase client interactions)  
+- End-to-end (E2E) user flows (selection → plan display)  
+- Performance tests (page load, API response times)  
+- Accessibility tests (WCAG compliance)  
+- Security sanity checks (input validation, authentication flows)  
+
+**Out of scope:**  
+- Third-party libraries internals (Astro, React, Tailwind)  
+- Supabase managed infrastructure beyond API integration  
+
+## 3. Types of Tests  
+
+| Test Type           | Focus                                                   | Tools               |
+|---------------------|---------------------------------------------------------|---------------------|
+| Unit Tests          | React components, utility functions, custom hooks       | Vitest / Jest + RTL |
+| Integration Tests   | Astro pages → API routes → Supabase client              | Vitest + mocking    |
+| End-to-End Tests    | Full user journey through UI, network, DB               |  Playwright|
+| Performance Tests   | Lighthouse audits, API latency                          | Lighthouse CI       |
+| Accessibility Tests | Keyboard navigation, ARIA roles, color contrast         | axe / pa11y CI      |
+| Security Checks     | Input validation, rate limiting, auth flow              | OWASP ZAP / manual  |
+
+## 4. Test Scenarios  
+
+### 4.1. Core User Flows  
+1. **Home Page Load:**  
+   - Page renders in ≤ 2 s, no console errors.  
+   - Layout and navigation menu visible.  
+
+2. **Disclaimer Acceptance:**  
+   - New users see a modal popup with disclaimer text before generating their first session.  
+   - “Accept Disclaimer” button is enabled immediately.  
+   - User cannot proceed until they click “Accept Disclaimer.”  
+   - Once accepted, disclaimer modal does not reappear in the same or subsequent sessions.  
+   - Acceptance state persists in user profile or local storage.  
+
+3. **Body Part Selection:**  
+   - Clickable buttons for body parts (e.g. “Shoulder,” “Lower Back”). 
+   - Only one button can be selected at the time. 
+   - On selection, the next step opens with correct headline.  
+
+4. **Pain Intensity Input:**  
+   - Slider/input accepts values 1–10.  
+   - Boundary tests at 1 and 10.  
+   - Invalid input blocked or defaulted.  
+   - At least one test with value above 0 is required to enable “Generate Plan.”  
+
+5. **Submit & Plan Generation:**  
+   - “Generate Plan” button on click, triggers API call to `/api/exercises`.  
+   - Handles 200 OK (exercise list displays correctly).  
+   - Handles 4xx/5xx (error banner shown).  
+   - Retry flow works.  
+
+### 4.2. Data & Business-Logic Validation  
+- Each returned exercise matches the selected body part.  
+- Pain intensity influences exercise intensity (verify mapping rules).  
+- DTOs and shared types (`src/types.ts`) enforce correct typing.  
+- Disclaimer acceptance is recorded and persisted correctly.  
+
+### 4.3. Edge & Negative Cases  
+- No exercises found → “No plan available” message.  
+- Network offline → UI displays offline notification.  
+- Invalid API response shape → error is logged and user sees fallback.  
+- Attempting to bypass disclaimer → redirected back to modal.  
+
+### 4.4. Accessibility & Responsiveness  
+- Tab navigation reaches all interactive elements in order.  
+- Screen reader announces form labels, buttons, and error states.  
+- Layout adapts across mobile (≤ 480 px), tablet, desktop.  
+
+## 5. Test Environment  
+- **Browsers:** Chrome latest, Firefox latest, Safari on macOS.  
+- **Devices:** Desktop & mobile emulators.  
+- **Backend:** Supabase local emulator or staging DB with seeded test data.  
+- **CI/CD:** GitHub Actions runner with Node.js 18.x, Tailwind build.  
+  - *Note on Node.js 18.x: Chosen for LTS stability and verified compatibility with Astro 5, React 19, TS 5, and Tailwind 4.*  
+- **Test Data:** Controlled fixtures for exercises, body parts, intensity ranges.
+
+## 6. Testing Tools & Frameworks for MVP  
+- **Unit Testing:** Vitest (lightweight, fast setup with Astro/React)  
+- **Component Testing:** React Testing Library (user-centric assertions)  
+- **E2E Testing:** Playwright (single, reliable tool for critical flows)  
+- **Manual Checklist:** Spreadsheet for final accessibility and UX checks  
+- **CI Integration:** GitHub Actions with concise pass/fail reporting  
+- **Issue Tracking:** GitHub Issues with basic labels (severity, area)  
+
+*Prioritize user-facing flows, minimal config, and rapid feedback for MVP.*
+## 7. Test Schedule & Milestones  
+
+| Sprint   | Activities                                     | Deliverables                 |
+|----------|------------------------------------------------|------------------------------|
+| Sprint 1 | Unit tests for UI components & utils           | ≥ 80% coverage on components |
+| Sprint 2 | Integration tests on API routes & Supabase     | Mocked Supabase tests        |
+| Sprint 3 | E2E happy path + negative flows                | Playwright suite             |
+| Sprint 4 | Performance & accessibility audits             | Lighthouse & axe reports     |
+| Sprint 5 | Security sanity scan + regression              | OWASP ZAP report             |
+| Ongoing  | Maintenance & regression in GitHub Actions CI  | Green pipeline               |
+
+## 8. Test Acceptance Criteria  
+- **Unit & Integration:** ≥ 90% code coverage, no high-severity failures.  
+- **E2E:** All core flows pass in CI.  
+- **Performance:** Lighthouse score ≥ 90.  
+- **Accessibility:** No critical WCAG violations.  
+- **Security:** No high or critical OWASP findings.
+
+## 9. Roles & Responsibilities  
+- **QA Engineer:** Design, execution, reporting, suite maintenance  
+- **Frontend Developer:** Implement fixes, support test IDs & mocks  
+- **Backend Developer:** Validate API contracts, seed test data  
+- **DevOps/CI Owner:** Configure GitHub Actions, runners, Docker  
+- **Product Owner:** Approve acceptance criteria & test plan updates
+
+## 10. Defect Reporting & Tracking  
+- **Tool:** GitHub Issues (labels: Critical, Major, Minor; UI, API, Integration)  
+- **Procedure:**  
+  1. Reproduce & gather logs/screenshots.  
+  2. Create issue with steps-to-reproduce, expected vs actual.  
+  3. Assign, tag sprint.  
+  4. QA verifies fix in next release branch.  
+  5. Close issue upon regression-free verification.  

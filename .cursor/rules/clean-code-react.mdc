@@ -1,0 +1,60 @@
+---
+description: 
+globs: *.tsx
+alwaysApply: false
+---
+### Guidelines for React
+
+- Use functional components with hooks instead of class components
+- Never use "use client" and other Next.js directives as we use React with Astro
+- Extract logic into custom hooks in `src/components/hooks` or `src/lib/hooks`
+- Store reusable utilities in `src/lib/utils/`
+- Store constants in `src/lib/constants/`
+- Store API functions in `src/lib/services/`
+- Store global contexts in `src/lib/contexts/`
+- Implement React.memo() for expensive components that render often with the same props
+- Utilize React.lazy() and Suspense for code-splitting and performance optimization
+- Use the useCallback hook for event handlers passed to child components to prevent unnecessary re-renders
+- Prefer useMemo for expensive calculations to avoid recomputation on every render
+- Implement useId() for generating unique IDs for accessibility attributes
+- Consider using the new useOptimistic hook for optimistic UI updates in forms
+- Use useTransition for non-urgent state updates to keep the UI responsive
+
+### 📦 Component Design
+- Keep components pure and reusable
+- Split components if they grow too large or complex
+- Prefer functional components with hooks
+- Use PropTypes or TypeScript for prop validation
+- Implement error boundaries for fault tolerance
+- Create component compositions instead of complex components
+- Consider using React.memo() for performance optimization
+- Use controlled components over uncontrolled when possible
+- Place each component in a separate file in `src/components/`
+
+### 🧱 JSX Rules
+- One component per file
+- Use fragments (`<>`) instead of unnecessary wrappers
+- Always use `key` when rendering lists
+- Prefer object destructuring for props
+- Keep JSX expressions simple
+- Use conditional rendering patterns consistently
+- Avoid inline styles (use CSS modules or styled components)
+- Format JSX for readability with proper indentation
+
+### 🎣 Hooks Usage
+- Always start with `use`
+- Keep hook logic at the top level
+- Custom hooks go in `src/lib/hooks/`
+- Avoid using hooks inside loops or conditions
+- Keep useEffect dependencies accurate
+- Use dependency arrays properly
+- Extract complex effects to custom hooks
+- Consider useCallback for functions passed to child components
+
+### 🎯 State Management
+- Co-locate state close to usage
+- Use `useReducer` for complex logic
+- Use external state libraries only when needed
+- Implement context efficiently
+- Normalize complex state objects
+- Consider state

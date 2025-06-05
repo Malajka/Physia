@@ -1,0 +1,54 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+```mermaid
+flowchart TD
+  %% Setup Supabase and Middleware
+  subgraph Setup
+    SC[Supabase Client (src/db/supabase.client.ts)] --> MW[Astro Middleware<br/>context.locals.supabase]
+    MW --> AuthAPI((Auth API Endpoints))
+    MW --> SSRPages((Protected SSR Pages))
+  end
+
+  %% Registration Flow
+  subgraph Registration
+    U1[User] --> RP[/register.astro/]
+    RP --> AF1[<AuthForm>]
+    AF1 -->|validate & submit| APIReg[POST /api/auth/register]
+    APIReg --> SBSignUp[supabase.auth.signUp]
+    SBSignUp --> APIReg
+    APIReg -->|200 OK| LoginPage[/login.astro/]
+    APIReg -->|400/409| AF1
+  end
+
+  %% Login Flow
+  subgraph Login
+    U2[User] --> LP[/login.astro/]
+    LP --> AF2[<AuthForm>]
+    AF2 -->|submit| APILogin[POST /api/auth/login]
+    APILogin --> SBSignIn[supabase.auth.signInWithPassword]
+    SBSignIn --> APILogin
+    APILogin -->|session cookie| Home[/index.astro/]
+    APILogin -->|401 Unauthorized| AF2
+  end
+
+  %% Logout Flow
+  subgraph Logout
+    U5[User] --> LO[Click "Log out" on Nav]
+    LO --> APILogout[POST /api/auth/logout]
+    APILogout --> SBSignOut[supabase.auth.signOut]
+    SBSignOut --> APILogout
+    APILogout -->|redirect| LoginPage
+  end
+
+  %% SSR Protected Page Flow
+  subgraph SSRProtected
+    PP[/my-sessions.astro/]
+    PP -->|Astro.serverSide| SSRChk[supabase.auth.getSession()]
+    SSRChk -->|valid session| PP
+    SSRChk -->|no session| LoginPage
+  end
+
+

@@ -1,8 +1,86 @@
 ---
-import Initial from "../components/Initial.astro";
-import Layout from "../layouts/Layout.astro";
+export const prerender = false;
+import Layout from "@/layouts/Layout.astro";
+
+// Fetch session to determine if user is authenticated
+const {
+  data: { session },
+} = await Astro.locals.supabase.auth.getSession();
+const isAuthenticated = !!session;
+
+// If authenticated, redirect to sessions, otherwise show the landing page
+// if (isAuthenticated) {
+//   return Astro.redirect("/sessions");
+// }
 ---
 
-<Layout>
-  <Initial />
+<Layout title="Physia - Personalized Exercise Plans">
+  <div class="container mx-auto px-4 py-12">
+    <section class="text-center max-w-3xl mx-auto mb-16">
+      <div class="flex flex-col items-center mb-6">
+        <img src="/physia-logo.png" alt="Physia illustration" class="h-24 md:h-32 w-auto" />
+        <h1 class="text-4xl md:text-5xl font-bold text-[var(--primary)] text-center">Personalized Exercise Plans for Overload-Related Muscle Pain</h1>
+      </div>
+      <p class="text-xl text-[var(--foreground)] mb-8">
+        Get custom exercise plans based on your specific body pain points, curated by physiotherapists and personalized by advanced AI.
+      </p>
+      {
+        !isAuthenticated ? (
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="/login"
+              class="px-6 py-3 bg-[var(--primary)] hover:bg-dark-green text-[var(--primary-foreground)] font-medium rounded-xl shadow-md transition-colors"
+            >
+              Log In
+            </a>
+            <a
+              href="/register"
+              class="px-6 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-medium rounded-xl shadow-md transition-colors"
+            >
+              Create Account
+            </a>
+          </div>
+        ) : null
+      }
+    </section>
+
+    <section class="grid md:grid-cols-3 gap-8 mb-16">
+      <div class="bg-[var(--card)] p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-[var(--primary)] mb-3">Select Body Area</h2>
+        <p class="text-[var(--foreground)]">Choose from four key areas: Neck & Upper Back, Lower Back, Wrists & Forearms, or Hips & Knees.</p>
+      </div>
+
+      <div class="bg-[var(--card)] p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-[var(--primary)] mb-3">Rate Your Pain</h2>
+        <p class="text-[var(--foreground)]">Use our simple sliding scale to indicate your pain level for specific muscle tests.</p>
+      </div>
+
+      <div class="bg-[var(--card)] p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-[var(--primary)] mb-3">Get Your Plan</h2>
+        <p class="text-[var(--foreground)]">Our AI generates a personalized exercise plan based on your inputs and expert physiotherapy data.</p>
+      </div>
+    </section>
+
+    <section class="bg-[var(--muted)] p-8 rounded-xl shadow-lg">
+      <h2 class="text-2xl font-bold text-center text-[var(--primary)] mb-6">Why Physia?</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold text-[var(--primary)] mb-2">Expert Guidance</h3>
+          <p class="text-[var(--foreground)]">All exercises are developed by licensed physiotherapists with years of experience.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-[var(--primary)] mb-2">AI Personalization</h3>
+          <p class="text-[var(--foreground)]">Advanced AI tailors exercise plans to your specific needs and pain intensity.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-[var(--primary)] mb-2">Track Progress</h3>
+          <p class="text-[var(--foreground)]">Save your sessions and track how your exercises and pain levels change over time.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-[var(--primary)] mb-2">Convenience</h3>
+          <p class="text-[var(--foreground)]">Access your personalized exercise plans anytime, anywhere through our web platform.</p>
+        </div>
+      </div>
+    </section>
+  </div>
 </Layout>

@@ -1,0 +1,15 @@
+---
+export interface Props {
+  message: string;
+  href: string;
+  label: string;
+}
+const { message, href, label } = Astro.props;
+---
+
+<div class="text-center py-8">
+  <p>{message}</p>
+  <a href={href} class="text-blue-600 hover:underline mt-2 inline-block">
+    {label}
+  </a>
+</div>

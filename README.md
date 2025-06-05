@@ -40,6 +40,11 @@ The project addresses the challenges of accessing physiotherapists and managing 
 - Husky - Git hooks
 - TypeScript - Static typing
 
+### Testing
+
+- Unit Testing: Vitest, React Testing Library
+- E2E Testing: Playwright
+
 ## Getting Started
 
 ### Prerequisites

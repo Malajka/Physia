@@ -22,8 +22,8 @@ export default defineConfig({
 
   reporter: "html",
   expect: {
-    // Increase expect timeout
-    timeout: 15000,
+    // Increase expect timeout to support session generation wait times
+    timeout: 30000,
   },
   use: {
     baseURL: "http://localhost:4321",
