@@ -43,8 +43,13 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "cleanup db",
+      testMatch: /global\.teardown\.ts/,
+    },
+    {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      teardown: "cleanup db",
     },
   ],
   webServer: {
