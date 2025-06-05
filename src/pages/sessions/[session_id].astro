@@ -1,5 +1,6 @@
 ---
 import { FeedbackRating } from "@/components/session/FeedbackRating";
+import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
@@ -56,46 +57,53 @@ if (trainingSession) {
 ---
 
 <Layout title={pageTitle}>
-  <div class="container drop-shadow-md mx-auto p-8 text-center">
-    <img src="/images/phybsia.png" alt="Phybsia cat" class="mx-auto" style="max-width:6.25rem;width:100%;display:block;" />
-    <h2 class="text-2xl font-bold mb-4">Session {sessionId} generated successfully!</h2>
-    {sessionError && <p class="text-red-600">Error loading session: {sessionError}</p>}
-    {
-      trainingSession && (
-        <>
-          <div class="mt-6 text-left">
-            <h3 class="text-xl font-semibold" data-testid="session-title">
-              {trainingSession.training_plan.title}
-            </h3>
-            <p class="mb-4" data-testid="session-description">
-              {trainingSession.training_plan.description}
-            </p>
-            {trainingSession.training_plan.exercises.length > 0 ? (
-              trainingSession.training_plan.exercises.map((ex: TrainingPlan["exercises"][number]) => (
-                <div class="mb-4 p-4 border rounded-lg" style="background-color:#f5fffc;" data-testid={`session-exercise-${ex.id}`}>
-                  <h4 class="font-medium">{ex.name}</h4>
-                  <p>{ex.description}</p>
-                  <p>
-                    Sets: {ex.sets}, Reps: {ex.reps}, Rest: {ex.rest_time_seconds}s
-                  </p>
-                  {ex.notes && <p class="italic text-sm">{ex.notes}</p>}
-                  {exerciseImagesMap[ex.id]?.length && (
-                    <div class="mt-2 flex flex-wrap">
-                      {exerciseImagesMap[ex.id].map((img) => (
-                        <img src={img.file_path} alt={ex.name} class="w-32 h-32 object-cover m-1" />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : (
-              <p class="text-red-600">No exercises found in the training plan.</p>
-            )}
+  <div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]">
+    <div class="container mx-auto p-8">
+      {/* Header */}
+      <div class="text-center mb-8">
+        <img src="/images/phybsia.png" alt="Phybsia cat" class="mx-auto mb-4" style="max-width:6.25rem;width:100%;display:block;" />
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Session {sessionId}</h1>
+        <p class="text-lg text-gray-600">Your training plan is ready!</p>
+      </div>
+
+      {
+        sessionError && (
+          <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6 max-w-2xl mx-auto">
+            <p class="text-red-600">Error loading session: {sessionError}</p>
           </div>
-          <FeedbackRating client:load sessionId={sessionId} />
-        </>
-      )
-    }
-    <a href="/body-parts" class="mt-6 inline-block text-[#14a49b] hover:underline">← Back to start</a>
+        )
+      }
+
+      {
+        trainingSession ? (
+          <div class="max-w-7xl mx-auto">
+            <TrainingPlanDisplay client:load trainingPlan={trainingSession.training_plan} exerciseImagesMap={exerciseImagesMap} />
+
+            {/* Feedback Section */}
+            <div class="mt-12 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-2xl mx-auto">
+              <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">How was your session?</h3>
+              <FeedbackRating client:load sessionId={sessionId} />
+            </div>
+          </div>
+        ) : (
+          <div class="bg-white rounded-2xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-2xl mx-auto text-center">
+            <p class="text-red-600">No training plan found for this session.</p>
+          </div>
+        )
+      }
+
+      {/* Navigation */}
+      <div class="text-center mt-8">
+        <a
+          href="/body-parts"
+          class="inline-flex items-center px-6 py-3 bg-white text-[#14a49b] font-medium rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
+        >
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          Back to start
+        </a>
+      </div>
+    </div>
   </div>
 </Layout>
