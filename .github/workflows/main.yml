@@ -1,16 +1,16 @@
 name: Test & Build Main
 
-# Uruchamianie workflow
+# Workflow triggers
 on:
-  # Automatycznie po push do main (zgodnie z aktualną konfiguracją repo)
+  # Automatically on push to main (according to current repo configuration)
   push:
     branches: [main]
 
-  # Automatycznie po pull request do main
+  # Automatically on pull request to main
   pull_request:
     branches: [main]
 
-  # Ręczne uruchamianie z GitHub UI
+  # Manual trigger from GitHub UI
   workflow_dispatch:
     inputs:
       environment:
@@ -23,18 +23,18 @@ on:
           - staging
           - production
 
-# Uprawnienia dla GITHUB_TOKEN (minimal permissions)
+# Permissions for GITHUB_TOKEN (minimal permissions)
 permissions:
   contents: read
   pull-requests: read
 
-# Zmienne środowiskowe
+# Environment variables
 env:
   NODE_ENV: development
   CI: true
 
 jobs:
-  # Job dla lint i formatowania
+  # Job for linting and formatting
   lint:
     name: Lint & Format Check
     runs-on: ubuntu-latest
@@ -59,7 +59,7 @@ jobs:
       - name: Check Prettier formatting
         run: npx prettier --check .
 
-  # Job dla typowania TypeScript
+  # Job for TypeScript checking
   typecheck:
     name: TypeScript Check
     runs-on: ubuntu-latest
@@ -81,7 +81,7 @@ jobs:
       - name: TypeScript check
         run: npx tsc --noEmit
 
-  # Job dla buildu aplikacji
+  # Job for application build
   build:
     name: Build Application
     runs-on: ubuntu-latest
@@ -114,12 +114,12 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
-  # Job dla testów (jeśli zostaną dodane w przyszłości)
+  # Job for tests (if added in the future)
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: false # Wyłączone dopóki nie ma testów
+    if: false # Disabled until tests are available
 
     steps:
       - name: Checkout code
@@ -135,9 +135,9 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test # Dodać gdy testy będą dostępne
+        run: npm test # Add when tests are available
 
-  # Job podsumowujący - będzie wymagany dla branch protection
+  # Summary job - will be required for branch protection
   ci-success:
     name: CI Success
     runs-on: ubuntu-latest
