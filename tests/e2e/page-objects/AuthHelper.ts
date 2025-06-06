@@ -44,8 +44,6 @@ export async function ensureLoggedOut(page: Page, context: BrowserContext): Prom
 
     // Additional wait to ensure all cleanup operations complete
     await page.waitForTimeout(500);
-
-    console.log("User data cleared, API logout called, Supabase signOut called.");
   } catch (error) {
     console.error("Error in ensureLoggedOut:", error);
     // Consider throwing error if logout is critical for test correctness
@@ -71,7 +69,7 @@ async function clearBrowserStorage(page: Page): Promise<void> {
           }
         }
       } catch (error) {
-        console.warn("Error clearing IndexedDB databases in page.evaluate:", error);
+        // IndexedDB clearing failed - this is non-critical for tests
       }
     }
   });
@@ -86,7 +84,7 @@ async function attemptApiLogout(page: Page): Promise<void> {
     await page.request.post("/api/auth/logout");
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.log("API auth logout attempt failed or endpoint not found (non-critical):", errorMessage);
+    // API auth logout attempt failed or endpoint not found (non-critical)
   }
 }
 
@@ -104,14 +102,12 @@ async function attemptSupabaseLogout(page: Page): Promise<void> {
         await window.supabase.auth.signOut();
         return "success";
       } catch (error) {
-        console.error("Supabase signOut error in page.evaluate:", error);
+        // Supabase signOut error occurred
         return "error";
       }
     }
     return "not_applicable";
   });
-
-  console.log("Supabase signOut result:", supabaseSignOutResult);
 }
 
 /**
@@ -123,7 +119,7 @@ export async function logoutViaAPI(page: Page): Promise<void> {
     await page.request.post("/api/logout");
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.log("API logout error (expected or non-critical):", errorMessage);
+    // API logout error (expected or non-critical)
   }
 }
 

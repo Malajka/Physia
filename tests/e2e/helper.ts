@@ -16,13 +16,13 @@ export async function waitForElementVisible(locator: Locator, options = { timeou
         await locator.waitFor({ state: "visible", timeout: options.timeout / retries });
         return; // Sukces
       } catch (err) {
-        console.log(`Próba ${4 - retries}/3 nie powiodła się. Ponawiam...`);
+        // Retry attempt failed, trying again
         retries--;
         if (retries === 0) throw err;
       }
     }
   } catch (error) {
-    console.error("Nie można znaleźć elementu:", error);
+    // Element not found after retries
     throw error;
   }
 }

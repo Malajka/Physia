@@ -55,7 +55,7 @@ async function setSessionFromCookies(supabase: SupabaseClient, context: APIConte
       refresh_token: refreshToken,
     });
     if (setSessionError) {
-      console.error(`[MW_HANDLER_SESSION_SET_ERROR] Error in setSession for ${pathname}:`, setSessionError.message);
+      // Error setting session from cookies
     }
   }
 }
@@ -63,7 +63,7 @@ async function setSessionFromCookies(supabase: SupabaseClient, context: APIConte
 async function fetchSession(supabase: SupabaseClient, pathname: string) {
   const { data: { session } = { session: null }, error: sessionFetchError } = await supabase.auth.getSession();
   if (sessionFetchError) {
-    console.error(`[MW_HANDLER_SESSION_FETCH_ERROR] Error fetching session for ${pathname}: ${sessionFetchError.message}`);
+    // Error fetching session
   }
   return session;
 }
