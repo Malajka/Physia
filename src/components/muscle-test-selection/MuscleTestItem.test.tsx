@@ -103,7 +103,7 @@ describe("MuscleTestItem", () => {
 `,
     };
     render(<MuscleTestItem test={testWithSteps} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Instructions")).toBeInTheDocument();
     expect(screen.getByText("Place your hand on the table")).toBeInTheDocument();
     expect(screen.getByText("Apply gentle pressure")).toBeInTheDocument();
@@ -120,7 +120,7 @@ Stop if you feel pain
 `,
     };
     render(<MuscleTestItem test={testWithWarnings} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Important")).toBeInTheDocument();
     expect(screen.getByText("Do not apply excessive pressure")).toBeInTheDocument();
     expect(screen.getByText("Stop if you feel pain")).toBeInTheDocument();
@@ -136,7 +136,7 @@ This is normal and expected
 `,
     };
     render(<MuscleTestItem test={testWithInfo} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("What to expect")).toBeInTheDocument();
     expect(screen.getByText("You may feel a slight tingling")).toBeInTheDocument();
     expect(screen.getByText("This is normal and expected")).toBeInTheDocument();
@@ -152,7 +152,7 @@ Keep your posture straight
 `,
     };
     render(<MuscleTestItem test={testWithNotes} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Remember")).toBeInTheDocument();
     expect(screen.getByText("Remember to breathe normally")).toBeInTheDocument();
     expect(screen.getByText("Keep your posture straight")).toBeInTheDocument();
@@ -164,7 +164,7 @@ Keep your posture straight
       description: "Simple description without sections\nSecond line of text",
     };
     render(<MuscleTestItem test={testWithSimpleDesc} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("What to expect")).toBeInTheDocument();
     expect(screen.getByText("Simple description without sections")).toBeInTheDocument();
     expect(screen.getByText("Second line of text")).toBeInTheDocument();
@@ -176,7 +176,7 @@ Keep your posture straight
       description: "This is a fallback description",
     };
     render(<MuscleTestItem test={testWithFallback} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("This is a fallback description")).toBeInTheDocument();
   });
 
@@ -186,7 +186,7 @@ Keep your posture straight
       description: null,
     };
     render(<MuscleTestItem test={testWithNullDesc} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Test Name")).toBeInTheDocument();
     // Should not crash and should render without description sections
   });
@@ -197,7 +197,7 @@ Keep your posture straight
       description: undefined,
     };
     render(<MuscleTestItem test={testWithUndefinedDesc} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Test Name")).toBeInTheDocument();
     // Should not crash and should render without description sections
   });
@@ -213,7 +213,7 @@ Keep your posture straight
 `,
     };
     render(<MuscleTestItem test={testWithBullets} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("First bullet point")).toBeInTheDocument();
     expect(screen.getByText("Second dash point")).toBeInTheDocument();
     expect(screen.getByText("Numbered point")).toBeInTheDocument();
@@ -237,7 +237,7 @@ Don't forget this
 `,
     };
     render(<MuscleTestItem test={testWithAltNames} value={3} onChange={vi.fn()} animating={false} />);
-    
+
     expect(screen.getByText("Instructions")).toBeInTheDocument();
     expect(screen.getByText("Follow these steps")).toBeInTheDocument();
     expect(screen.getByText("Important")).toBeInTheDocument();
