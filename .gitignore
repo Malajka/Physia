@@ -134,3 +134,6 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# test configuration files
+tests/e2e/config.ts
