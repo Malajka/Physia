@@ -101,4 +101,55 @@ describe("GET /api/sessions/[session_id]/exercises", () => {
     expect(body.error).toBe("Internal server error");
     expect(body.details).toMatch(/unexpected/);
   });
+
+  it("returns 500 when auth getSession throws error", async () => {
+    const supabase = {
+      auth: {
+        getSession: vi.fn().mockRejectedValue(new Error("Auth service error")),
+      },
+    } as unknown as Supabase;
+    locals = { supabase };
+    const params = { session_id: "123" };
+    const response = await GET({ locals, params } as unknown as GetArgs);
+    const body = await response.json();
+    expect(response.status).toBe(500);
+    expect(body.error).toBe("Internal server error");
+    expect(body.details).toBe("Auth service error");
+  });
+
+  it("returns 500 when auth getSession returns null sessionResult", async () => {
+    const supabase = {
+      auth: {
+        getSession: vi.fn().mockResolvedValue(null),
+      },
+    } as unknown as Supabase;
+    locals = { supabase };
+    const params = { session_id: "123" };
+    const response = await GET({ locals, params } as unknown as GetArgs);
+    const body = await response.json();
+    expect(response.status).toBe(500);
+    expect(body.error).toBe("Internal server error");
+    expect(body.details).toBe("No session result");
+  });
+
+  it("returns 401 when auth returns error", async () => {
+    locals = { supabase: createMockSupabase({ session: { user: { id: "user" } }, error: { message: "Auth error" } }) };
+    const params = { session_id: "123" };
+    const response = await GET({ locals, params } as unknown as GetArgs);
+    const body = await response.json();
+    expect(response.status).toBe(401);
+    expect(body.error).toBe("Authentication required");
+  });
+
+  it("returns 500 on non-Error exception from getExercisesForSession", async () => {
+    locals = { supabase: createMockSupabase() };
+    (getExercisesForSession as ReturnType<typeof vi.fn>).mockRejectedValue("String error");
+    const params = { session_id: "123" };
+    const response = await GET({ locals, params } as unknown as GetArgs);
+    const raw = await response.text();
+    const body = JSON.parse(raw);
+    expect(response.status).toBe(500);
+    expect(body.error).toBe("Internal server error");
+    expect(body.details).toBe("String error");
+  });
 });

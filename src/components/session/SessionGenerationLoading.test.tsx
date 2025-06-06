@@ -6,9 +6,11 @@ import { SessionGenerationLoading } from "./SessionGenerationLoading";
 
 // Mock UI components
 vi.mock("@/components/ui/Button", () => ({
-  Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
-    <button {...props}>{children}</button>
-  ),
+  Button: ({ children, asChild, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode; asChild?: boolean }) => {
+    // Destructure asChild to prevent it from being passed to the DOM element
+    const { ...rest } = props;
+    return <button {...rest}>{children}</button>;
+  },
 }));
 vi.mock("@/components/ui/Skeleton", () => ({
   Skeleton: (props: React.HTMLAttributes<HTMLDivElement>) => <div data-testid="skeleton" {...props} />,
