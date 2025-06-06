@@ -35,16 +35,16 @@ const isAuthenticated = !!session;
         </p>
         {
           !isAuthenticated ? (
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="/login"
-                class="px-6 py-3 bg-[var(--primary)] hover:bg-dark-green text-[var(--primary-foreground)] font-medium rounded-xl shadow-md transition-colors"
+                class="w-fit max-w-36 sm:max-w-none sm:px-8 px-5 py-3 bg-[var(--primary)] hover:bg-dark-green text-[var(--primary-foreground)] font-medium rounded-xl shadow-md transition-colors"
               >
                 Log In
               </a>
               <a
                 href="/register"
-                class="px-6 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-medium rounded-xl shadow-md transition-colors"
+                class="w-fit max-w-44 sm:max-w-none sm:px-8 px-5 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-medium rounded-xl shadow-md transition-colors"
               >
                 Create Account
               </a>

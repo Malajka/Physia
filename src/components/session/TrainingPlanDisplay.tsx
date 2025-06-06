@@ -133,7 +133,11 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
       {sectionData.length > 0 ? (
         <div className="space-y-4">
           {sectionData.map(({ exercise, content }, index) => (
-            <div key={`${exercise.id}-${index}`} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <div
+              key={`${exercise.id}-${index}`}
+              data-testid={`session-exercise-${exercise.id}`}
+              className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+            >
               <h4 className="font-semibold text-lg text-gray-800 mb-2">{exercise.name}</h4>
 
               {/* Exercise Stats */}
@@ -208,8 +212,12 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
     <div className="space-y-6">
       {/* Title and Description */}
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">{trainingPlan.title}</h2>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">{trainingPlan.description}</p>
+        <h2 data-testid="session-title" className="text-3xl font-bold text-gray-800 mb-4">
+          {trainingPlan.title}
+        </h2>
+        <p data-testid="session-description" className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          {trainingPlan.description}
+        </p>
       </div>
 
       {/* Warnings */}

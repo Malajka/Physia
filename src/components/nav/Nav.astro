@@ -30,7 +30,7 @@ const showUserButtons = isAuthenticated;
     {
       NAVIGATION_SECTIONS.map((section) => (
         <li>
-          <LinkButton href={`#${section}`} variant="nav-link">
+          <LinkButton href={`/#${section}`} variant="nav-link">
             {capitalizeFirst(section)}
           </LinkButton>
         </li>
@@ -63,7 +63,7 @@ const showUserButtons = isAuthenticated;
       {
         NAVIGATION_SECTIONS.map((section) => (
           <li>
-            <LinkButton href={`#${section}`} variant="nav-link" className="block">
+            <LinkButton href={`/#${section}`} variant="nav-link" className="block">
               {capitalizeFirst(section)}
             </LinkButton>
           </li>
