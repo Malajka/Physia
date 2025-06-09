@@ -7,8 +7,6 @@ import type { CreateSessionCommandDto } from "@/types";
 import { ErrorCode } from "@/types";
 import type { APIRoute } from "astro";
 
-export const prerender = false;
-
 export const POST: APIRoute = withAuth(async ({ request, locals }, userId) => {
   try {
     // Parse and validate request payload

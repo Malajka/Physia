@@ -4,7 +4,6 @@ import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
-export const prerender = false;
 // Server-side guard: require authenticated session and disclaimer acceptance
 const authRes = await Astro.locals.supabase.auth.getSession();
 const session = authRes.data.session;

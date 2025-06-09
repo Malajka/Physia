@@ -1,15 +1,10 @@
-// @ts-check
-import { defineConfig } from "astro/config";
-import process from "node:process";
-import path from "path";
-
 import cloudflare from "@astrojs/cloudflare";
-import node from "@astrojs/node";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
+import path from "path";
 
-// https://astro.build/config
 export default defineConfig({
   output: "server",
   integrations: [react(), sitemap()],
@@ -25,13 +20,9 @@ export default defineConfig({
     },
     plugins: [tailwindcss()],
   },
-  adapter: process.env.CF_PAGES
-    ? cloudflare({
-        platformProxy: {
-          enabled: true,
-        },
-      })
-    : node({
-        mode: "standalone",
-      }),
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true,
+    },
+  }),
 });
