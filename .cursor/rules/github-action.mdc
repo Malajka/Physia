@@ -3,44 +3,38 @@ description:
 globs: 
 alwaysApply: false
 ---
----
-description: 
-globs: 
-alwaysApply: false
----
+
 ## Github Action Rules
 
-Conduct these steps to ensure reliability and high quality of GitHub Actions workflow.
+- Check if `package.json` exists in project root and summarize key scripts
+- Check if `.nvmrc` exists in project root
+- Check if `.env.example` exists in project root to identify key `env:` variables
+- Always use `git branch -a | cat` to verify whether we use `main` or `master` branch
+- Always use `env:` variables and secrets attached to jobs instead of global workflows
+- Always use `npm ci` for Node-based dependency setup
+- Extract common steps into composite actions in separate files
+- Once you're done, as a final step conduct the following: 
 
-### Version Verification
-
-In Agent Mode:
-
-1. Scan the file that user mentions and look for the public actions used within the workflow. Be explicit.
-2. For each action always trigger "Run Terminal" tool to see what is the most up-to-date version with the following command:
+1) For each public action always use <tool>"Run Terminal"</tool> to see what is the most up-to-date version (use only major version):
 
 ```bash
 curl -s https://api.github.com/repos/{owner}/{repo}/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([0-9]+).*/\1/'
 ```
 
-3. Make sure you executed this command. Update Github Actions Script only by applying MAJOR version number.
+2) (Ask if needed) Use <tool>"Run Terminal"</tool> to fetch README.md and see if we're not using any deprecated actions by mistake:
 
-### Installing dependencies
+```bash
+curl -s https://raw.githubusercontent.com/{owner}/{repo}/refs/tags/v{TAG_VERSION}/README.md
+```
 
-In Agent Mode:
+3) (Ask if needed) Use <tool>"Run Terminal"</tool> to fetch repo metadata and see if we're not using any deprecated actions by mistake:
 
-1. Always prefer `npm ci` over `npm install` to ensure sync with lockfile.
+```bash
+curl -s https://api.github.com/repos/{owner}/{repo} | grep '"archived":'
+```
 
+4) (Ask if needed) In case of linter issues related to action parameters, try to fetch action description directly from GitHub and use the following command:
 
-### Setup Node
-
-In Agent Mode:
-
-1. Search for `.nvmrc` in project root.
-2. If it exists, update CI/CD workflow by applying `node-version-file: '.nvmrc'` to setup-node action.
-
-### Workflow Triggers
-
-In Agent Mode:
-
-1. Ensure proper `default branch` (main or master) by checking current `git` configuration.
+```bash
+curl -s https://raw.githubusercontent.com/{owner}/{repo}/refs/heads/{main/master}/action.yml
+```

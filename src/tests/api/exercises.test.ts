@@ -1,7 +1,7 @@
 import { getExercisesForSession } from "@/lib/services/exercises";
 import type { ExerciseDto } from "@/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GET } from "./exercises";
+import { GET } from "@/pages/api/sessions/[session_id]/exercises";
 
 vi.mock("@/lib/services/exercises", () => ({
   getExercisesForSession: vi.fn(),
