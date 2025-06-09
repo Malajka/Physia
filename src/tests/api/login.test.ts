@@ -1,6 +1,6 @@
+import { POST } from "@/pages/api/auth/login";
 import type { AuthCredentialsDto } from "@/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./login";
 
 const validCredentials: AuthCredentialsDto = { email: "test@example.com", password: "password123" };
 const validSession = {

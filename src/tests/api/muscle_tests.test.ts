@@ -2,7 +2,7 @@
 import type { MuscleTestDto } from "@/types";
 import type { APIContext } from "astro"; // Importuj APIContext dla typowania
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GET } from "./muscle_tests"; // Zakładam, że plik to muscle_tests.ts lub muscle_tests/index.ts
+import { GET } from "@/pages/api/body_parts/[body_part_id]/muscle_tests"; // Zakładam, że plik to muscle_tests.ts lub muscle_tests/index.ts
 
 // Definicje typów dla mocka Supabase (mogą być bardziej generyczne lub uproszczone)
 interface SupabaseFrom {

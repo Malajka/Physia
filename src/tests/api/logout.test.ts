@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./logout";
+import { POST } from "@/pages/api/auth/logout";
 
 // --- Types ---
 interface MockCookies {

@@ -1,0 +1,20 @@
+name = "physia"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+name = "physia"
+
+# KV binding for sessions (używa nazwy namespace z dashboard)
+[[env.production.kv_namespaces]]
+binding = "SESSION"
+id = "physia-sessions"
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Routes configuration
+[env.production.routes]
+include = ["/*"]
+exclude = [] 

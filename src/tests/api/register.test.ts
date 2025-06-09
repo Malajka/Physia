@@ -1,6 +1,6 @@
 import type { AuthCredentialsDto } from "@/types";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./register";
+import { POST } from "@/pages/api/auth/register";
 
 const validCredentials: AuthCredentialsDto = { email: "test@example.com", password: "password1234" };
 const validUser = { id: "user-id", email: validCredentials.email };
