@@ -1,8 +1,6 @@
 import { jsonResponse } from "@/lib/utils/response";
 import type { APIRoute } from "astro";
 
-
-
 const ACCESS_TOKEN_COOKIE = "sb-access-token";
 const REFRESH_TOKEN_COOKIE = "sb-refresh-token";
 

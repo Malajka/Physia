@@ -4,8 +4,6 @@ import type { AuthCredentialsDto } from "@/types";
 import type { APIRoute } from "astro";
 import { ZodError } from "zod";
 
-
-
 export const POST: APIRoute = async ({ request, locals, cookies }) => {
   try {
     let data: AuthCredentialsDto;
