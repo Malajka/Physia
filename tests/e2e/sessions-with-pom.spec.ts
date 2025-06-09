@@ -39,7 +39,7 @@ test.describe("User Session Functionality (with POM)", () => {
     const hasSessionItems = await sessionsPage.hasSessionItems();
 
     if (!hasSessionItems) {
-      console.log("No sessions found or /sessions page not loaded correctly.");
+      // No sessions found or /sessions page not loaded correctly
       return; // Exit the test if no sessions exist
     }
 

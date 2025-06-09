@@ -1,27 +1,51 @@
 ---
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { LinkButton } from "@/components/ui/LinkButton";
-const { isAuthenticated } = Astro.props;
-const currentPath = Astro.url.pathname;
-const isAuthPage = currentPath === "/login" || currentPath === "/register";
+
+// Types
+interface Props {
+  isAuthenticated?: boolean;
+}
+
+// Extract props
+const { isAuthenticated = false } = Astro.props as Props;
+
+// Constants
+const NAVIGATION_SECTIONS = ["about", "services", "benefits"] as const;
+const AUTH_PAGES = ["/login", "/register"] as const;
+
+// Helper functions
+const getCurrentPath = () => Astro.url.pathname;
+const isAuthPage = () => AUTH_PAGES.includes(getCurrentPath() as (typeof AUTH_PAGES)[number]);
+const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+
+// Computed values
+const showAuthButtons = !isAuthenticated && !isAuthPage();
+const showUserButtons = isAuthenticated;
 ---
 
-<nav class="flex items-center w-full">
-  <!-- Desktop nav -->
-  <ul class="hidden lg:flex flex-1 justify-center items-center space-x-6">
+<nav class="flex items-center w-full z-[9]" role="navigation" aria-label="Main navigation">
+  <!-- Desktop Navigation -->
+  <ul class="hidden lg:flex flex-1 justify-center items-center space-x-6" role="menubar">
     {
-      ["about", "services", "benefits"].map((section) => (
+      NAVIGATION_SECTIONS.map((section) => (
         <li>
-          <LinkButton href={`#${section}`} variant="nav-link">
-            {section.charAt(0).toUpperCase() + section.slice(1)}
+          <LinkButton href={`/#${section}`} variant="nav-link">
+            {capitalizeFirst(section)}
           </LinkButton>
         </li>
       ))
     }
   </ul>
-  <!-- Mobile burger -->
-  <details class="lg:hidden ml-auto relative">
-    <summary class="list-none p-2 cursor-pointer" aria-label="Open navigation menu" aria-haspopup="true" aria-expanded="false">
+
+  <!-- Mobile Navigation -->
+  <details class="lg:hidden ml-auto relative" role="group">
+    <summary
+      class="list-none p-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg"
+      aria-label="Toggle navigation menu"
+      role="button"
+      tabindex="0"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="h-6 w-6 text-[var(--primary)]"
@@ -34,18 +58,20 @@ const isAuthPage = currentPath === "/login" || currentPath === "/register";
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </summary>
-    <ul class="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 rounded-xl shadow-md space-y-2 text-right">
+
+    <ul class="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 shadow-md space-y-2 text-right border border-[var(--border)]" role="menu">
       {
-        ["about", "services", "benefits"].map((section) => (
+        NAVIGATION_SECTIONS.map((section) => (
           <li>
-            <LinkButton href={`#${section}`} variant="nav-link" className="block">
-              {section.charAt(0).toUpperCase() + section.slice(1)}
+            <LinkButton href={`/#${section}`} variant="nav-link" className="block">
+              {capitalizeFirst(section)}
             </LinkButton>
           </li>
         ))
       }
+
       {
-        !isAuthenticated && !isAuthPage && (
+        showAuthButtons && (
           <>
             <li>
               <LinkButton href="/login" variant="nav-primary" className="block w-full">
@@ -60,23 +86,24 @@ const isAuthPage = currentPath === "/login" || currentPath === "/register";
           </>
         )
       }
+
       {
-        isAuthenticated && (
+        showUserButtons && (
           <>
             <li>
-              <LinkButton href="/sessions" variant="nav-muted" className="block w-full">
+              <LinkButton href="/sessions" variant="nav-link" className="block">
                 My Sessions
               </LinkButton>
             </li>
             <li>
-              <LinkButton href="/body-parts" variant="nav-muted" className="block w-full" data-testid="create-new-session-mobile">
+              <LinkButton href="/body-parts" variant="nav-link" className="block" data-testid="create-new-session-mobile">
                 Create New Session
               </LinkButton>
             </li>
             <li>
               <LogoutButton
                 client:load
-                className="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+                className="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
               />
             </li>
           </>
@@ -85,9 +112,10 @@ const isAuthPage = currentPath === "/login" || currentPath === "/register";
     </ul>
   </details>
 
+  <!-- Desktop Auth/User Buttons -->
   <ul class="hidden lg:flex items-center space-x-6">
     {
-      !isAuthenticated && !isAuthPage && (
+      showAuthButtons && (
         <>
           <li>
             <LinkButton href="/login" variant="nav-primary">
@@ -102,23 +130,24 @@ const isAuthPage = currentPath === "/login" || currentPath === "/register";
         </>
       )
     }
+
     {
-      isAuthenticated && (
+      showUserButtons && (
         <>
           <li>
-            <LinkButton href="/sessions" variant="nav-muted">
+            <LinkButton href="/sessions" variant="nav-link" className="block">
               My Sessions
             </LinkButton>
           </li>
           <li>
-            <LinkButton href="/body-parts" variant="nav-muted" data-testid="create-new-session-desktop">
+            <LinkButton href="/body-parts" variant="nav-link" className="block" data-testid="create-new-session-desktop">
               Create New Session
             </LinkButton>
           </li>
           <li>
             <LogoutButton
               client:load
-              className="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 py-3 rounded-xl transition-colors"
+              className="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
             />
           </li>
         </>

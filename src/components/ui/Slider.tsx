@@ -12,6 +12,22 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
     const currentValue = props.value?.[0] ?? 0;
     const thumbColor = getThumbColor(currentValue);
 
+    // Convert hex color to RGB values for shadow effects
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result
+        ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16),
+          }
+        : null;
+    };
+
+    const rgb = hexToRgb(thumbColor);
+    const shadowColor = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.3)` : "rgba(0, 0, 0, 0.3)";
+    const glowColor = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)` : "rgba(0, 0, 0, 0.5)";
+
     return (
       <div style={{ padding: "15px 0" }}>
         <style>
@@ -57,6 +73,25 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
           .slider-thumb:focus {
             outline: none;
           }
+
+          .slider-thumb-heartbeat {
+            animation: steady-pulse 1s ease-in-out infinite;
+          }
+
+          @keyframes steady-pulse {
+            0% {
+              transform: scale(0.95);
+              box-shadow: 0 2px 10px var(--thumb-color-shadow, rgba(0, 0, 0, 0.3));
+            }
+            50% {
+              transform: scale(0.99);
+              box-shadow: 0 0 20px var(--thumb-color-glow, rgba(0, 0, 0, 0.5));
+            }
+            100% {
+              transform: scale(1);
+              box-shadow: 0 2px 10px var(--thumb-color-shadow, rgba(0, 0, 0, 0.3));
+            }
+          }
         `}
         </style>
 
@@ -65,12 +100,16 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
             <SliderPrimitive.Range className="slider-range" />
           </SliderPrimitive.Track>
           <SliderPrimitive.Thumb
-            className="slider-thumb"
-            style={{
-              backgroundColor: thumbColor,
-              border: `2px solid ${thumbColor}`,
-              boxShadow: `0 0 0 5px ${thumbColor}33`,
-            }}
+            className="slider-thumb slider-thumb-heartbeat"
+            style={
+              {
+                backgroundColor: thumbColor,
+                border: `2px solid ${thumbColor}`,
+                boxShadow: `0 0 0 5px ${thumbColor}33`,
+                "--thumb-color-shadow": shadowColor,
+                "--thumb-color-glow": glowColor,
+              } as React.CSSProperties
+            }
           />
         </SliderPrimitive.Root>
       </div>

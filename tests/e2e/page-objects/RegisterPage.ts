@@ -37,7 +37,6 @@ export class RegisterPage extends BasePage {
       await expect(this.passwordConfirmInput).toBeVisible({ timeout: 10000 });
       await expect(this.submitButton).toBeVisible({ timeout: 10000 });
     } catch (error) {
-      console.error("Form elements not visible:", error);
       // Take a screenshot for debugging
       await this.page.screenshot({ path: "form-not-visible.png" });
       throw error;
@@ -72,7 +71,6 @@ export class RegisterPage extends BasePage {
         throw new Error("Form values do not match input values");
       }
     } catch (error) {
-      console.error("Error filling form:", error);
       await this.page.screenshot({ path: "form-fill-error.png" });
       throw error;
     }
@@ -97,7 +95,6 @@ export class RegisterPage extends BasePage {
       await expect(this.successMessage).toBeVisible({ timeout: 15000 });
       await expect(this.page).toHaveURL(/\/body-parts/, { timeout: 15000 });
     } catch (error) {
-      console.error("Error during form submission:", error);
       await this.page.screenshot({ path: "submit-error.png" });
       throw error;
     }
@@ -150,8 +147,8 @@ export class RegisterPage extends BasePage {
           });
         }
       });
-    } catch (error) {
-      console.log("Could not clear storage:", error);
+    } catch {
+      // Could not clear storage - non-critical
     }
   }
 }

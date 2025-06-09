@@ -46,7 +46,7 @@ function createRedirect(location: string): Response {
   });
 }
 
-async function setSessionFromCookies(supabase: SupabaseClient, context: APIContext, pathname: string) {
+async function setSessionFromCookies(supabase: SupabaseClient, context: APIContext) {
   const accessToken = context.cookies.get("sb-access-token")?.value;
   const refreshToken = context.cookies.get("sb-refresh-token")?.value;
   if (accessToken && refreshToken) {
@@ -55,7 +55,7 @@ async function setSessionFromCookies(supabase: SupabaseClient, context: APIConte
       refresh_token: refreshToken,
     });
     if (setSessionError) {
-      console.error(`[MW_HANDLER_SESSION_SET_ERROR] Error in setSession for ${pathname}:`, setSessionError.message);
+      console.error("[MW_HANDLER_SESSION_SET_ERROR]", setSessionError.message);
     }
   }
 }
@@ -101,7 +101,7 @@ export async function handleRequest(context: APIContext, next: MiddlewareNext): 
   const supabase: SupabaseClient = context.locals.supabase;
   const pathname = getPathname(context.request);
 
-  await setSessionFromCookies(supabase, context, pathname);
+  await setSessionFromCookies(supabase, context);
   const session = await fetchSession(supabase, pathname);
 
   if (shouldRedirectToDefault(session, pathname)) {

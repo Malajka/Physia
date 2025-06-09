@@ -44,8 +44,6 @@ export async function ensureLoggedOut(page: Page, context: BrowserContext): Prom
 
     // Additional wait to ensure all cleanup operations complete
     await page.waitForTimeout(500);
-
-    console.log("User data cleared, API logout called, Supabase signOut called.");
   } catch (error) {
     console.error("Error in ensureLoggedOut:", error);
     // Consider throwing error if logout is critical for test correctness
@@ -70,8 +68,8 @@ async function clearBrowserStorage(page: Page): Promise<void> {
             window.indexedDB.deleteDatabase(db.name);
           }
         }
-      } catch (error) {
-        console.warn("Error clearing IndexedDB databases in page.evaluate:", error);
+      } catch {
+        // IndexedDB clearing failed - this is non-critical for tests
       }
     }
   });
@@ -84,9 +82,8 @@ async function clearBrowserStorage(page: Page): Promise<void> {
 async function attemptApiLogout(page: Page): Promise<void> {
   try {
     await page.request.post("/api/auth/logout");
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.log("API auth logout attempt failed or endpoint not found (non-critical):", errorMessage);
+  } catch {
+    // API auth logout attempt failed or endpoint not found (non-critical)
   }
 }
 
@@ -98,20 +95,18 @@ async function attemptSupabaseLogout(page: Page): Promise<void> {
   // Navigate to home page again if previous actions changed the page
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const supabaseSignOutResult = await page.evaluate(async () => {
+  await page.evaluate(async () => {
     if (typeof window.supabase?.auth?.signOut === "function") {
       try {
         await window.supabase.auth.signOut();
         return "success";
-      } catch (error) {
-        console.error("Supabase signOut error in page.evaluate:", error);
+      } catch {
+        // Supabase signOut error occurred
         return "error";
       }
     }
     return "not_applicable";
   });
-
-  console.log("Supabase signOut result:", supabaseSignOutResult);
 }
 
 /**
@@ -121,9 +116,8 @@ async function attemptSupabaseLogout(page: Page): Promise<void> {
 export async function logoutViaAPI(page: Page): Promise<void> {
   try {
     await page.request.post("/api/logout");
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.log("API logout error (expected or non-critical):", errorMessage);
+  } catch {
+    // API logout error (expected or non-critical)
   }
 }
 

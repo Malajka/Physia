@@ -41,8 +41,9 @@ test.describe("User Registration (with POM)", () => {
 
   test("should show error when email is already registered", async () => {
     const existingUser = TestDataHelper.getExistingTestUser();
+    const validPassword = TestDataHelper.getValidPassword(); // Use valid password to avoid password validation errors
 
-    await registerPage.fillForm(existingUser.email, existingUser.password);
+    await registerPage.fillForm(existingUser.email, validPassword);
     await registerPage.submitButton.click();
 
     await registerPage.expectValidationError("This email is already registered");

@@ -21,9 +21,6 @@ function BodyPartButtonComponent({ id, name, selected, onSelect }: BodyPartButto
 
   const style = {
     backgroundImage: `url(${imageSrc})`,
-    backgroundSize: "contain",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
   };
 
   return (
@@ -33,7 +30,7 @@ function BodyPartButtonComponent({ id, name, selected, onSelect }: BodyPartButto
       aria-pressed={selected}
       aria-label={`Select ${name}`}
       style={style}
-      className={`${baseClass} ${selected ? selectedClass : unselectedClass}`}
+      className={`${baseClass} ${selected ? selectedClass : unselectedClass} bg-cover sm:bg-contain bg-center bg-no-repeat`}
       data-testid={`body-part-${slug}`}
     >
       {!selected && <div className="absolute inset-0 bg-[var(--background)] opacity-35" aria-hidden="true" />}

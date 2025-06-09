@@ -45,8 +45,8 @@ try {
       tests = parsedTests;
     }
   }
-} catch (error) {
-  console.error("Error parsing query parameters:", error);
+} catch {
+  // Error parsing query parameters - using default values
 }
 
 const pageTitle = "Generating Training Plan";
