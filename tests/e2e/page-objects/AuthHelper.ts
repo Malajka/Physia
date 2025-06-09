@@ -68,7 +68,7 @@ async function clearBrowserStorage(page: Page): Promise<void> {
             window.indexedDB.deleteDatabase(db.name);
           }
         }
-      } catch (error) {
+      } catch {
         // IndexedDB clearing failed - this is non-critical for tests
       }
     }
@@ -82,8 +82,7 @@ async function clearBrowserStorage(page: Page): Promise<void> {
 async function attemptApiLogout(page: Page): Promise<void> {
   try {
     await page.request.post("/api/auth/logout");
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+  } catch {
     // API auth logout attempt failed or endpoint not found (non-critical)
   }
 }
@@ -96,12 +95,12 @@ async function attemptSupabaseLogout(page: Page): Promise<void> {
   // Navigate to home page again if previous actions changed the page
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  const supabaseSignOutResult = await page.evaluate(async () => {
+  await page.evaluate(async () => {
     if (typeof window.supabase?.auth?.signOut === "function") {
       try {
         await window.supabase.auth.signOut();
         return "success";
-      } catch (error) {
+      } catch {
         // Supabase signOut error occurred
         return "error";
       }
@@ -117,8 +116,7 @@ async function attemptSupabaseLogout(page: Page): Promise<void> {
 export async function logoutViaAPI(page: Page): Promise<void> {
   try {
     await page.request.post("/api/logout");
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+  } catch {
     // API logout error (expected or non-critical)
   }
 }

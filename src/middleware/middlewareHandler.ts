@@ -46,7 +46,7 @@ function createRedirect(location: string): Response {
   });
 }
 
-async function setSessionFromCookies(supabase: SupabaseClient, context: APIContext, pathname: string) {
+async function setSessionFromCookies(supabase: SupabaseClient, context: APIContext) {
   const accessToken = context.cookies.get("sb-access-token")?.value;
   const refreshToken = context.cookies.get("sb-refresh-token")?.value;
   if (accessToken && refreshToken) {
@@ -55,7 +55,7 @@ async function setSessionFromCookies(supabase: SupabaseClient, context: APIConte
       refresh_token: refreshToken,
     });
     if (setSessionError) {
-      // Error setting session from cookies
+      console.error("[MW_HANDLER_SESSION_SET_ERROR]", setSessionError.message);
     }
   }
 }
@@ -63,7 +63,7 @@ async function setSessionFromCookies(supabase: SupabaseClient, context: APIConte
 async function fetchSession(supabase: SupabaseClient, pathname: string) {
   const { data: { session } = { session: null }, error: sessionFetchError } = await supabase.auth.getSession();
   if (sessionFetchError) {
-    // Error fetching session
+    console.error(`[MW_HANDLER_SESSION_FETCH_ERROR] Error fetching session for ${pathname}: ${sessionFetchError.message}`);
   }
   return session;
 }
@@ -101,7 +101,7 @@ export async function handleRequest(context: APIContext, next: MiddlewareNext): 
   const supabase: SupabaseClient = context.locals.supabase;
   const pathname = getPathname(context.request);
 
-  await setSessionFromCookies(supabase, context, pathname);
+  await setSessionFromCookies(supabase, context);
   const session = await fetchSession(supabase, pathname);
 
   if (shouldRedirectToDefault(session, pathname)) {

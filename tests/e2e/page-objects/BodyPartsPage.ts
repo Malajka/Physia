@@ -24,8 +24,8 @@ export class BodyPartsPage extends BasePage {
       if (await this.disclaimerAcceptButton.isVisible({ timeout: 5000 })) {
         await this.disclaimerAcceptButton.click();
       }
-    } catch (error) {
-      console.log("Disclaimer not found or not visible, continuing...", error);
+    } catch {
+      // Disclaimer not found or not visible, continuing...
     }
   }
 
