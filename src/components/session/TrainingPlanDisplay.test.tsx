@@ -36,7 +36,7 @@ Stretch chest muscles
       sets: 3,
       reps: 8,
       rest_time_seconds: 90,
-      notes: null,
+      notes: undefined,
     },
   ],
 };
@@ -118,7 +118,7 @@ describe("TrainingPlanDisplay", () => {
           sets: 1,
           reps: 1,
           rest_time_seconds: 30,
-          notes: null,
+          notes: undefined,
         },
       ],
     };

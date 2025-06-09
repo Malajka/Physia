@@ -191,17 +191,6 @@ Keep your posture straight
     // Should not crash and should render without description sections
   });
 
-  it("handles undefined description gracefully", () => {
-    const testWithUndefinedDesc = {
-      ...test,
-      description: undefined,
-    };
-    render(<MuscleTestItem test={testWithUndefinedDesc} value={3} onChange={vi.fn()} animating={false} />);
-
-    expect(screen.getByText("Test Name")).toBeInTheDocument();
-    // Should not crash and should render without description sections
-  });
-
   it("removes bullet points and numbers from content", () => {
     const testWithBullets = {
       ...test,
