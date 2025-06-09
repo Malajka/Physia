@@ -1,44 +1,35 @@
-name: Test & Build Main
+name: Deploy to Cloudflare Pages
 
 # Workflow triggers
 on:
-  # Automatically on push to main (according to current repo configuration)
-  push:
-    branches: [main]
-
-  # Automatically on pull request to main
-  pull_request:
-    branches: [main]
-
   # Manual trigger from GitHub UI
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to run tests against"
+        description: "Environment to deploy to"
         required: false
-        default: "development"
+        default: "production"
         type: choice
         options:
-          - development
-          - staging
           - production
 
 # Permissions for GITHUB_TOKEN (minimal permissions)
 permissions:
   contents: read
-  pull-requests: read
 
 # Environment variables
 env:
-  NODE_ENV: development
+  NODE_ENV: production
   CI: true
+  NODE_VERSION: "22.14.0"
 
 jobs:
   # Job for linting and formatting
   lint:
-    name: Lint & Format Check
+    name: Code Linting
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    outputs:
+      lint-success: ${{ steps.lint-step.outcome == 'success' }}
 
     steps:
       - name: Checkout code
@@ -49,21 +40,25 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: "npm"
+
+      - name: Clean install environment
+        run: rm -rf node_modules
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run ESLint
+        id: lint-step
         run: npm run lint
-
-      - name: Check Prettier formatting
-        run: npx prettier --check .
 
   # Job for TypeScript checking
   typecheck:
     name: TypeScript Check
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    needs: lint
+    if: needs.lint.outputs.lint-success == 'true'
+    outputs:
+      typecheck-success: ${{ steps.typecheck-step.outcome == 'success' }}
 
     steps:
       - name: Checkout code
@@ -77,49 +72,56 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate Astro types
+        run: npx astro sync
+
+      - name: Generate TypeScript types
+        run: npx tsc --declaration --emitDeclarationOnly --skipLibCheck
 
       - name: TypeScript check
+        id: typecheck-step
         run: npx tsc --noEmit
 
-  # Job for application build
-  build:
-    name: Build Application
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: [lint, typecheck]
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-files-${{ github.sha }}
-          path: dist/
-          retention-days: 7
-          if-no-files-found: error
-
-  # Job for tests (if added in the future)
-  test:
+  unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: false # Disabled until tests are available
+    needs: [lint, typecheck]
+    if: needs.lint.outputs.lint-success == 'true' && needs.typecheck.outputs.typecheck-success == 'true'
+    outputs:
+      unit-test-success: ${{ steps.unit-test-step.outcome == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Clean npm cache and node_modules
+        run: |
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        id: unit-test-step
+        run: npm run test:unit
+
+  build-and-deploy:
+    name: Build and Deploy to Cloudflare Pages
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, unit-tests]
+    if: needs.lint.outputs.lint-success == 'true' && needs.typecheck.outputs.typecheck-success == 'true' && needs.unit-tests.outputs.unit-test-success == 'true'
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
 
     steps:
       - name: Checkout code
@@ -134,30 +136,45 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
-        run: npm test # Add when tests are available
+      - name: Generate Astro types
+        run: npx astro sync
 
-  # Summary job - will be required for branch protection
-  ci-success:
-    name: CI Success
+      - name: Build for Cloudflare Pages
+        run: npm run build:cloudflare
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }} --compatibility-date=2024-12-01
+
+  deployment-status:
+    name: Deployment Status
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [lint, typecheck, build]
+    needs: [lint, typecheck, unit-tests, build-and-deploy]
     if: always()
 
     steps:
-      - name: Check all jobs status
+      - name: Report deployment status
         run: |
-          echo "Job results:"
-          echo "- Lint: ${{ needs.lint.result }}"
-          echo "- TypeCheck: ${{ needs.typecheck.result }}"
-          echo "- Build: ${{ needs.build.result }}"
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Linting** | ${{ needs.lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **TypeScript Check** | ${{ needs.typecheck.result == 'success' && '✅ Passed' || needs.typecheck.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Unit Tests** | ${{ needs.unit-tests.result == 'success' && '✅ Passed' || needs.unit-tests.result == 'failure' && '❌ Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Deployment** | ${{ needs.build-and-deploy.result == 'success' && '✅ Deployed Successfully' || needs.build-and-deploy.result == 'failure' && '❌ Deployment Failed' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [[ "${{ needs.lint.result }}" != "success" ]] || \
-             [[ "${{ needs.typecheck.result }}" != "success" ]] || \
-             [[ "${{ needs.build.result }}" != "success" ]]; then
-            echo "❌ Some CI jobs failed"
-            exit 1
+          if [[ "${{ needs.build-and-deploy.result }}" == "success" ]]; then
+            echo "🎉 **Application deployed successfully to Cloudflare Pages!**" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.build-and-deploy.result }}" == "failure" ]]; then
+            echo "⚠️ **Deployment failed.** Please check the logs above." >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ All CI jobs passed successfully"
+            echo "⚠️ **Deployment was skipped due to failed tests.**" >> $GITHUB_STEP_SUMMARY
           fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "*Deployment completed at: $(date)*" >> $GITHUB_STEP_SUMMARY

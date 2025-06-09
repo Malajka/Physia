@@ -21,7 +21,7 @@
 - CI/CD and Hosting
 
   - Github Actions for creating CI/CD pipelines
-  - DigitalOcean for hosting the application via a Docker image
+  - Cloudflare Pages for hosting Astro application
 
 - Testing
   - Unit Testing: Vitest, React Testing Library
