@@ -6,20 +6,20 @@ import type { Database } from "./database.types";
 function getEnvVar(name: string): string {
   // W development używamy import.meta.env
   if (import.meta.env.DEV) {
-    return import.meta.env[name] || '';
+    return import.meta.env[name] || "";
   }
-  
+
   // W production na Cloudflare Pages próbujemy różnych źródeł
-  if (typeof globalThis !== 'undefined' && globalThis.process?.env) {
-    return globalThis.process.env[name] || '';
+  if (typeof globalThis !== "undefined" && globalThis.process?.env) {
+    return globalThis.process.env[name] || "";
   }
-  
+
   // Fallback do import.meta.env
-  return import.meta.env[name] || '';
+  return import.meta.env[name] || "";
 }
 
-const supabaseUrl = getEnvVar('SUPABASE_URL');
-const supabaseAnonKey = getEnvVar('SUPABASE_PUBLIC_KEY');
+const supabaseUrl = getEnvVar("SUPABASE_URL");
+const supabaseAnonKey = getEnvVar("SUPABASE_PUBLIC_KEY");
 
 // Debug logging dla production
 if (!supabaseUrl || !supabaseAnonKey) {
