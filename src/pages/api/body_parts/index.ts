@@ -1,7 +1,7 @@
 import { jsonResponse } from "@/lib/utils/response";
 import type { APIRoute } from "astro";
 
-export const prerender = false;
+
 
 export const GET: APIRoute = async ({ locals }) => {
   const supabase = locals.supabase;

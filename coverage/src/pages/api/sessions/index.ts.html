@@ -132,7 +132,7 @@ import type { CreateSessionCommandDto } from "@/types";
 import { ErrorCode } from "@/types";
 import type { APIRoute } from "astro";
 &nbsp;
-export const prerender = false;
+
 &nbsp;
 export const POST: APIRoute = withAuth(async ({ request, locals }, userId) =&gt; {
   try {

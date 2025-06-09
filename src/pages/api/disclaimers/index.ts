@@ -2,7 +2,7 @@ import { withAuth } from "@/lib/middleware/withAuth";
 import { jsonResponse } from "@/lib/utils/response";
 import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";
 
-export const prerender = false;
+
 
 // GET returns the current disclaimer content and whether the user has accepted it
 export const GET = withAuth(async ({ locals }) => {

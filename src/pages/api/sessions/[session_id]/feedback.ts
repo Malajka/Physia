@@ -5,7 +5,7 @@ import { getFeedbackForSession, upsertFeedback } from "@/lib/services/feedback";
 import { jsonResponse } from "@/lib/utils/response";
 import { FeedbackBodySchema, FeedbackParamsSchema } from "@/lib/validators/feedback.validator";
 
-export const prerender = false;
+
 
 // GET /sessions/:session_id/feedback
 export const GET: APIRoute = withAuth(async ({ locals, params }, userId) => {
