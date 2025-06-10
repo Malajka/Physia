@@ -1,0 +1,57 @@
+import type { APIContext } from "astro";
+
+export async function GET(context: APIContext) {
+  try {
+    // Different ways to access env vars in Cloudflare Pages
+    const methods = {
+      // Method 1: import.meta.env (build time)
+      importMeta: {
+        SUPABASE_URL: import.meta.env.SUPABASE_URL || "missing",
+        SUPABASE_PUBLIC_KEY: import.meta.env.SUPABASE_PUBLIC_KEY || "missing",
+      },
+      // Method 2: context.locals.runtime.env (Cloudflare Pages runtime)
+      runtime: (() => {
+        const locals = context?.locals as unknown as { runtime?: { env?: Record<string, string> } };
+        return locals?.runtime?.env
+          ? {
+              SUPABASE_URL: locals.runtime.env.SUPABASE_URL || "missing",
+              SUPABASE_PUBLIC_KEY: locals.runtime.env.SUPABASE_PUBLIC_KEY || "missing",
+            }
+          : "runtime not available";
+      })(),
+      // Method 3: Direct context access
+      contextEnv: (() => {
+        const ctx = context as unknown as { env?: Record<string, string> };
+        return ctx?.env
+          ? {
+              SUPABASE_URL: ctx.env.SUPABASE_URL || "missing",
+              SUPABASE_PUBLIC_KEY: ctx.env.SUPABASE_PUBLIC_KEY || "missing",
+            }
+          : "context.env not available";
+      })(),
+      // Method 4: Check what's available on context
+      contextKeys: context ? Object.keys(context) : "no context",
+      localsKeys: context?.locals ? Object.keys(context.locals) : "no locals",
+    };
+
+    return new Response(JSON.stringify(methods, null, 2), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({
+        error: error instanceof Error ? error.message : "Unknown error",
+        stack: error instanceof Error ? error.stack : undefined,
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+}
