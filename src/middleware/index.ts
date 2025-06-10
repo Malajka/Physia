@@ -1,7 +1,18 @@
 import type { MiddlewareHandler } from "astro";
+import { getSupabaseClient } from "../db/supabase.client";
 
 export const onRequest: MiddlewareHandler = async (context, next) => {
-  // Skip Supabase initialization for now to test
-  console.log("Middleware running for:", context.url.pathname);
-  return next();
+  try {
+    // Create Supabase client with context for runtime environment variables
+    const supabase = getSupabaseClient(context);
+
+    // Add Supabase client to locals for use in API routes and pages
+    context.locals.supabase = supabase;
+
+    console.log("✅ Middleware: Supabase client initialized successfully for:", context.url.pathname);
+    return next();
+  } catch (error) {
+    console.error("❌ Middleware error:", error);
+    return next();
+  }
 };
