@@ -1,11 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
+import type { APIContext } from "astro";
 
 import type { Database } from "./database.types";
 
 // Function to create Supabase client at request time
-export function createSupabaseClient() {
-  const supabaseUrl = import.meta.env.SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
+export function createSupabaseClient(context?: APIContext) {
+  let supabaseUrl: string | undefined;
+  let supabaseAnonKey: string | undefined;
+
+  if (context) {
+    // Runtime access via Cloudflare Pages context
+    const runtime = (context.locals as unknown as { runtime?: { env?: Record<string, string> } })?.runtime;
+    supabaseUrl = runtime?.env?.SUPABASE_URL;
+    supabaseAnonKey = runtime?.env?.SUPABASE_PUBLIC_KEY;
+  } else {
+    // Build-time access via import.meta.env
+    supabaseUrl = import.meta.env.SUPABASE_URL;
+    supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
+  }
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(`Missing Supabase environment variables: URL=${!!supabaseUrl}, KEY=${!!supabaseAnonKey}`);
@@ -14,14 +26,9 @@ export function createSupabaseClient() {
   return createClient<Database>(supabaseUrl, supabaseAnonKey);
 }
 
-// Lazy initialization - only create when actually needed
-let _supabaseClient: ReturnType<typeof createSupabaseClient> | null = null;
-
-export function getSupabaseClient() {
-  if (!_supabaseClient) {
-    _supabaseClient = createSupabaseClient();
-  }
-  return _supabaseClient;
+// For runtime usage, we create a fresh client each time with context
+export function getSupabaseClient(context?: APIContext) {
+  return createSupabaseClient(context);
 }
 
 export type SupabaseClient = ReturnType<typeof createSupabaseClient>;
