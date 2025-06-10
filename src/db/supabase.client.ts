@@ -1,23 +1,19 @@
 import { createClient } from "@supabase/supabase-js";
-import type { APIContext } from "astro";
 
 import type { Database } from "./database.types";
 
 // Function to create Supabase client at request time
-export function createSupabaseClient(context?: APIContext) {
-  let supabaseUrl: string | undefined;
-  let supabaseAnonKey: string | undefined;
+export function createSupabaseClient() {
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  const supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
 
-  if (context) {
-    // Runtime access via Cloudflare Pages context
-    const runtime = (context.locals as unknown as { runtime?: { env?: Record<string, string> } })?.runtime;
-    supabaseUrl = runtime?.env?.SUPABASE_URL;
-    supabaseAnonKey = runtime?.env?.SUPABASE_PUBLIC_KEY;
-  } else {
-    // Build-time access via import.meta.env
-    supabaseUrl = import.meta.env.SUPABASE_URL;
-    supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
-  }
+  // Debug logging for production
+  console.log("Creating Supabase client with:", {
+    SUPABASE_URL: supabaseUrl ? "✓ present" : "✗ missing",
+    SUPABASE_PUBLIC_KEY: supabaseAnonKey ? "✓ present" : "✗ missing",
+    DEV: import.meta.env.DEV,
+    NODE_ENV: import.meta.env.NODE_ENV,
+  });
 
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error(`Missing Supabase environment variables: URL=${!!supabaseUrl}, KEY=${!!supabaseAnonKey}`);
@@ -26,9 +22,6 @@ export function createSupabaseClient(context?: APIContext) {
   return createClient<Database>(supabaseUrl, supabaseAnonKey);
 }
 
-// For runtime usage, we create a fresh client each time with context
-export function getSupabaseClient(context?: APIContext) {
-  return createSupabaseClient(context);
-}
-
+// Keep the old export for backward compatibility (but it will throw an error)
+export const supabaseClient = createSupabaseClient();
 export type SupabaseClient = ReturnType<typeof createSupabaseClient>;
