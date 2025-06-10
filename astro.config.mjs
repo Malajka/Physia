@@ -7,7 +7,7 @@ import path from "path";
 export default defineConfig({
   output: "server",
   integrations: [react()],
-  server: { port: 4321 },
+  server: { host: true, port: 4321 },
   experimental: {
     session: true,
   },
@@ -20,12 +20,6 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    },
-    runtime: {
-      mode: "local",
-      type: "pages",
-    },
+    runtime: "edge",
   }),
 });
