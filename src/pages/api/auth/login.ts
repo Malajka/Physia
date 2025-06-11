@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request, locals, cookies }) => {
     });
 
     if (error) {
-      return jsonResponse({ error: "Invalid login credentials" }, 401);
+      return jsonResponse({ error: "Invalid login credentials", debug: error.message }, 401);
     }
     // Success - set authentication cookies for SSR
     cookies.set("sb-access-token", authData.session.access_token, {
