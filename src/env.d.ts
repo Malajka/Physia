@@ -2,6 +2,11 @@
 
 import type { SupabaseClient } from "./db/supabase.client";
 
+declare module "@tailwindcss/vite" {
+  const plugin: () => unknown;
+  export default plugin;
+}
+
 declare global {
   namespace App {
     interface Locals {
