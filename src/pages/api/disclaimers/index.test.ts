@@ -1,4 +1,3 @@
-import { handleRequest } from "@/middleware/middlewareHandler";
 import type { Session } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "./index";
@@ -19,8 +18,6 @@ interface MockLocals {
 
 type GetPostArgs = Parameters<typeof GET>[0];
 
-const mockNext = vi.fn().mockResolvedValue(new Response("ok"));
-
 function createMockSession(userMetadata = {}): Session {
   return {
     access_token: "mock-token",
@@ -39,78 +36,7 @@ function createMockSession(userMetadata = {}): Session {
   };
 }
 
-function makeContext({
-  pathname = "/sessions/1",
-  session = null,
-  sessionOwner = true,
-  cookies = {} as Record<string, string>,
-}: {
-  pathname?: string;
-  session?: Session | null;
-  sessionOwner?: boolean;
-  cookies?: Record<string, string>;
-} = {}) {
-  const getSession = vi.fn().mockResolvedValue({
-    data: { session },
-    error: null,
-  });
-  const setSession = vi.fn().mockResolvedValue({ error: null });
-  const select = vi.fn().mockReturnThis();
-  const eq = vi.fn().mockReturnThis();
-  const single = vi.fn().mockResolvedValue({
-    data: sessionOwner && session ? { user_id: session.user.id } : { user_id: "other" },
-    error: sessionOwner && session ? null : "error",
-  });
-  const from = vi.fn().mockReturnValue({ select, eq, single });
-
-  const supabase = { auth: { getSession, setSession, updateUser: vi.fn() }, from };
-
-  const context = {
-    locals: { supabase },
-    cookies: {
-      get: vi.fn((key: string) => ({ value: cookies[key] })),
-    },
-    request: { url: `http://localhost${pathname}` },
-  };
-  return { context, supabase, getSession, setSession, select, eq, single };
-}
-
-describe("middlewareHandler", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("redirects to /login if not authenticated", async () => {
-    const { context } = makeContext({ session: null });
-    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-    expect(res.status).toBe(302);
-    expect(res.headers.get("Location")).toBe("/login");
-  });
-
-  it("redirects to /sessions if not session owner", async () => {
-    const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
-    const { context } = makeContext({ session, sessionOwner: false });
-    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-    expect(res.status).toBe(302);
-    expect(res.headers.get("Location")).toBe("/sessions");
-  });
-
-  it("calls next() for valid session and owner", async () => {
-    const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
-    const { context } = makeContext({ session });
-    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-    expect(mockNext).toHaveBeenCalled();
-    expect(res).toBeInstanceOf(Response);
-    expect(res.status).toBe(200);
-  });
-
-  it("calls next() for unprotected route", async () => {
-    const { context } = makeContext({ pathname: "/public" });
-    const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-    expect(mockNext).toHaveBeenCalled();
-    expect(res).toBeInstanceOf(Response);
-  });
-});
+// Middleware tests moved to src/middleware/index.test.ts
 
 function createMockSupabase({
   disclaimerContent = "Test disclaimer text",
