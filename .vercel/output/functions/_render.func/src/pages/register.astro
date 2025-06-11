@@ -1,0 +1,24 @@
+---
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import Layout from "@/layouts/Layout.astro";
+
+export const prerender = false;
+
+// Check for error parameter in URL
+const error = Astro.url.searchParams.get("error");
+const errorMessage = error === "email_in_use" ? "This email is already registered" : error ? "An error occurred during registration" : null;
+---
+
+<Layout title="Register - Physia">
+  <div class="container mx-auto max-w-md p-4">
+    <header class="mb-8 text-center">
+      <a href="/" class="inline-block">
+        <h1 class="text-2xl font-bold text-slate-700">Register to Physia</h1>
+      </a>
+    </header>
+
+    <main class="bg-white rounded-lg shadow-md p-6 md:p-8">
+      <RegisterForm initialError={errorMessage} client:load />
+    </main>
+  </div>
+</Layout>
