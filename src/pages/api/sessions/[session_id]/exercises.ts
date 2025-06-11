@@ -4,8 +4,6 @@ import type { ExerciseDto } from "@/types";
 import type { APIRoute } from "astro";
 import { z } from "zod";
 
-export const prerender = false;
-
 // Schema to parse and validate route parameter
 const ParamsSchema = z.object({
   session_id: z.coerce

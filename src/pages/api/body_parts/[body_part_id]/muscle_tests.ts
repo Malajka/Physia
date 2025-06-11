@@ -2,8 +2,6 @@ import { withAuth } from "@/lib/middleware/withAuth";
 import { jsonResponse } from "@/lib/utils/response";
 import { z } from "zod";
 
-export const prerender = false;
-
 // Schema to parse and validate route parameter as a positive integer
 const ParamsSchema = z.object({
   body_part_id: z.coerce

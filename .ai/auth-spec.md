@@ -94,7 +94,7 @@
 - Initialize a Supabase client in `src/lib/supabaseClient.ts`:
   ```ts
   import { createClient } from "@supabase/supabase-js";
-  export const supabase = createClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_ANON_KEY);
+  export const supabase = createClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_PUBLIC_KEY);
   ```
 
 ### 3.2. Session Management

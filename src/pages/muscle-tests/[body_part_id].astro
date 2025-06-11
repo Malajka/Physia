@@ -6,8 +6,6 @@ import { ErrorAlert } from "@/components/ui/ErrorAlert";
 import Layout from "@/layouts/Layout.astro";
 import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
 
-export const prerender = false;
-
 // The global `onRequest` middleware should handle authentication and disclaimer checks.
 // If execution reaches this point, we assume the user is authenticated
 // and has an accepted disclaimer if required by the route.

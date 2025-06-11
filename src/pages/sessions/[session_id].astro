@@ -4,7 +4,6 @@ import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
-export const prerender = false;
 // Server-side guard: require authenticated session and disclaimer acceptance
 const authRes = await Astro.locals.supabase.auth.getSession();
 const session = authRes.data.session;
@@ -63,7 +62,7 @@ if (trainingSession) {
       <div class="text-center mb-8">
         <img src="/images/phybsia.png" alt="Phybsia cat" class="mx-auto mb-4" style="max-width:6.25rem;width:100%;display:block;" />
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Session {sessionId}</h1>
-        <p class="text-lg text-gray-600">Your training plan is ready!</p>
+        <p class="text-lg text-gray-600">Your Training Plan is ready!</p>
       </div>
 
       {

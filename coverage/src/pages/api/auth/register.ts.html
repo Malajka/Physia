@@ -178,7 +178,7 @@ import type { AuthCredentialsDto } from "@/types";
 import type { APIRoute } from "astro";
 import { z, ZodError, type ZodType } from "zod";
 &nbsp;
-export const prerender = false;
+
 &nbsp;
 // Runtime validation schema matching the external DTO
 export const registerSchema: ZodType&lt;AuthCredentialsDto&gt; = z.object({

@@ -3,7 +3,7 @@ import { getFeedbackForSession, upsertFeedback } from "@/lib/services/feedback";
 import type { FeedbackRatingDto, ServiceResultDto } from "@/types";
 import type { APIContext } from "astro";
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
-import { GET, POST } from "./feedback"; // Assuming your endpoint file is feedback.ts or feedback/index.ts
+import { GET, POST } from "@/pages/api/sessions/[session_id]/feedback"; // Assuming your endpoint file is feedback.ts or feedback/index.ts
 
 // Mock the feedback service module
 vi.mock("@/lib/services/feedback", () => ({
