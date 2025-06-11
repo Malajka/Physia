@@ -107,7 +107,7 @@ async function validateMuscleTests(
   if (muscleTestsQueryError) {
     throw new Error("Failed to validate muscle tests");
   }
-  const validIds = new Set(muscleTestsData.map((test) => test.id));
+  const validIds = new Set(muscleTestsData.map((test: { id: number }) => test.id));
   const invalid = muscleTestIds.filter((id) => !validIds.has(id));
   if (invalid.length) {
     throw new Error(`Invalid muscle tests: ${invalid.join(", ")}`);
@@ -198,7 +198,7 @@ async function fetchTestsAndExercises(
     throw new Error("Failed to retrieve exercises for the selected muscle tests");
   }
 
-  const exercisesWithImages = rawExerciseRows.map((exerciseRow) => ({
+  const exercisesWithImages = rawExerciseRows.map((exerciseRow: any) => ({
     id: exerciseRow.id,
     muscle_test_id: exerciseRow.muscle_test_id,
     description: exerciseRow.description,

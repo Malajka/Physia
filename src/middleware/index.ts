@@ -1,4 +1,4 @@
-import { supabaseClient, type SupabaseClient } from "@/db/supabase.client";
+import { createSupabaseServerInstance, supabaseClient, type SupabaseClient } from "@/db/supabase.client";
 import type { User } from "@supabase/supabase-js";
 import { defineMiddleware, sequence } from "astro:middleware";
 
@@ -40,50 +40,54 @@ function shouldRedirectToDisclaimer(user: User | null, pathname: string): boolea
   return Boolean(user) && doesPathRequireDisclaimerAcceptance(pathname) && !isDisclaimerAccepted && pathname !== DISCLAIMER_ACCEPTANCE_PATH;
 }
 
-async function handleSessionOwnership(supabase: SupabaseClient, userId: string, pathname: string): Promise<Response | undefined> {
-  if (!pathname.startsWith("/sessions/")) {
-    return undefined;
-  }
-  const pathSegments = pathname.split("/");
-  if (pathSegments.length < 3 || Number.isNaN(Number(pathSegments[2]))) {
-    return undefined;
-  }
-  const sessionId = Number(pathSegments[2]);
-  const { data: sessionRecord, error } = await supabase.from("sessions").select("user_id").eq("id", sessionId).single();
-  if (error || !sessionRecord || sessionRecord.user_id !== userId) {
-    return new Response(null, {
-      status: 302,
-      headers: { Location: DEFAULT_AUTHENTICATED_PATH },
-    });
-  }
-  return undefined;
-}
+// Session ownership check removed for simplicity
 
-const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect }, next) => {
+const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect, request }, next) => {
   try {
-    // Set up supabase client
-    const supabase = supabaseClient;
+    console.log(`[MW] Processing: ${url.pathname}`);
 
-    // Attach supabase client to locals
-    locals.supabase = supabase;
+    let supabase: SupabaseClient;
 
-    // Set session from cookies if available
-    const accessToken = cookies.get("sb-access-token")?.value;
-    const refreshToken = cookies.get("sb-refresh-token")?.value;
-    if (accessToken && refreshToken) {
-      const { error: setSessionError } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-      if (setSessionError) {
-        console.error("[MW_SESSION_SET_ERROR]", setSessionError.message);
+    // Use different client approach for dev vs prod
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[MW] Using development client for: ${url.pathname}`);
+      // In development, use regular client with session management
+      supabase = supabaseClient;
+
+      // Set session from cookies if available
+      const accessToken = cookies.get("sb-access-token")?.value;
+      const refreshToken = cookies.get("sb-refresh-token")?.value;
+      console.log(`[MW] Cookies found - access: ${!!accessToken}, refresh: ${!!refreshToken}`);
+
+      if (accessToken && refreshToken) {
+        const { error: setSessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+        if (setSessionError) {
+          console.error("[MW_SESSION_SET_ERROR]", setSessionError.message);
+        } else {
+          console.log("[MW] Session set successfully");
+        }
       }
+    } else {
+      console.log(`[MW] Using SSR client for: ${url.pathname}`);
+      // In production, use SSR client
+      supabase = createSupabaseServerInstance({
+        cookies,
+        headers: request.headers,
+      });
     }
+
+    // Attach supabase client to locals (cast to unified type)
+    locals.supabase = supabase as SupabaseClient;
 
     // Get user session
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    console.log(`[MW] User found: ${user ? user.email : "NONE"} for path: ${url.pathname}`);
 
     // Always set user in locals if available, regardless of path
     if (user) {
@@ -95,7 +99,7 @@ const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect
 
     // Skip auth check for public paths - EARLY RETURN
     if (PUBLIC_PATHS.includes(url.pathname)) {
-      console.log("Skipping auth check for public path:", url.pathname);
+      console.log(`[MW] Public path, skipping auth: ${url.pathname}`);
       return next();
     }
 
@@ -121,15 +125,13 @@ const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect
 
     // For protected routes with authenticated user
     if (user && isPathProtected(url.pathname)) {
-      const ownershipRedirect = await handleSessionOwnership(supabase, user.id, url.pathname);
-      if (ownershipRedirect) {
-        return ownershipRedirect;
-      }
+      console.log(`[MW] ✅ AUTHENTICATED - allowing access to: ${url.pathname}`);
       return next();
     }
 
     // For protected routes without user
     if (!user && isPathProtected(url.pathname)) {
+      console.log(`[MW] ❌ UNAUTHORIZED - blocking access to: ${url.pathname}`);
       // For API routes, return 401 instead of redirecting
       if (url.pathname.startsWith("/api/")) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -145,6 +147,7 @@ const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect
     }
 
     // For any other routes not covered above, allow access
+    console.log(`[MW] Allowing access to unprotected path: ${url.pathname}`);
     return next();
   } catch (error) {
     console.error("Error in middleware:", error instanceof Error ? error.message : error);

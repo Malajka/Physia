@@ -1,27 +1,83 @@
+import { createServerClient, parseCookieHeader, type CookieOptionsWithName } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
+import type { AstroCookies } from "astro";
 import type { Database } from "./database.types";
 
-// Function to create Supabase client at request time
+export const cookieOptions: CookieOptionsWithName = {
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+  httpOnly: true,
+  sameSite: "lax",
+};
+
+interface SupabaseContext {
+  headers: Headers;
+  cookies: AstroCookies;
+}
+
+const createSupabaseInstance = (apiKey: string, context: SupabaseContext) => {
+  const supabaseUrl = import.meta.env.SUPABASE_URL;
+  return createServerClient<Database>(supabaseUrl, apiKey, {
+    cookieOptions,
+    cookies: {
+      // @ts-expect-error - correct implementation per Supabase docs
+      getAll() {
+        const cookieHeader = context.headers.get("Cookie") ?? "";
+        return parseCookieHeader(cookieHeader);
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => context.cookies.set(name, value, options));
+      },
+    },
+  });
+};
+
+export const createSupabaseServerInstance = (context: SupabaseContext) => {
+  const supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
+  return createSupabaseInstance(supabaseAnonKey, context);
+};
+
+// For backward compatibility - use regular client in development, SSR in production
 export function createSupabaseClient() {
   const supabaseUrl = import.meta.env.SUPABASE_URL;
   const supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
-  return createClient<Database>(supabaseUrl, supabaseAnonKey);
+
+  // Use regular client for development to avoid cookie issues
+  if (process.env.NODE_ENV === "development") {
+    return createClient<Database>(supabaseUrl, supabaseAnonKey);
+  }
+
+  // Use SSR client for production
+  const dummyContext: SupabaseContext = {
+    headers: new Headers(),
+    cookies: {
+      set: () => {
+        // No-op in dummy context
+      },
+      get: () => undefined,
+      has: () => false,
+      delete: () => {
+        // No-op in dummy context
+      },
+      getAll: () => [],
+    } as unknown as AstroCookies,
+  };
+
+  return createSupabaseInstance(supabaseAnonKey, dummyContext);
 }
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_PUBLIC_KEY;
+export const supabaseClient = createSupabaseClient();
 
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
-export type SupabaseClient = typeof supabaseClient;
-
-// Server-side instance for edge runtime compatibility
-export function createSupabaseServerInstance({ headers }: { cookies: unknown; headers: Headers }) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      flowType: "pkce",
-    },
-    global: {
-      headers: Object.fromEntries(headers.entries()),
-    },
-  });
+// Create a unified interface that both client types can satisfy
+export interface SupabaseClient {
+  auth: {
+    getUser(): Promise<any>;
+    getSession(): Promise<any>;
+    setSession(session: any): Promise<any>;
+    updateUser(attributes: any): Promise<any>;
+    signInWithPassword(credentials: any): Promise<any>;
+    signUp(userAttributes: any): Promise<any>;
+    signOut(): Promise<any>;
+  };
+  from(table: string): any;
 }
