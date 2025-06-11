@@ -1,4 +1,5 @@
-import { supabaseClient } from "@/db/supabase.client";
+import { supabaseClient, type SupabaseClient } from "@/db/supabase.client";
+import type { User } from "@supabase/supabase-js";
 import { defineMiddleware, sequence } from "astro:middleware";
 
 const LOGIN_PATH = "/login";
@@ -30,16 +31,16 @@ function doesPathRequireDisclaimerAcceptance(path: string): boolean {
   return PATHS_REQUIRING_DISCLAIMER.some((disclaimerRoute) => path.startsWith(disclaimerRoute));
 }
 
-function shouldRedirectToDefault(user: any, pathname: string): boolean {
+function shouldRedirectToDefault(user: User | null, pathname: string): boolean {
   return Boolean(user) && (pathname === LOGIN_PATH || pathname === REGISTER_PATH);
 }
 
-function shouldRedirectToDisclaimer(user: any, pathname: string): boolean {
+function shouldRedirectToDisclaimer(user: User | null, pathname: string): boolean {
   const isDisclaimerAccepted = Boolean(user?.user_metadata?.disclaimer_accepted_at);
   return Boolean(user) && doesPathRequireDisclaimerAcceptance(pathname) && !isDisclaimerAccepted && pathname !== DISCLAIMER_ACCEPTANCE_PATH;
 }
 
-async function handleSessionOwnership(supabase: any, userId: string, pathname: string): Promise<Response | undefined> {
+async function handleSessionOwnership(supabase: SupabaseClient, userId: string, pathname: string): Promise<Response | undefined> {
   if (!pathname.startsWith("/sessions/")) {
     return undefined;
   }
@@ -58,7 +59,7 @@ async function handleSessionOwnership(supabase: any, userId: string, pathname: s
   return undefined;
 }
 
-const validateRequest = defineMiddleware(async ({ locals, cookies, url, request, redirect }, next) => {
+const validateRequest = defineMiddleware(async ({ locals, cookies, url, redirect }, next) => {
   try {
     // Set up supabase client
     const supabase = supabaseClient;
