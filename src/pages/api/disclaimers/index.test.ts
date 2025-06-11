@@ -1,6 +1,6 @@
 import type { Session } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GET, POST } from "@/pages/api/disclaimers/index";
+import { GET, POST } from "./index";
 
 // Types for the mock context and API calls
 interface MockSupabase {
