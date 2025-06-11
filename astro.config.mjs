@@ -31,6 +31,16 @@ export default defineConfig({
       },
     },
     plugins: [tailwindcss()],
+    ssr: {
+      external: ["ws"],
+      noExternal: ["@supabase/ssr"],
+    },
+    define: {
+      global: "globalThis",
+    },
+    optimizeDeps: {
+      exclude: ["ws"],
+    },
   },
   devToolbar: {
     enabled: false,

@@ -25,14 +25,14 @@ export async function getExercisesForSession(
       return { exercises: [], error: "No muscle tests found for the selected body part" };
     }
 
-    const muscleTestIds = muscleTests.map((test) => test.id);
+    const muscleTestIds = muscleTests.map((test: { id: number }) => test.id);
     const { data: exercisesData, error: exercisesError } = await getExercisesForMuscleTests(supabase, muscleTestIds);
 
     if (exercisesError || !exercisesData || exercisesData.length === 0) {
       return { exercises: [], error: "No exercises found for the selected muscle tests" };
     }
 
-    const formattedExercises: ExerciseDto[] = exercisesData.map((exercise) => ({
+    const formattedExercises: ExerciseDto[] = exercisesData.map((exercise: any) => ({
       id: exercise.id,
       muscle_test_id: exercise.muscle_test_id,
       description: exercise.description,

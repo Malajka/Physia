@@ -5,7 +5,10 @@ import type { DataArrayResponse, DataResponse, ErrorResponse } from "@/types";
  * Throws if HTTP status is not ok or JSON parsing fails.
  */
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(url, init);
+  const response = await fetch(url, {
+    credentials: "include",
+    ...init,
+  });
   let body: T & Partial<ErrorResponse>;
   try {
     body = await response.json();
@@ -23,7 +26,10 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
  * Fetches an endpoint that returns either T[] or { data: T[] } and returns T[].
  */
 export async function fetchArray<T>(url: string, signal?: AbortSignal): Promise<T[]> {
-  const result = await fetchJson<T[] | DataArrayResponse<T>>(url, { signal });
+  const result = await fetchJson<T[] | DataArrayResponse<T>>(url, {
+    signal,
+    credentials: "include",
+  });
   if (Array.isArray(result)) {
     return result;
   }
@@ -34,7 +40,10 @@ export async function fetchArray<T>(url: string, signal?: AbortSignal): Promise<
  * Fetches an endpoint that returns { data: T } and returns the unwrapped T.
  */
 export async function fetchData<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const result = await fetchJson<DataResponse<T>>(url, { signal });
+  const result = await fetchJson<DataResponse<T>>(url, {
+    signal,
+    credentials: "include",
+  });
   return result.data;
 }
 
@@ -43,7 +52,11 @@ export async function fetchWithTimeout(url: string, options: RequestInit, timeou
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
+    return await fetch(url, {
+      ...options,
+      credentials: "include",
+      signal: controller.signal,
+    });
   } finally {
     clearTimeout(timeoutId);
   }
