@@ -18,8 +18,11 @@ export default defineConfig({
       },
     },
     plugins: [tailwindcss()],
+    ssr: {
+      external: ["@emnapi/runtime"],
+    },
   },
   adapter: cloudflare({
-    runtime: "edge",
+    runtime: "nodejs-compat",
   }),
 });
