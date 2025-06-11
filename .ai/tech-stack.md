@@ -18,10 +18,10 @@
   - Access to a wide range of models (OpenAI, Anthropic, Google, and many others), allowing us to find a solution that ensures high efficiency and low costs
   - Allows setting financial limits on API keys
 
-- CI/CD and Hosting
+- Local Development Only
 
-  - Github Actions for creating CI/CD pipelines
-  - Cloudflare Pages for hosting Astro application
+  - No production deployment configured
+  - Application runs locally for development and testing purposes
 
 - Testing
   - Unit Testing: Vitest, React Testing Library

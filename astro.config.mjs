@@ -1,7 +1,6 @@
 // @ts-check
-import cloudflare from "@astrojs/cloudflare";
+import node from "@astrojs/node";
 import react from "@astrojs/react";
-// @ts-expect-error - @tailwindcss/vite lacks TypeScript declarations
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 import path from "path";
@@ -46,5 +45,7 @@ export default defineConfig({
     enabled: false,
   },
   integrations: [react()],
-  adapter: cloudflare(),
+  adapter: node({
+    mode: "standalone",
+  }),
 });
