@@ -20,8 +20,8 @@ export function generateTestUser() {
 }
 
 /**
- * Get existing test user for login/conflict tests
- * This user should already exist in the system
+ * Get existing test user for login/conflict tests.
+ * This user should already exist in the system.
  */
 export function getExistingTestUser() {
   return {
@@ -38,7 +38,7 @@ export function getValidPassword(): string {
 }
 
 /**
- * Get an invalid password (too short)
+ * Get an invalid password (e.g., too short)
  */
 export function getInvalidPassword(): string {
   return "short";

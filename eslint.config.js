@@ -19,6 +19,7 @@ const baseConfig = tseslint.config({
   rules: {
     "no-console": "warn",
     "no-unused-vars": "off",
+    "@typescript-eslint/triple-slash-reference": ["error", { path: "off", types: "off", lib: "off" }],
   },
 });
 

@@ -1,4 +1,3 @@
-// AuthHelper.ts - Authentication helper for E2E tests
 import type { BrowserContext, Page } from "@playwright/test";
 
 declare global {

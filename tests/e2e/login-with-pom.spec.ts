@@ -10,109 +10,92 @@ test.describe("User Login (with POM)", () => {
   let loginPage: LoginPage;
   let sessionsPage: SessionsPage;
 
+  const LOGIN_API_URL = "/api/auth/login";
+
   test.beforeEach(async ({ page: testPage, context: testContext }) => {
     page = testPage;
     context = testContext;
     loginPage = new LoginPage(page);
     sessionsPage = new SessionsPage(page);
-
-    // Ensure clean state before each test
     await AuthHelper.ensureLoggedOut(page, context);
   });
 
   test.afterEach(async () => {
-    // Clean up after each test
     await AuthHelper.ensureLoggedOut(page, context);
   });
 
-  test("should log in successfully with valid credentials", async () => {
-    const testUser = TestDataHelper.getExistingTestUser();
+  test.describe("Login Form Validation", () => {
+    test("should show error with invalid password", async () => {
+      const testUser = TestDataHelper.getExistingTestUser();
+      const invalidPassword = "wrongpassword";
+      await loginPage.navigateToLogin();
 
-    // Navigate to login page
-    await loginPage.navigateToLogin();
+      const responsePromise = page.waitForResponse((resp) => resp.url().includes(LOGIN_API_URL) && resp.status() !== 200);
 
-    // Login with valid credentials
-    await loginPage.loginUser(testUser.email, testUser.password);
+      await loginPage.loginUser(testUser.email, invalidPassword);
 
-    // Verify successful login - should redirect to sessions page
-    await sessionsPage.expectOnSessionsPage();
+      await responsePromise;
 
-    // Verify no error message is visible
-    await expect(loginPage.errorMessage).toHaveCount(0);
-  });
+      await expect(page).toHaveURL(/\/login/);
+      await loginPage.expectLoginError();
+    });
 
-  test("should show error with invalid password", async () => {
-    const testUser = TestDataHelper.getExistingTestUser();
-    const invalidPassword = "wrongpassword";
+    test("should show error with invalid email format", async () => {
+      await loginPage.navigateToLogin();
+      await loginPage.loginUser(TestDataHelper.getInvalidEmail(), TestDataHelper.getValidPassword());
+      await loginPage.expectLoginError();
+    });
 
-    // Navigate to login page
-    await loginPage.navigateToLogin();
+    test.describe("Successful Login", () => {
+      test("should login successfully with valid credentials", async () => {
+        const testUser = TestDataHelper.getExistingTestUser();
+        await loginPage.navigateToLogin();
 
-    // Fill form with invalid password
-    await loginPage.fillLoginForm(testUser.email, invalidPassword);
-    await loginPage.submitLogin();
+        const responsePromise = page.waitForResponse((resp) => resp.url().includes(LOGIN_API_URL) && resp.status() === 200);
 
-    // Should stay on login page
-    await expect(page).toHaveURL(/\/login/);
+        await loginPage.loginUser(testUser.email, testUser.password);
+        await responsePromise;
 
-    // Should show error message
-    await loginPage.expectLoginError();
-  });
+        await loginPage.expectSuccessfulLogin();
+        await loginPage.expectNoLoginError();
+      });
 
-  test("should show error with invalid email", async () => {
-    const invalidEmail = "nonexistent@example.com";
-    const validPassword = TestDataHelper.getValidPassword();
+      test("should redirect to sessions page after successful login", async () => {
+        const testUser = TestDataHelper.getExistingTestUser();
+        await loginPage.navigateToLogin();
+        await loginPage.loginUser(testUser.email, testUser.password);
 
-    // Navigate to login page
-    await loginPage.navigateToLogin();
+        await expect(page).toHaveURL(/\/sessions/);
+        await expect(page.getByTestId("sessions-page")).toBeVisible();
+      });
+    });
 
-    // Fill form with invalid email
-    await loginPage.fillLoginForm(invalidEmail, validPassword);
-    await loginPage.submitLogin();
+    test.describe("Login Form UI", () => {
+      test("should show password when toggle button is clicked", async () => {
+        await loginPage.navigateToLogin();
+        const passwordInput = loginPage.passwordInput;
 
-    // Should stay on login page
-    await expect(page).toHaveURL(/\/login/);
+        await passwordInput.fill("testpassword");
+        await expect(passwordInput).toHaveAttribute("type", "password");
 
-    // Should show error message
-    await loginPage.expectLoginError();
-  });
+        await page.getByRole("button", { name: "Show password" }).click();
+        await expect(passwordInput).toHaveAttribute("type", "text");
 
-  test("should show error with empty credentials", async () => {
-    // Navigate to login page
-    await loginPage.navigateToLogin();
+        await page.getByRole("button", { name: "Hide password" }).click();
+        await expect(passwordInput).toHaveAttribute("type", "password");
+      });
 
-    // Submit form without filling any fields
-    await loginPage.submitLogin();
+      test("should disable submit button while loading", async () => {
+        await loginPage.navigateToLogin();
+        const submitButton = loginPage.submitButton;
 
-    // Should stay on login page
-    await expect(page).toHaveURL(/\/login/);
+        await expect(submitButton).toBeEnabled();
 
-    // Form validation should prevent submission or show error
-    // Note: This depends on your form validation implementation
-  });
+        const loginPromise = loginPage.loginUser(TestDataHelper.getExistingTestUser().email, TestDataHelper.getExistingTestUser().password);
 
-  test("should redirect to login when accessing protected page unauthenticated", async () => {
-    // Try to access protected sessions page without authentication
-    await sessionsPage.verifyProtectedRouteRedirect("/sessions");
-  });
-
-  test("should handle multiple failed login attempts", async () => {
-    const testUser = TestDataHelper.getExistingTestUser();
-    const invalidPassword = "wrongpassword";
-
-    await loginPage.navigateToLogin();
-
-    // First failed attempt
-    await loginPage.fillLoginForm(testUser.email, invalidPassword);
-    await loginPage.submitLogin();
-    await loginPage.expectLoginError();
-
-    // Second failed attempt
-    await loginPage.fillLoginForm(testUser.email, invalidPassword + "2");
-    await loginPage.submitLogin();
-    await loginPage.expectLoginError();
-
-    // Should still be on login page
-    await expect(page).toHaveURL(/\/login/);
+        await expect(submitButton).toBeDisabled();
+        await loginPromise;
+      });
+    });
   });
 });

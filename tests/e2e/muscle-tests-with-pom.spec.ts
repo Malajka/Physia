@@ -34,10 +34,7 @@ test.describe("Muscle Tests (with POM)", () => {
   test("Complete flow: login → body parts → muscle tests → session generation", async () => {
     // Step 1: Login
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
-
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
     // Step 2: Verify successful login and wait for navigation to sessions
     await loginPage.expectNoLoginError();
     await page.waitForURL("**/sessions", { timeout: 10000 });
@@ -94,9 +91,7 @@ test.describe("Muscle Tests (with POM)", () => {
   test("Should require at least one slider value to proceed", async () => {
     // Step 1: Login and navigate to muscle tests
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     await loginPage.expectNoLoginError();
     await page.waitForURL("**/sessions", { timeout: 10000 });
@@ -131,9 +126,7 @@ test.describe("Muscle Tests (with POM)", () => {
   test("Should allow setting multiple slider values", async () => {
     // Step 1: Login and navigate to muscle tests
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     await loginPage.expectNoLoginError();
     await page.waitForURL("**/sessions", { timeout: 10000 });
@@ -184,9 +177,7 @@ test.describe("Muscle Tests (with POM)", () => {
     // result in different exercise recommendations
 
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     await loginPage.expectNoLoginError();
     await page.waitForURL("**/sessions", { timeout: 10000 });

@@ -1,6 +1,4 @@
 /// <reference path="../.astro/types.d.ts" />
-// / <reference path="../.astro/types.d.ts" />
-// / <reference types="astro/client" />
 
 // Import types for Supabase client and user, and your auto-generated DB types
 import type { SupabaseClient, User } from "@supabase/supabase-js";
@@ -29,7 +27,6 @@ declare global {
     readonly PUBLIC_SUPABASE_URL: string;
     readonly PUBLIC_SUPABASE_ANON_KEY: string;
   }
-  
 
   interface ImportMeta {
     readonly env: ImportMetaEnv;

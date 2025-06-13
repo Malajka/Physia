@@ -22,9 +22,7 @@ test.describe("User Session Functionality (with POM)", () => {
 
     // Login user before each test
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
     await loginPage.expectNoLoginError();
     await sessionsPage.expectOnSessionsPage();
   });

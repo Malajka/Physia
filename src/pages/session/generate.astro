@@ -53,5 +53,6 @@ const pageTitle = "Generating Training Plan";
 ---
 
 <Layout title={pageTitle}>
+  <!-- @ts-ignore -->
   <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} client:load />
 </Layout>

@@ -34,9 +34,7 @@ test.describe("Body Parts Selection (with POM)", () => {
   test("Minimal create session flow", async () => {
     // Step 1: Login using POM
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
@@ -76,9 +74,7 @@ test.describe("Body Parts Selection (with POM)", () => {
   test("should accept disclaimer when visible", async () => {
     // Step 1: Login using POM
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
@@ -106,9 +102,7 @@ test.describe("Body Parts Selection (with POM)", () => {
   test("should enable next button after selecting body part", async () => {
     // Step 1: Login using POM
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
@@ -161,9 +155,7 @@ test.describe("Body Parts Selection (with POM)", () => {
   test("should navigate to next step after body part selection", async () => {
     // Step 1: Login using POM
     await loginPage.navigateToLogin();
-    await loginPage.fillEmail(TEST_USER.email);
-    await loginPage.fillPassword(TEST_USER.password);
-    await loginPage.clickSubmit();
+    await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
     // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);

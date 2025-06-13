@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 import dotenv from "dotenv";
 import path from "path";
+
 dotenv.config({ path: path.resolve(process.cwd(), ".env.test") });
 
 export default defineConfig({
@@ -20,27 +21,29 @@ export default defineConfig({
   // Increase global timeout
   timeout: 90000,
 
-  reporter: "html",
+  // Use console reporter only, avoid file generation
+  reporter: [["dot"]],
+
   expect: {
     // Increase expect timeout to support session generation wait times
     timeout: 30000,
   },
+
   use: {
     baseURL: "http://localhost:4321",
-    trace: "on",
-    video: "on",
-    screenshot: "on",
+    trace: "off", // Disable trace generation
+    video: "off", // Disable video capture
+    screenshot: "off", // Disable screenshots
 
-    // Increased timeouts
     navigationTimeout: 30000,
     actionTimeout: 20000,
 
-    // Improve browser stability
     viewport: { width: 1280, height: 720 },
     launchOptions: {
       slowMo: 100,
     },
   },
+
   projects: [
     {
       name: "cleanup db",
@@ -52,6 +55,7 @@ export default defineConfig({
       teardown: "cleanup db",
     },
   ],
+
   webServer: {
     command: "npm run dev",
     url: "http://localhost:4321",

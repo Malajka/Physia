@@ -15,7 +15,7 @@ export class BasePage {
     await this.page.goto(url);
   }
 
-  protected async waitForUrl(url: string, timeout = 10000) {
+  protected async waitForUrl(url: string | RegExp, timeout = 10000) {
     await this.page.waitForURL(url, { timeout });
   }
 
@@ -46,7 +46,8 @@ export class BasePage {
   }
 
   /**
-   * Retry mechanism for flaky actions
+   * Retry mechanism for flaky actions.
+   * Use sparingly, prefer Playwright's built-in auto-waiting.
    */
   protected async retryAction(action: () => Promise<void>, retries = 3, delay = 2000) {
     for (let attempt = 1; attempt <= retries; attempt++) {
