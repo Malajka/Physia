@@ -14,7 +14,7 @@ const variantStyles: Record<"primary" | "secondary" | "text" | "nav-link" | "nav
   primary: "bg-blue-600 text-white hover:bg-blue-700 hover:opacity-80",
   secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300 hover:opacity-80",
   text: "text-[var(--color-gray-800)] hover:underline",
-  "nav-link": "text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold",
+  "nav-link": "text-[var(--gray-text)] hover:text-[var(--primary)] hover:underline text-lg font-bold text-right",
   "nav-primary":
     "px-6 py-3 bg-[var(--primary)] border border-[var(--primary)] text-[var(--primary-foreground)] font-bold text-lg rounded-xl shadow-md text-center hover:opacity-80",
   "nav-secondary":

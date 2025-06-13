@@ -11,7 +11,7 @@ export const LogoutButton = function LogoutButton({ className = "" }: LogoutButt
 
   return (
     <Button
-      variant="ghost"
+      variant="default"
       size="default"
       onClick={logout}
       disabled={isLoggingOut}
