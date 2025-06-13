@@ -58,23 +58,7 @@ const pageTitle = "Generating Training Plan";
 </Layout> -->
 import type { APIRoute } from "astro";
 
-export const POST: APIRoute = async ({ locals }) => {
-  const supabase = locals.supabase;
-  console.log("TEST KROK 3: Próba wykonania pierwszego zapytania do Supabase.");
-  try {
-    const { data, error } = await supabase.from("body_parts").select("id").limit(1);
-
-    if (error) {
-      console.error("KRYTYCZNY BŁĄD ZAPYTANIA SUPABASE:", error);
-      throw new Error(`Błąd zapytania do Supabase: ${error.message}`);
-    }
-
-    console.log("TEST KROK 3: Zapytanie do Supabase wykonane pomyślnie.", data);
-    return new Response(JSON.stringify({ message: "Test Krok 3 zakończony sukcesem." }), { status: 200 });
-  } catch (e) {
-    const errorMessage = e instanceof Error ? e.message : "Nieznany błąd w Kroku 3.";
-    console.error("BŁĄD ZŁAPANY W KROKU 3:", errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), { status: 500 });
-  }
+export const POST: APIRoute = async () => {
+  console.log("TEST: Endpoint /api/sessions został trafiony.");
+  return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
 };
-
