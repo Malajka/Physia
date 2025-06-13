@@ -1,6 +1,5 @@
 import { Button, Skeleton, Spinner } from "@/components/ui";
 import { useSessionGeneration } from "@/hooks/useSessionGeneration";
-import { useEffect } from "react";
 
 interface SessionGenerationLoadingProps {
   bodyPartId: number;
@@ -77,11 +76,7 @@ function InvalidRequestDisplay() {
 }
 
 export function SessionGenerationLoading({ bodyPartId, tests }: SessionGenerationLoadingProps) {
-  const { statusMessage, error, retry, isLoading, startGeneration } = useSessionGeneration(bodyPartId, tests);
-
-  useEffect(() => {
-    // The hook manages its own initialization, this useEffect can be simplified or removed
-  }, [startGeneration, bodyPartId, tests]);
+  const { statusMessage, error, retry, isLoading } = useSessionGeneration(bodyPartId, tests);
 
   if (!bodyPartId || !tests || tests.length === 0) {
     return <InvalidRequestDisplay />;
