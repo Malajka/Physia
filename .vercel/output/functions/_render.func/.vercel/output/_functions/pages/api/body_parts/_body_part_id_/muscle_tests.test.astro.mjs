@@ -1,19 +1,19 @@
-import { describe, beforeEach, vi, it, expect } from "vitest";
-import { G as GET } from "../../../../chunks/muscle_tests_c4D4WmNG.mjs";
-export { renderers } from "../../../../renderers.mjs";
+import { describe, beforeEach, vi, it, expect } from 'vitest';
+import { G as GET } from '../../../../chunks/muscle_tests_c4D4WmNG.mjs';
+export { renderers } from '../../../../renderers.mjs';
 
 function createMockSupabase({ data, error }) {
   return {
     from: vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({
-        eq: vi.fn().mockResolvedValue({ data, error }),
-      }),
+        eq: vi.fn().mockResolvedValue({ data, error })
+      })
     }),
     auth: {
       // Domyślnie symulujemy zalogowanego użytkownika, aby testy mogły skupić się na logice endpointu.
       // Poszczególne testy mogą nadpisać ten mock, jeśli testują scenariusze autentykacji.
-      getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: "test-user-id" } } }, error: null }),
-    },
+      getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: "test-user-id" } } }, error: null })
+    }
   };
 }
 function createMockApiContext(params, locals, method = "GET", pathnameSuffix = "") {
@@ -31,11 +31,11 @@ function createMockApiContext(params, locals, method = "GET", pathnameSuffix = "
       get: vi.fn(),
       set: vi.fn(),
       delete: vi.fn(),
-      has: vi.fn(),
+      has: vi.fn()
     },
     // Bardziej precyzyjny typ dla mocka
     redirect: vi.fn((path, status) => new Response(null, { status: status || 302, headers: { Location: path } })),
-    clientAddress: "127.0.0.1",
+    clientAddress: "127.0.0.1"
     // site: new URL("http://localhost"),
   };
 }
@@ -80,10 +80,10 @@ describe("GET /api/body_parts/[body_part_id]/muscle_tests", () => {
       // Zachowaj mock auth
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockRejectedValue(new Error("unexpected database crash")),
-        }),
+          eq: vi.fn().mockRejectedValue(new Error("unexpected database crash"))
+        })
       }),
-      auth: locals.supabase.auth,
+      auth: locals.supabase.auth
       // Upewnij się, że auth jest zachowane
     };
     const params = { body_part_id: "2" };
@@ -113,15 +113,9 @@ describe("GET /api/body_parts/[body_part_id]/muscle_tests", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

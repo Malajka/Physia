@@ -1,5 +1,5 @@
-import { _ as _page } from "../../chunks/index_BYkik4NO.mjs";
-export { renderers } from "../../renderers.mjs";
+import { _ as _page } from '../../chunks/index_CLgpSJUb.mjs';
+export { renderers } from '../../renderers.mjs';
 
 const page = () => _page;
 

@@ -1,6 +1,6 @@
-import { j as jsonResponse } from "./response_BJucfPdF.mjs";
-import { l as loginSchema } from "./auth.validator_ZWOtGhyR.mjs";
-import { ZodError } from "zod";
+import { j as jsonResponse } from './response_BJucfPdF.mjs';
+import { l as loginSchema } from './auth.validator_ZWOtGhyR.mjs';
+import { ZodError } from 'zod';
 
 const prerender = false;
 const POST = async ({ request, locals }) => {
@@ -17,7 +17,7 @@ const POST = async ({ request, locals }) => {
     const { email, password } = data;
     const { data: authData, error } = await locals.supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     });
     if (error) {
       return jsonResponse({ error: "Invalid login credentials", debug: error.message }, 401);
@@ -29,16 +29,10 @@ const POST = async ({ request, locals }) => {
   }
 };
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-      POST,
-      prerender,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  POST,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
 
 export { POST as P, _page as _ };

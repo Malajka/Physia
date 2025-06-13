@@ -2,7 +2,7 @@ const JSON_HEADERS = { "Content-Type": "application/json" };
 function jsonResponse(body, status) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: JSON_HEADERS,
+    headers: JSON_HEADERS
   });
 }
 function errorResponse(code, message, status) {

@@ -1,30 +1,12 @@
 /* empty css                                      */
-import {
-  c as createComponent,
-  a as createAstro,
-  b as renderComponent,
-  r as renderTemplate,
-  m as maybeRenderHead,
-} from "../chunks/astro/server_B181Abhk.mjs";
-import "kleur/colors";
-import { $ as $$Layout } from "../chunks/Layout_DXvctC9J.mjs";
-export { renderers } from "../renderers.mjs";
+import { c as createComponent, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_B181Abhk.mjs';
+import 'kleur/colors';
+import { $ as $$Layout } from '../chunks/Layout_DXvctC9J.mjs';
+export { renderers } from '../renderers.mjs';
 
-const $$Astro = createAstro();
 const prerender = false;
-const $$Index = createComponent(
-  async ($$result, $$props, $$slots) => {
-    const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
-    Astro2.self = $$Index;
-    return renderTemplate`${renderComponent(
-      $$result,
-      "Layout",
-      $$Layout,
-      { title: "Physia - Personalized Exercise Plans" },
-      {
-        default: async (
-          $$result2
-        ) => renderTemplate`  ${maybeRenderHead()}<div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]"> <div class="container mx-auto px-4 py-12"> <section class="text-center max-w-3xl mx-auto mb-16" id="about"> <div class="flex flex-col items-center mb-6"> <img src="/physia-logo.png" alt="Physia illustration" class="h-24 mb-4 md:h-32 w-auto"> <h1 class="text-4xl md:text-5xl font-bold text-[var(--primary)] text-center">
+const $$Index = createComponent(($$result, $$props, $$slots) => {
+  return renderTemplate`${renderComponent($$result, "Layout", $$Layout, { "title": "Physia - Personalized Exercise Plans" }, { "default": ($$result2) => renderTemplate` ${maybeRenderHead()}<div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]"> <div class="container mx-auto px-4 py-12"> <section class="text-center max-w-3xl mx-auto mb-16" id="about"> <div class="flex flex-col items-center mb-6"> <img src="/physia-logo.png" alt="Physia illustration" class="h-24 mb-4 md:h-32 w-auto"> <h1 class="text-4xl md:text-5xl font-bold text-[var(--primary)] text-center">
 Personalized Exercise Plans for Overload-Related Muscle Pain
 </h1> </div> <p class="text-xl text-[var(--foreground)] mb-8">
 Discover a new way to move pain-free! Get a personalized exercise plan tailored to your unique muscle pain and overload points—created by
@@ -54,30 +36,19 @@ Advanced AI tailors exercise plans to your specific needs and pain intensity for
 Save your sessions and track how your exercises and pain levels change over time with detailed analytics.
 </p> </div> <div class="group"> <div class="flex items-start mb-3"> <div class="w-8 h-8 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-lg flex items-center justify-center mr-3 mt-1"> <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path> </svg> </div> <h3 class="text-xl font-bold text-gray-800 group-hover:text-[var(--primary)] transition-colors">Convenience</h3> </div> <p class="text-gray-600 text-base leading-relaxed ml-11">
 Access your personalized exercise plans anytime, anywhere through our responsive web platform.
-</p> </div> </div> </section> </div> </div> `,
-      }
-    )}`;
-  },
-  "/Users/monikabieniecka/Downloads/Physia/src/pages/index.astro",
-  void 0
-);
+</p> </div> </div> </section> </div> </div> ` })}; ---`;
+}, "/Users/monikabieniecka/Downloads/Physia/src/pages/index.astro", void 0);
 
 const $$file = "/Users/monikabieniecka/Downloads/Physia/src/pages/index.astro";
 const $$url = "";
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-      default: $$Index,
-      file: $$file,
-      prerender,
-      url: $$url,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  default: $$Index,
+  file: $$file,
+  prerender,
+  url: $$url
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

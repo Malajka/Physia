@@ -1,10 +1,10 @@
-import { g as getFeedbackForSession, G as GET, u as upsertFeedback, P as POST } from "../../../../chunks/feedback_DbJCpAEE.mjs";
-import { vi, describe, beforeEach, it, expect } from "vitest";
-export { renderers } from "../../../../renderers.mjs";
+import { g as getFeedbackForSession, G as GET, u as upsertFeedback, P as POST } from '../../../../chunks/feedback_DbJCpAEE.mjs';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
+export { renderers } from '../../../../renderers.mjs';
 
 vi.mock("@/lib/services/feedback", () => ({
   getFeedbackForSession: vi.fn(),
-  upsertFeedback: vi.fn(),
+  upsertFeedback: vi.fn()
 }));
 const userId = "user-id-from-withauth";
 const mockSessionIdString = "123";
@@ -12,10 +12,15 @@ const mockSessionIdNumber = 123;
 const mockGetSession = vi.fn();
 const mockSupabaseClient = {
   auth: {
-    getSession: mockGetSession,
-  },
+    getSession: mockGetSession
+  }
 };
-function createMockContext({ params = {}, requestBody = void 0, method = "GET", urlPath = `/api/sessions/${mockSessionIdString}/feedback` }) {
+function createMockContext({
+  params = {},
+  requestBody = void 0,
+  method = "GET",
+  urlPath = `/api/sessions/${mockSessionIdString}/feedback`
+}) {
   const request = {
     json: vi.fn().mockResolvedValue(requestBody),
     text: vi.fn().mockResolvedValue(requestBody ? JSON.stringify(requestBody) : ""),
@@ -23,11 +28,11 @@ function createMockContext({ params = {}, requestBody = void 0, method = "GET", 
     formData: vi.fn().mockResolvedValue(new FormData()),
     headers: new Headers({ "Content-Type": "application/json" }),
     method,
-    url: `http://localhost:4321${urlPath}`,
+    url: `http://localhost:4321${urlPath}`
   };
   return {
     locals: {
-      supabase: mockSupabaseClient,
+      supabase: mockSupabaseClient
     },
     params,
     request,
@@ -35,7 +40,7 @@ function createMockContext({ params = {}, requestBody = void 0, method = "GET", 
       get: vi.fn(),
       set: vi.fn(),
       delete: vi.fn(),
-      has: vi.fn(),
+      has: vi.fn()
     },
     site: void 0,
     generator: void 0,
@@ -46,7 +51,7 @@ function createMockContext({ params = {}, requestBody = void 0, method = "GET", 
     currentLocale: "en",
     defaultLocale: "en",
     locales: ["en"],
-    routing: { strategy: "prefix-always" },
+    routing: { strategy: "prefix-always" }
   };
 }
 describe("GET /api/sessions/:session_id/feedback", () => {
@@ -60,7 +65,7 @@ describe("GET /api/sessions/:session_id/feedback", () => {
     const context = createMockContext({
       params: { session_id: mockSessionIdString },
       // CRITICAL: FeedbackParamsSchema must correctly parse this string "123" to a number.
-      method: "GET",
+      method: "GET"
     });
     const response = await GET(context);
     expect(response.status).toBe(200);
@@ -77,7 +82,7 @@ describe("GET /api/sessions/:session_id/feedback", () => {
     const context = createMockContext({
       params: { session_id: "invalid-id-string" },
       // This should be rejected by FeedbackParamsSchema
-      method: "GET",
+      method: "GET"
     });
     const response = await GET(context);
     expect(response.status).toBe(400);
@@ -89,7 +94,7 @@ describe("GET /api/sessions/:session_id/feedback", () => {
     const context = createMockContext({
       params: { session_id: mockSessionIdString },
       // Should pass param validation
-      method: "GET",
+      method: "GET"
     });
     const response = await GET(context);
     expect(response.status).toBe(500);
@@ -111,7 +116,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
       params: { session_id: mockSessionIdString },
       // CRITICAL: `validPostBody` must be valid according to FeedbackBodySchema.
       requestBody: validPostBody,
-      method: "POST",
+      method: "POST"
     });
     const response = await POST(context);
     expect(response.status).toBe(200);
@@ -131,7 +136,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
       // This should be rejected by FeedbackParamsSchema
       requestBody: validPostBody,
       // Body is valid
-      method: "POST",
+      method: "POST"
     });
     const response = await POST(context);
     expect(response.status).toBe(400);
@@ -142,7 +147,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
     const context = createMockContext({
       params: { session_id: mockSessionIdString },
       // Params are valid
-      method: "POST",
+      method: "POST"
       // requestBody is undefined by default, and context.request.json() will throw.
     });
     context.request.json.mockRejectedValue(new Error("Simulated Invalid JSON"));
@@ -158,7 +163,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
       // Params are valid
       requestBody: invalidPostBody,
       // This should be rejected by FeedbackBodySchema
-      method: "POST",
+      method: "POST"
     });
     const response = await POST(context);
     expect(response.status).toBe(400);
@@ -173,7 +178,7 @@ describe("POST /api/sessions/:session_id/feedback", () => {
       // Should pass param validation
       requestBody: validPostBody,
       // Should pass body validation
-      method: "POST",
+      method: "POST"
     });
     const response = await POST(context);
     expect(response.status).toBe(500);
@@ -182,15 +187,9 @@ describe("POST /api/sessions/:session_id/feedback", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

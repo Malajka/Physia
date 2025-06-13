@@ -1,25 +1,28 @@
-import { p as parseAndValidate, c as createSession, P as POST } from "../../chunks/index_Dds9DCN5.mjs";
-import { vi, describe, beforeEach, it, expect } from "vitest";
-export { renderers } from "../../renderers.mjs";
+import { p as parseAndValidate, c as createSession, P as POST } from '../../chunks/index_Dds9DCN5.mjs';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
+export { renderers } from '../../renderers.mjs';
 
 vi.mock("@/lib/services/session", () => ({
-  createSession: vi.fn(),
+  createSession: vi.fn()
 }));
 vi.mock("@/lib/utils/request", () => ({
-  parseAndValidate: vi.fn(),
+  parseAndValidate: vi.fn()
 }));
-function createMockSupabase({ session = { user: { id: "user-id" } }, error = null } = {}) {
+function createMockSupabase({
+  session = { user: { id: "user-id" } },
+  error = null
+} = {}) {
   return {
     auth: {
-      getSession: vi.fn().mockResolvedValue({ data: { session }, error }),
-    },
+      getSession: vi.fn().mockResolvedValue({ data: { session }, error })
+    }
   };
 }
 function createMockRequest(json) {
   return {
     json: vi.fn().mockResolvedValue(json),
     url: "http://localhost/api/sessions",
-    headers: new Headers(),
+    headers: new Headers()
   };
 }
 describe("POST /api/sessions", () => {
@@ -40,7 +43,7 @@ describe("POST /api/sessions", () => {
       created_at: "2024-01-01",
       training_plan: {},
       session_tests: [],
-      feedback_rating: null,
+      feedback_rating: null
     };
     vi.mocked(parseAndValidate).mockResolvedValue(command);
     vi.mocked(createSession).mockResolvedValue({ session, error: null });
@@ -114,9 +117,7 @@ describe("POST /api/sessions", () => {
   });
   it("returns 500 if session error", async () => {
     locals = { supabase: createMockSupabase({ error: { message: "session error" } }) };
-    locals.supabase.auth.getSession = vi
-      .fn()
-      .mockResolvedValue({ data: { session: { user: { id: "user-id" } } }, error: { message: "session error" } });
+    locals.supabase.auth.getSession = vi.fn().mockResolvedValue({ data: { session: { user: { id: "user-id" } } }, error: { message: "session error" } });
     const command = { body_part_id: 1, tests: [{ muscle_test_id: 2, pain_intensity: 5 }] };
     vi.mocked(parseAndValidate).mockResolvedValue(command);
     request = createMockRequest(command);
@@ -127,15 +128,9 @@ describe("POST /api/sessions", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

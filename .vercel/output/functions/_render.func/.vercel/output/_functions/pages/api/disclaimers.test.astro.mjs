@@ -1,14 +1,8 @@
-export { renderers } from "../../renderers.mjs";
+export { renderers } from '../../renderers.mjs';
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+	__proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

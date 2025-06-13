@@ -1,29 +1,32 @@
 ---
+// src/pages/sessions/index.astro
+
 export const prerender = false;
 import { LinkButton } from "@/components/ui/LinkButton";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
-// Get the current user session
-const { data: authData } = await Astro.locals.supabase.auth.getSession();
-const session = authData.session;
+const {
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
 
-// Redirect to login if not authenticated
-if (!session) {
+// Redirect to login if the user is not authenticated.
+if (!user) {
   return Astro.redirect("/login?error=not_authenticated");
 }
 
-// Extract user ID
-const userId = session.user.id;
+// Extract the user ID from the secure, verified user object.
+const userId = user.id;
 
-// Fetch user's sessions and include the related body part name
+// Fetch the user's sessions, including the related body part name.
 const { data: sessionsRaw, error: fetchError } = await Astro.locals.supabase
   .from("sessions")
   .select("id, created_at, training_plan, body_parts(name)")
   .eq("user_id", userId)
   .order("created_at", { ascending: false });
 
-// Map each raw row into a typed session object with `plan` property
+// Map each raw row into a typed session object with a `plan` property.
+// This logic is correct and remains unchanged.
 interface SessionRow {
   id: number;
   created_at: string;

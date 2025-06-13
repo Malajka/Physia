@@ -1,15 +1,18 @@
-import { g as getExercisesForSession, G as GET } from "../../../../chunks/exercises_mUilRlMu.mjs";
-import { vi, describe, beforeEach, it, expect } from "vitest";
-export { renderers } from "../../../../renderers.mjs";
+import { g as getExercisesForSession, G as GET } from '../../../../chunks/exercises_bPx96JYu.mjs';
+import { vi, describe, beforeEach, it, expect } from 'vitest';
+export { renderers } from '../../../../renderers.mjs';
 
 vi.mock("@/lib/services/exercises", () => ({
-  getExercisesForSession: vi.fn(),
+  getExercisesForSession: vi.fn()
 }));
-function createMockSupabase({ session = { user: { id: "user-id" } }, error = null } = {}) {
+function createMockSupabase({
+  session = { user: { id: "user-id" } },
+  error = null
+} = {}) {
   return {
     auth: {
-      getSession: vi.fn().mockResolvedValue({ data: { session }, error }),
-    },
+      getSession: vi.fn().mockResolvedValue({ data: { session }, error })
+    }
   };
 }
 describe("GET /api/sessions/[session_id]/exercises", () => {
@@ -79,8 +82,8 @@ describe("GET /api/sessions/[session_id]/exercises", () => {
   it("returns 500 when auth getSession throws error", async () => {
     const supabase = {
       auth: {
-        getSession: vi.fn().mockRejectedValue(new Error("Auth service error")),
-      },
+        getSession: vi.fn().mockRejectedValue(new Error("Auth service error"))
+      }
     };
     locals = { supabase };
     const params = { session_id: "123" };
@@ -93,8 +96,8 @@ describe("GET /api/sessions/[session_id]/exercises", () => {
   it("returns 500 when auth getSession returns null sessionResult", async () => {
     const supabase = {
       auth: {
-        getSession: vi.fn().mockResolvedValue(null),
-      },
+        getSession: vi.fn().mockResolvedValue(null)
+      }
     };
     locals = { supabase };
     const params = { session_id: "123" };
@@ -125,15 +128,9 @@ describe("GET /api/sessions/[session_id]/exercises", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

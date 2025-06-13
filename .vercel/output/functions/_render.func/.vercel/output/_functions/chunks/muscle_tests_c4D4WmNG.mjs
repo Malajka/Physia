@@ -1,16 +1,13 @@
-import { w as withAuth } from "./withAuth_B5AzTmJJ.mjs";
-import { j as jsonResponse } from "./response_BJucfPdF.mjs";
-import { z } from "zod";
+import { w as withAuth } from './withAuth_B5AzTmJJ.mjs';
+import { j as jsonResponse } from './response_BJucfPdF.mjs';
+import { z } from 'zod';
 
 const prerender = false;
 const ParamsSchema = z.object({
-  body_part_id: z.coerce
-    .number({
-      required_error: "body_part_id is required",
-      invalid_type_error: "body_part_id must be a number",
-    })
-    .int()
-    .positive(),
+  body_part_id: z.coerce.number({
+    required_error: "body_part_id is required",
+    invalid_type_error: "body_part_id must be a number"
+  }).int().positive()
 });
 const SELECT_COLUMNS = "id, body_part_id, name, description, created_at";
 const GET = withAuth(async ({ locals: { supabase }, params }, _userId) => {
@@ -31,16 +28,10 @@ const GET = withAuth(async ({ locals: { supabase }, params }, _userId) => {
   }
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-      GET,
-      prerender,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  GET,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
 
 export { GET as G, _page as _ };

@@ -1,8 +1,8 @@
-import { createServerClient } from "@supabase/ssr";
-import { d as defineMiddleware, s as sequence } from "./chunks/index_rBVTmNgT.mjs";
-import "es-module-lexer";
-import "./chunks/astro-designed-error-pages_CBXS45Lj.mjs";
-import "cookie";
+import { createServerClient } from '@supabase/ssr';
+import { d as defineMiddleware, s as sequence } from './chunks/index_rBVTmNgT.mjs';
+import 'es-module-lexer';
+import './chunks/astro-designed-error-pages_CBXS45Lj.mjs';
+import 'cookie';
 
 const LOGIN_PATH = "/login";
 const REGISTER_PATH = "/register";
@@ -61,41 +61,37 @@ async function handleSessionOwnership(context) {
   return null;
 }
 const onRequest$1 = defineMiddleware(async (context, next) => {
-  const supabase = createServerClient(
-    "https://juecydaoemmuzshzkjki.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1ZWN5ZGFvZW1tdXpzaHpramtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3ODgyMTIsImV4cCI6MjA2MjM2NDIxMn0.ttj-Z2cxA9CEl1Mb0ZH095CaB7XFIYT06WyOlU__8Kc",
-    {
-      cookies: {
-        get: (key) => context.cookies.get(key)?.value,
-        set: (key, value, options) => {
-          context.cookies.set(key, value, {
-            domain: options.domain,
-            expires: options.expires,
-            httpOnly: options.httpOnly,
-            maxAge: options.maxAge,
-            path: options.path ?? "/",
-            sameSite: options.sameSite,
-            secure: options.secure,
-            // Added to satisfy Astro's type definition.
-            encode: (val) => val,
-          });
-        },
-        remove: (key, options) => {
-          context.cookies.delete(key, {
-            domain: options.domain,
-            path: options.path ?? "/",
-            // Added to ensure the cookie can be properly deleted.
-            httpOnly: options.httpOnly,
-            secure: options.secure,
-            sameSite: options.sameSite,
-          });
-        },
+  const supabase = createServerClient("https://juecydaoemmuzshzkjki.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp1ZWN5ZGFvZW1tdXpzaHpramtpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3ODgyMTIsImV4cCI6MjA2MjM2NDIxMn0.ttj-Z2cxA9CEl1Mb0ZH095CaB7XFIYT06WyOlU__8Kc", {
+    cookies: {
+      get: (key) => context.cookies.get(key)?.value,
+      set: (key, value, options) => {
+        context.cookies.set(key, value, {
+          domain: options.domain,
+          expires: options.expires,
+          httpOnly: options.httpOnly,
+          maxAge: options.maxAge,
+          path: options.path ?? "/",
+          sameSite: options.sameSite,
+          secure: options.secure,
+          // Added to satisfy Astro's type definition.
+          encode: (val) => val
+        });
       },
+      remove: (key, options) => {
+        context.cookies.delete(key, {
+          domain: options.domain,
+          path: options.path ?? "/",
+          // Added to ensure the cookie can be properly deleted.
+          httpOnly: options.httpOnly,
+          secure: options.secure,
+          sameSite: options.sameSite
+        });
+      }
     }
-  );
+  });
   context.locals.supabase = supabase;
   const {
-    data: { user },
+    data: { user }
   } = await supabase.auth.getUser();
   context.locals.user = user;
   const pathname = getPathname(context.request);
@@ -114,6 +110,10 @@ const onRequest$1 = defineMiddleware(async (context, next) => {
   return next();
 });
 
-const onRequest = sequence(onRequest$1);
+const onRequest = sequence(
+	
+	onRequest$1
+	
+);
 
 export { onRequest };

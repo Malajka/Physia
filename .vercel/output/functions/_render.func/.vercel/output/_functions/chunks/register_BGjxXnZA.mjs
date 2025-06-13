@@ -1,6 +1,6 @@
-import { j as jsonResponse } from "./response_BJucfPdF.mjs";
-import { r as registerSchema } from "./auth.validator_ZWOtGhyR.mjs";
-import { ZodError } from "zod";
+import { j as jsonResponse } from './response_BJucfPdF.mjs';
+import { r as registerSchema } from './auth.validator_ZWOtGhyR.mjs';
+import { ZodError } from 'zod';
 
 const prerender = false;
 const POST = async ({ request, locals }) => {
@@ -19,8 +19,8 @@ const POST = async ({ request, locals }) => {
       email,
       password,
       options: {
-        emailRedirectTo: `${new URL(request.url).origin}/login`,
-      },
+        emailRedirectTo: `${new URL(request.url).origin}/login`
+      }
     });
     if (signUpError) {
       const errorMessageLower = signUpError.message.toLowerCase();
@@ -29,7 +29,7 @@ const POST = async ({ request, locals }) => {
         return jsonResponse(
           {
             error: "This email is already registered. Please log in instead.",
-            code: "EMAIL_ALREADY_EXISTS",
+            code: "EMAIL_ALREADY_EXISTS"
           },
           409
         );
@@ -39,7 +39,7 @@ const POST = async ({ request, locals }) => {
     return jsonResponse(
       {
         user: registrationResult.user,
-        message: "Registration successful! Please check your email for confirmation.",
+        message: "Registration successful! Please check your email for confirmation."
       },
       200
     );
@@ -49,16 +49,10 @@ const POST = async ({ request, locals }) => {
   }
 };
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-      POST,
-      prerender,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  POST,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
 
 export { POST as P, _page as _ };

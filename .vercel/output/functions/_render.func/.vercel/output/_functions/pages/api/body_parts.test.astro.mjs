@@ -1,17 +1,17 @@
-import { vi, describe, beforeEach, it, expect } from "vitest";
-import { G as GET } from "../../chunks/index_BYkik4NO.mjs";
-export { renderers } from "../../renderers.mjs";
+import { vi, describe, beforeEach, it, expect } from 'vitest';
+import { G as GET } from '../../chunks/index_CLgpSJUb.mjs';
+export { renderers } from '../../renderers.mjs';
 
 vi.mock("astro:middleware", () => ({
-  defineMiddleware: (fn) => fn,
+  defineMiddleware: (fn) => fn
 }));
 function createMockSupabase({ data, error }) {
   return {
     from: vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({
-        order: vi.fn().mockResolvedValue({ data, error }),
-      }),
-    }),
+        order: vi.fn().mockResolvedValue({ data, error })
+      })
+    })
   };
 }
 describe("GET /api/body_parts", () => {
@@ -40,10 +40,10 @@ describe("GET /api/body_parts", () => {
       ...locals.supabase,
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
-          order: vi.fn().mockRejectedValue(new Error("unexpected")),
+          order: vi.fn().mockRejectedValue(new Error("unexpected"))
           // throws
-        }),
-      }),
+        })
+      })
     };
     const response = await GET({ locals });
     expect(response.status).toBe(500);
@@ -52,15 +52,9 @@ describe("GET /api/body_parts", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

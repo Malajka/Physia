@@ -1,6 +1,6 @@
-import { E as ErrorCode, w as withAuth } from "./withAuth_B5AzTmJJ.mjs";
-import { z } from "zod";
-import { e as errorResponse, s as successResponse } from "./api_CZk8L_u-.mjs";
+import { E as ErrorCode, w as withAuth } from './withAuth_B5AzTmJJ.mjs';
+import { z } from 'zod';
+import { e as errorResponse, s as successResponse } from './api_CZk8L_u-.mjs';
 
 const HIGH_PAIN_THRESHOLD = 7;
 const MEDIUM_PAIN_THRESHOLD = 4;
@@ -20,9 +20,9 @@ z.object({
       sets: z.number().int().positive(),
       reps: z.number().int().positive(),
       rest_time_seconds: z.number().int().nonnegative(),
-      notes: z.string().optional(),
+      notes: z.string().optional()
     })
-  ),
+  )
 });
 function calculateSetsReps(painLevel) {
   if (painLevel >= HIGH_PAIN_THRESHOLD) {
@@ -58,9 +58,9 @@ function generateMockTrainingPlan(bodyPartName, muscleTests, exercises) {
         sets,
         reps,
         rest_time_seconds: DEFAULT_REST_TIME_SECONDS,
-        notes: pain >= HIGH_PAIN_THRESHOLD ? "Perform with caution due to high pain level" : void 0,
+        notes: pain >= HIGH_PAIN_THRESHOLD ? "Perform with caution due to high pain level" : void 0
       };
-    }),
+    })
   };
 }
 async function generateTrainingPlan(bodyPartName, muscleTests, exercises) {
@@ -75,7 +75,7 @@ async function generateTrainingPlan(bodyPartName, muscleTests, exercises) {
 
 async function createSession(supabase, userId, command) {
   const { body_part_id: bodyPartId, tests: selectedTests } = command;
-  const disclaimerAcceptedTimestamp = /* @__PURE__ */ new Date().toISOString();
+  const disclaimerAcceptedTimestamp = (/* @__PURE__ */ new Date()).toISOString();
   try {
     const bodyPartRecord = await validateBodyPart(supabase, bodyPartId);
     await validateMuscleTests(supabase, bodyPartId, selectedTests);
@@ -95,7 +95,7 @@ async function createSession(supabase, userId, command) {
       muscle_test_id: exerciseRecord.muscle_test_id,
       description: exerciseRecord.description,
       created_at: exerciseRecord.created_at,
-      images: exerciseRecord.images,
+      images: exerciseRecord.images
     }));
     const updatedSessionRecord = await generateAndSaveTrainingPlan(
       supabase,
@@ -113,7 +113,7 @@ async function createSession(supabase, userId, command) {
       created_at: updatedSessionRecord.created_at,
       training_plan: updatedSessionRecord.training_plan,
       session_tests: updatedSessionRecord.session_tests,
-      feedback_rating: null,
+      feedback_rating: null
     };
     return { session: sessionDetailDto, error: null };
   } catch (errorCaught) {
@@ -121,7 +121,7 @@ async function createSession(supabase, userId, command) {
     await supabase.from("generation_error_logs").insert({
       error_code: "session_creation_failed",
       error_message: errorMessage,
-      user_id: userId,
+      user_id: userId
     });
     return { session: null, error: errorMessage };
   }
@@ -135,11 +135,7 @@ async function validateBodyPart(supabase, bodyPartId) {
 }
 async function validateMuscleTests(supabase, bodyPartId, selectedTests) {
   const muscleTestIds = selectedTests.map((test) => test.muscle_test_id);
-  const { data: muscleTestsData, error: muscleTestsQueryError } = await supabase
-    .from("muscle_tests")
-    .select("*")
-    .eq("body_part_id", bodyPartId)
-    .in("id", muscleTestIds);
+  const { data: muscleTestsData, error: muscleTestsQueryError } = await supabase.from("muscle_tests").select("*").eq("body_part_id", bodyPartId).in("id", muscleTestIds);
   if (muscleTestsQueryError) {
     throw new Error("Failed to validate muscle tests");
   }
@@ -151,16 +147,13 @@ async function validateMuscleTests(supabase, bodyPartId, selectedTests) {
   return muscleTestsData;
 }
 async function insertSession(supabase, userId, bodyPartId, disclaimerAt) {
-  const { data: insertedSessionData, error: insertionError } = await supabase
-    .from("sessions")
-    .insert({
-      user_id: userId,
-      body_part_id: bodyPartId,
-      disclaimer_accepted_at: disclaimerAt,
-      training_plan: {},
-    })
-    .select(
-      `
+  const { data: insertedSessionData, error: insertionError } = await supabase.from("sessions").insert({
+    user_id: userId,
+    body_part_id: bodyPartId,
+    disclaimer_accepted_at: disclaimerAt,
+    training_plan: {}
+  }).select(
+    `
       id,
       user_id,
       body_part_id,
@@ -168,8 +161,7 @@ async function insertSession(supabase, userId, bodyPartId, disclaimerAt) {
       created_at,
       training_plan
     `
-    )
-    .single();
+  ).single();
   if (insertionError || !insertedSessionData) {
     throw new Error(`Failed to create session: ${insertionError?.message || "Unknown error"}`);
   }
@@ -179,7 +171,7 @@ async function recordSessionTests(supabase, sessionId, selectedTests) {
   const sessionTestEntries = selectedTests.map(({ muscle_test_id, pain_intensity }) => ({
     session_id: sessionId,
     muscle_test_id,
-    pain_intensity,
+    pain_intensity
   }));
   const { error: recordError } = await supabase.from("session_tests").insert(sessionTestEntries);
   if (recordError) {
@@ -189,10 +181,8 @@ async function recordSessionTests(supabase, sessionId, selectedTests) {
 async function fetchTestsAndExercises(supabase, testIds) {
   const [{ data: muscleTestsData, error: muscleTestsQueryError }, { data: rawExerciseRows, error: exercisesQueryError }] = await Promise.all([
     supabase.from("muscle_tests").select("*").in("id", testIds),
-    supabase
-      .from("exercises")
-      .select(
-        `
+    supabase.from("exercises").select(
+      `
           id,
           muscle_test_id,
           description,
@@ -205,8 +195,7 @@ async function fetchTestsAndExercises(supabase, testIds) {
             created_at
           )
         `
-      )
-      .in("muscle_test_id", testIds),
+    ).in("muscle_test_id", testIds)
   ]);
   if (muscleTestsQueryError || !muscleTestsData?.length) {
     throw new Error("Failed to retrieve detailed muscle test data");
@@ -219,7 +208,7 @@ async function fetchTestsAndExercises(supabase, testIds) {
     muscle_test_id: exerciseRow.muscle_test_id,
     description: exerciseRow.description,
     created_at: exerciseRow.created_at,
-    images: exerciseRow.exercise_images,
+    images: exerciseRow.exercise_images
   }));
   return { muscleTests: muscleTestsData, exercises: exercisesWithImages };
 }
@@ -229,16 +218,12 @@ async function generateAndSaveTrainingPlan(supabase, userId, sessionId, bodyPart
     await supabase.from("generation_error_logs").insert({
       error_code: "ai_generation_failed",
       error_message: error,
-      user_id: userId,
+      user_id: userId
     });
     throw new Error(`Failed to generate training plan: ${error}`);
   }
-  const { data: updatedSessionData, error: sessionUpdateError } = await supabase
-    .from("sessions")
-    .update({ training_plan: trainingPlan })
-    .eq("id", sessionId)
-    .select(
-      `
+  const { data: updatedSessionData, error: sessionUpdateError } = await supabase.from("sessions").update({ training_plan: trainingPlan }).eq("id", sessionId).select(
+    `
       id,
       body_part_id,
       user_id,
@@ -247,8 +232,7 @@ async function generateAndSaveTrainingPlan(supabase, userId, sessionId, bodyPart
       training_plan,
       session_tests(id, session_id, muscle_test_id, pain_intensity)
     `
-    )
-    .single();
+  ).single();
   if (sessionUpdateError || !updatedSessionData) {
     throw new Error(`Failed to update session with training plan: ${sessionUpdateError?.message || "Unknown error"}`);
   }
@@ -271,14 +255,12 @@ async function parseAndValidate(request, schema) {
 
 const CreateSessionSchema = z.object({
   body_part_id: z.number().int().positive(),
-  tests: z
-    .array(
-      z.object({
-        muscle_test_id: z.number().int().positive(),
-        pain_intensity: z.number().int().min(0).max(10),
-      })
-    )
-    .nonempty(),
+  tests: z.array(
+    z.object({
+      muscle_test_id: z.number().int().positive(),
+      pain_intensity: z.number().int().min(0).max(10)
+    })
+  ).nonempty()
 });
 
 const prerender = false;
@@ -304,16 +286,10 @@ const POST = withAuth(async ({ request, locals }, userId) => {
   }
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-      POST,
-      prerender,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  POST,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
 
 export { POST as P, _page as _, createSession as c, parseAndValidate as p };

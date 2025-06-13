@@ -1,4 +1,4 @@
-import { e as errorResponse } from "./api_CZk8L_u-.mjs";
+import { e as errorResponse } from './api_CZk8L_u-.mjs';
 
 var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
   ErrorCode2["VALIDATION_FAILED"] = "validation_failed";
@@ -10,7 +10,7 @@ var ErrorCode = /* @__PURE__ */ ((ErrorCode2) => {
 })(ErrorCode || {});
 
 function withAuth(handler) {
-  return function (context) {
+  return function(context) {
     const { locals } = context;
     const user = locals.user;
     if (!user) {

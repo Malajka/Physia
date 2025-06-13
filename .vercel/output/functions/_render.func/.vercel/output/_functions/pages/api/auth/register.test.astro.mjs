@@ -1,13 +1,13 @@
-import { describe, beforeEach, vi, it, expect } from "vitest";
-import { P as POST } from "../../../chunks/register_BGjxXnZA.mjs";
-export { renderers } from "../../../renderers.mjs";
+import { describe, beforeEach, vi, it, expect } from 'vitest';
+import { P as POST } from '../../../chunks/register_BGjxXnZA.mjs';
+export { renderers } from '../../../renderers.mjs';
 
 const validCredentials = { email: "test@example.com", password: "password1234" };
 const validUser = { id: "user-id", email: validCredentials.email };
 function createMockRequest(json, url = "http://localhost/register") {
   return {
     json: vi.fn().mockResolvedValue(json),
-    url,
+    url
   };
 }
 describe("POST /api/auth/register", () => {
@@ -16,16 +16,16 @@ describe("POST /api/auth/register", () => {
     locals = {
       supabase: {
         auth: {
-          signUp: vi.fn(),
-        },
-      },
+          signUp: vi.fn()
+        }
+      }
     };
   });
   it("returns 200 and user on valid registration", async () => {
     const request = createMockRequest(validCredentials);
     locals.supabase.auth.signUp.mockResolvedValue({
       data: { user: validUser },
-      error: null,
+      error: null
     });
     const response = await POST({ request, locals });
     expect(response.status).toBe(200);
@@ -37,7 +37,7 @@ describe("POST /api/auth/register", () => {
     const request = createMockRequest(validCredentials);
     locals.supabase.auth.signUp.mockResolvedValue({
       data: null,
-      error: { message: "Email already registered" },
+      error: { message: "Email already registered" }
     });
     const response = await POST({ request, locals });
     expect(response.status).toBe(409);
@@ -48,7 +48,7 @@ describe("POST /api/auth/register", () => {
     const request = createMockRequest(validCredentials);
     locals.supabase.auth.signUp.mockResolvedValue({
       data: null,
-      error: { message: "Something else went wrong" },
+      error: { message: "Something else went wrong" }
     });
     const response = await POST({ request, locals });
     expect(response.status).toBe(400);
@@ -87,15 +87,9 @@ describe("POST /api/auth/register", () => {
   });
 });
 
-const _page = /*#__PURE__*/ Object.freeze(
-  /*#__PURE__*/ Object.defineProperty(
-    {
-      __proto__: null,
-    },
-    Symbol.toStringTag,
-    { value: "Module" }
-  )
-);
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null
+}, Symbol.toStringTag, { value: 'Module' }));
 
 const page = () => _page;
 

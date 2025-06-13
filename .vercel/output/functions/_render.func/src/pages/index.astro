@@ -1,21 +1,9 @@
 ---
 export const prerender = false;
 import Layout from "@/layouts/Layout.astro";
-
-// Fetch session to determine if user is authenticated
-// const {
-//   data: { session },
-// } = await Astro.locals.supabase.auth.getSession();
-// const isAuthenticated = !!session;
-
-// If authenticated, redirect to sessions, otherwise show the landing page
-// if (isAuthenticated) {
-//   return Astro.redirect("/sessions");
-// }
 ---
 
 <Layout title="Physia - Personalized Exercise Plans">
-  <!-- Gradient background container -->
   <div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]">
     <div class="container mx-auto px-4 py-12">
       <section class="text-center max-w-3xl mx-auto mb-16" id="about">
@@ -172,4 +160,4 @@ import Layout from "@/layouts/Layout.astro";
       </section>
     </div>
   </div>
-</Layout>
+</Layout>; ---

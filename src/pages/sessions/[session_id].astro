@@ -1,57 +1,64 @@
 ---
+// src/pages/sessions/[session_id].astro
+
 import { FeedbackRating } from "@/components/session/FeedbackRating";
 import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
 export const prerender = false;
-// Server-side guard: require authenticated session and disclaimer acceptance
-const authRes = await Astro.locals.supabase.auth.getSession();
-const session = authRes.data.session;
-if (!session) {
-  return Astro.redirect("/login");
+
+// --- THE FINAL FIX: Use the secure getUser() method ---
+const {
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
+
+// Server-side guard: require authenticated user and disclaimer acceptance
+if (!user) {
+  return Astro.redirect("/login?error=authentication_required");
 }
-if (!session.user.user_metadata?.disclaimer_accepted_at) {
-  return Astro.redirect("/body-parts");
+if (!user.user_metadata?.disclaimer_accepted_at) {
+  return Astro.redirect("/body-parts?error=disclaimer_required");
 }
 
 // Grab the session_id from the route params
 const sessionId = Number(Astro.params.session_id);
 const pageTitle = `Session ${sessionId}`;
-// Initialize session data variables
-let sessionError: string | null = null;
 let trainingSession: { training_plan: TrainingPlan } | null = null;
 
-// Fetch session details for the authenticated user
+// Fetch session details for the authenticated user, using the secure user.id
 const supabase = Astro.locals.supabase;
 const { data: sessionRow, error: fetchError } = await supabase
   .from("sessions")
   .select("training_plan")
   .eq("id", sessionId)
-  .eq("user_id", session.user.id)
+  .eq("user_id", user.id) // This query is now fully secure
   .single();
+
 if (fetchError || !sessionRow) {
-  // Not found or not owned by user
-  return Astro.redirect("/sessions");
+  // If the session is not found or not owned by the user, redirect.
+  return Astro.redirect("/sessions?error=not_found");
 }
 trainingSession = { training_plan: sessionRow.training_plan as TrainingPlan };
 
-// Add exercise image fetching
+// Fetch exercise images (this logic is correct)
 let exerciseImagesMap: Record<number, { file_path: string; metadata: unknown }[]> = {};
 if (trainingSession) {
   const exerciseIds = trainingSession.training_plan.exercises.map((ex) => ex.id);
-  const { data: exercisesData, error: exercisesError } = await supabase
-    .from("exercises")
-    .select("id, exercise_images(file_path, metadata)")
-    .in("id", exerciseIds);
-  if (!exercisesError && exercisesData) {
-    exerciseImagesMap = exercisesData.reduce(
-      (acc, item) => {
-        acc[item.id] = item.exercise_images;
-        return acc;
-      },
-      {} as Record<number, { file_path: string; metadata: unknown }[]>
-    );
+  if (exerciseIds.length > 0) {
+    const { data: exercisesData, error: exercisesError } = await supabase
+      .from("exercises")
+      .select("id, exercise_images(file_path, metadata)")
+      .in("id", exerciseIds);
+    if (!exercisesError && exercisesData) {
+      exerciseImagesMap = exercisesData.reduce(
+        (acc, item) => {
+          acc[item.id] = item.exercise_images;
+          return acc;
+        },
+        {} as Record<number, { file_path: string; metadata: unknown }[]>
+      );
+    }
   }
 }
 ---
@@ -59,7 +66,7 @@ if (trainingSession) {
 <Layout title={pageTitle}>
   <div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]">
     <div class="container mx-auto p-8">
-      {/* Header */}
+      <!-- Header -->
       <div class="text-center mb-8">
         <img src="/images/phybsia.png" alt="Phybsia cat" class="mx-auto mb-4" style="max-width:6.25rem;width:100%;display:block;" />
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Session {sessionId}</h1>
@@ -67,19 +74,9 @@ if (trainingSession) {
       </div>
 
       {
-        sessionError && (
-          <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6 max-w-2xl mx-auto">
-            <p class="text-red-600">Error loading session: {sessionError}</p>
-          </div>
-        )
-      }
-
-      {
         trainingSession ? (
           <div class="max-w-7xl mx-auto">
             <TrainingPlanDisplay client:load trainingPlan={trainingSession.training_plan} exerciseImagesMap={exerciseImagesMap} />
-
-            {/* Feedback Section */}
             <div class="mt-12 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-2xl mx-auto">
               <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">How was your session?</h3>
               <FeedbackRating client:load sessionId={sessionId} />
@@ -92,7 +89,7 @@ if (trainingSession) {
         )
       }
 
-      {/* Navigation */}
+      <!-- Navigation -->
       <div class="text-center mt-8">
         <a
           href="/body-parts"

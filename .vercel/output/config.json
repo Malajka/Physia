@@ -1,127 +1,127 @@
 {
-  "version": 3,
-  "routes": [
-    {
-      "src": "^/_astro/(.*)$",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "^\\/_image$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/login\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/login\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/logout\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/logout\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/register\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/auth\\/register\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/body_parts\\/([^/]+?)\\/muscle_tests\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/body_parts\\/([^/]+?)\\/muscle_tests\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/body_parts\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/body_parts\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/disclaimers\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/disclaimers\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\/([^/]+?)\\/exercises\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\/([^/]+?)\\/exercises\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\/([^/]+?)\\/feedback\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\/([^/]+?)\\/feedback\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/sessions\\.test\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/api\\/test-db\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/body-parts\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/login\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/muscle-tests\\/([^/]+?)\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/register\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/session\\/generate\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/sessions\\/([^/]+?)\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/sessions\\/?$",
-      "dest": "_render"
-    },
-    {
-      "src": "^\\/$",
-      "dest": "_render"
-    }
-  ]
+	"version": 3,
+	"routes": [
+		{
+			"src": "^/_astro/(.*)$",
+			"headers": {
+				"cache-control": "public, max-age=31536000, immutable"
+			},
+			"continue": true
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^\\/_image$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/login\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/login\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/logout\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/logout\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/register\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/auth\\/register\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/body_parts\\/([^/]+?)\\/muscle_tests\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/body_parts\\/([^/]+?)\\/muscle_tests\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/body_parts\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/body_parts\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/disclaimers\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/disclaimers\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\/([^/]+?)\\/exercises\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\/([^/]+?)\\/exercises\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\/([^/]+?)\\/feedback\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\/([^/]+?)\\/feedback\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/sessions\\.test\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/api\\/test-db\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/body-parts\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/login\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/muscle-tests\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/register\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/session\\/generate\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/sessions\\/([^/]+?)\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/sessions\\/?$",
+			"dest": "_render"
+		},
+		{
+			"src": "^\\/$",
+			"dest": "_render"
+		}
+	]
 }
