@@ -17,6 +17,7 @@ export async function startSessionGeneration(
 ): Promise<SessionGenerationResult> {
   const response = await fetch("/api/sessions", {
     method: "POST",
+    credentials: "include",
     headers: JSON_HEADERS,
     body: JSON.stringify({ body_part_id: bodyPartId, tests } as CreateSessionCommandDto),
   });

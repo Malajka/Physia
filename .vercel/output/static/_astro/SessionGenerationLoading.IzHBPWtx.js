@@ -1,0 +1,166 @@
+import { j as e } from "./jsx-runtime.BMmiHB9I.js";
+import { c as b, B as j } from "./SubmitButton.D_2OGRIf.js";
+import { r as o } from "./index.Cj_FO6QK.js";
+import "./LinkButton.BhR02P1x.js";
+import { S as v } from "./Spinner.BIKKfVSC.js";
+import { J as y } from "./api.C6upV_NU.js";
+import "./index.DqldKjai.js";
+function m({ className: s, ...t }) {
+  return e.jsx("div", { className: b("animate-pulse rounded-md bg-muted", s), ...t });
+}
+async function S(s, t) {
+  const r = await fetch("/api/sessions", { method: "POST", credentials: "include", headers: y, body: JSON.stringify({ body_part_id: s, tests: t }) });
+  if (r.status === 403 && (await r.json()).error === "disclaimer_required")
+    return (window.location.href = "/disclaimer"), { error: "disclaimer_required" };
+  if (!r.ok) {
+    const c = await r.json().catch(() => ({}));
+    let i = `Server error: ${r.statusText}`;
+    if (c.error) {
+      const n = c.error;
+      if (typeof n.details?.reason == "string") i = n.details.reason;
+      else {
+        const l = [];
+        n.code && l.push(n.code), n.message && l.push(n.message), l.length > 0 ? (i = l.join(": ")) : (i = JSON.stringify(n));
+      }
+    }
+    throw new Error(i);
+  }
+  const a = await r.json();
+  return { data: a, id: a.id };
+}
+function k(s, t) {
+  const { bodyPartId: r, tests: a } = typeof s == "object" ? s : { bodyPartId: s, tests: t || [] },
+    [c, i] = o.useState("Preparing session data..."),
+    [n, l] = o.useState(null),
+    [g, x] = o.useState(!1),
+    [p, w] = o.useState(null),
+    f = o.useRef(!1),
+    u = o.useCallback(async () => {
+      if (!r || !a?.length) {
+        l("Invalid request parameters"), x(!1);
+        return;
+      }
+      x(!0), l(null);
+      try {
+        i("Initializing session..."), await new Promise((h) => setTimeout(h, 500)), i("Sending data to the AI engine...");
+        const d = await S(r, a);
+        if ((i("Finalizing your personalized training plan..."), !d.data)) throw new Error("No session data received");
+        if (!d.id) throw new Error("Invalid session data received (missing ID)");
+        w(d.data), (window.location.href = `/sessions/${d.id}`);
+      } catch (d) {
+        const h = d instanceof Error ? d.message : "An unexpected error occurred";
+        l(h);
+      } finally {
+        x(!1);
+      }
+    }, [r, a]),
+    N = o.useCallback(async () => {
+      (f.current = !1), await u();
+    }, [u]);
+  return (
+    o.useEffect(() => {
+      f.current || !r || !a?.length || ((f.current = !0), u());
+    }, [r, a, u]),
+    { statusMessage: c, error: n, retry: N, isLoading: g, sessionDetail: p, startGeneration: u }
+  );
+}
+function E({ error: s, retry: t }) {
+  return e.jsxs("div", {
+    className: "text-center",
+    children: [
+      e.jsx("div", {
+        className: "text-red-600 mb-4",
+        children: e.jsx("svg", {
+          xmlns: "http://www.w3.org/2000/svg",
+          className: "h-12 w-12 mx-auto",
+          fill: "none",
+          viewBox: "0 0 24 24",
+          stroke: "currentColor",
+          children: e.jsx("path", {
+            strokeLinecap: "round",
+            strokeLinejoin: "round",
+            strokeWidth: 2,
+            d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+          }),
+        }),
+      }),
+      e.jsx("h2", { className: "text-xl font-semibold mb-4", children: "Generation Failed" }),
+      e.jsx("p", { className: "mb-6", children: s }),
+      e.jsxs("div", {
+        className: "flex flex-col md:flex-row gap-4 justify-center",
+        children: [
+          e.jsx(j, { onClick: t, children: "Try Again" }),
+          e.jsx(j, { variant: "outline", asChild: !0, children: e.jsx("a", { href: "/body-parts", children: "Go Back" }) }),
+        ],
+      }),
+    ],
+  });
+}
+function G() {
+  return e.jsxs(e.Fragment, {
+    children: [
+      e.jsx("div", { className: "mb-8", children: e.jsx(v, { className: "w-12 h-12" }) }),
+      e.jsxs("div", {
+        className: "grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl",
+        children: [
+          e.jsxs("div", {
+            className: "col-span-full",
+            children: [e.jsx(m, { className: "h-8 w-3/4 mb-2" }), e.jsx(m, { className: "h-6 w-full" }), e.jsx(m, { className: "h-6 w-2/3 mt-1" })],
+          }),
+          [1, 2, 3].map((s) =>
+            e.jsxs(
+              "div",
+              {
+                className: "border rounded-lg p-4",
+                children: [
+                  e.jsx(m, { className: "h-6 w-3/4 mb-2" }),
+                  e.jsx(m, { className: "h-16 w-full mb-3" }),
+                  e.jsxs("div", {
+                    className: "flex justify-between",
+                    children: [e.jsx(m, { className: "h-6 w-1/4" }), e.jsx(m, { className: "h-6 w-1/4" })],
+                  }),
+                ],
+              },
+              s
+            )
+          ),
+        ],
+      }),
+    ],
+  });
+}
+function L() {
+  return e.jsxs("div", {
+    className: "flex flex-col items-center justify-center p-6 text-center",
+    children: [
+      e.jsx("h2", { className: "text-xl font-semibold text-red-600 mb-4", children: "Invalid Request" }),
+      e.jsx("p", { className: "mb-6", children: "Missing required parameters to generate your training plan." }),
+      e.jsx(j, { asChild: !0, children: e.jsx("a", { href: "/body-parts", children: "← Go back to body parts selection" }) }),
+    ],
+  });
+}
+function T({ bodyPartId: s, tests: t }) {
+  const { statusMessage: r, error: a, retry: c, isLoading: i, startGeneration: n } = k(s, t);
+  return (
+    o.useEffect(() => {}, [n, s, t]),
+    !s || !t || t.length === 0
+      ? e.jsx(L, {})
+      : e.jsxs("div", {
+          className: "flex flex-col items-center justify-center p-6",
+          children: [
+            e.jsx("h1", { className: "text-2xl font-bold mb-6", children: "Generating Your Training Plan" }),
+            i
+              ? e.jsxs(e.Fragment, {
+                  children: [
+                    e.jsx("p", { role: "status", "aria-live": "polite", className: "text-lg text-center mb-8 max-w-md", children: r }),
+                    e.jsx(G, {}),
+                  ],
+                })
+              : a
+                ? e.jsx(E, { error: a, retry: c })
+                : null,
+          ],
+        })
+  );
+}
+export { T as SessionGenerationLoading };

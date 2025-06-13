@@ -1,0 +1,237 @@
+import { j as r } from "./jsx-runtime.BMmiHB9I.js";
+import { r as i } from "./index.Cj_FO6QK.js";
+import { c as b, B as p } from "./SubmitButton.D_2OGRIf.js";
+import "./LinkButton.BhR02P1x.js";
+import "./index.DqldKjai.js";
+function y(t) {
+  return t.toLowerCase().replace(/\s+/g, "-");
+}
+const h =
+    "relative overflow-hidden w-full h-48 rounded-lg border flex items-end justify-center p-4 text-center font-medium text-lg uppercase drop-shadow-md transform transition-all ease-in-out duration-500 active:scale-[0.98] hover:scale-[1.02] cursor-pointer",
+  j = "bg-primary border-primary text-white hover:bg-light-green hover:text-primary",
+  w = "bg-gray-50 border-gray-200 text-black hover:bg-white";
+function v({ id: t, name: e, selected: a, onSelect: s }) {
+  if (!e) return null;
+  const n = y(e),
+    d = { backgroundImage: `url(${`/images/body-parts/${n}.png`})` };
+  return r.jsxs("button", {
+    type: "button",
+    onClick: () => s(t),
+    "aria-pressed": a,
+    "aria-label": `Select ${e}`,
+    style: d,
+    className: `${h} ${a ? j : w} bg-cover sm:bg-contain bg-center bg-no-repeat`,
+    "data-testid": `body-part-${n}`,
+    children: [
+      !a && r.jsx("div", { className: "absolute inset-0 bg-[var(--background)] opacity-35", "aria-hidden": "true" }),
+      r.jsx("span", {
+        className: `relative z-10 px-2 py-1 rounded ${a ? "bg-[var(--background)] text-primary" : "bg-[var(--primary)] text-white"}`,
+        children: e,
+      }),
+    ],
+  });
+}
+const S = i.memo(v);
+function E({ children: t, className: e = "" }) {
+  return r.jsx("div", { className: `p-4 bg-blue-50 border border-blue-200 text-blue-700 rounded mb-4 ${e}`, children: t });
+}
+const k = ({ open: t, onClose: e, title: a, children: s, footer: n }) => (
+    i.useEffect(() => {
+      function o(d) {
+        d.key === "Escape" && e();
+      }
+      return t && document.addEventListener("keydown", o), () => document.removeEventListener("keydown", o);
+    }, [t, e]),
+    t
+      ? r.jsxs("div", {
+          className: "fixed inset-0 z-50 flex items-center justify-center",
+          children: [
+            r.jsx("div", {
+              className: "absolute inset-0 bg-black/50",
+              onClick: e,
+              onKeyDown: (o) => {
+                (o.key === "Enter" || o.key === " ") && (o.preventDefault(), e());
+              },
+              role: "button",
+              tabIndex: 0,
+              "aria-label": "Close modal",
+            }),
+            r.jsxs("div", {
+              role: "dialog",
+              "aria-modal": "true",
+              className: b("relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full"),
+              children: [
+                a && r.jsx("h2", { className: "text-lg font-semibold mb-4", children: a }),
+                r.jsx("div", { className: "mb-4", children: s }),
+                n && r.jsx("div", { className: "flex justify-end gap-2", children: n }),
+              ],
+            }),
+          ],
+        })
+      : null
+  ),
+  N = ({ open: t, onAccept: e, text: a }) =>
+    r.jsx(k, {
+      open: t,
+      onClose: () => {},
+      title: "Medical Disclaimer",
+      footer: r.jsx("div", {
+        className: "flex justify-between items-center w-full",
+        children: r.jsx(p, { onClick: e, "data-testid": "accept-disclaimer", className: "flex justify-center mx-auto", children: "I Accept" }),
+      }),
+      children: r.jsx("div", { className: "whitespace-pre-line text-sm mb-4", children: a }),
+    });
+function C(t, e) {
+  switch (e.type) {
+    case "INIT":
+      return { ...t, loading: !0, error: null };
+    case "SUCCESS":
+      return { data: e.payload, loading: !1, error: null };
+    case "FAILURE":
+      return { data: null, loading: !1, error: e.error };
+    default:
+      return t;
+  }
+}
+function A(t, e = !1) {
+  const a = i.useRef(null),
+    s = { data: null, loading: !e, error: null },
+    [n, o] = i.useReducer(C, s),
+    d = i.useCallback(async () => {
+      a.current?.abort();
+      const m = new AbortController();
+      (a.current = m), o({ type: "INIT" });
+      try {
+        const l = await t(m.signal);
+        o({ type: "SUCCESS", payload: l });
+      } catch (l) {
+        if (l instanceof DOMException && l.name === "AbortError") return;
+        const f = l instanceof Error ? l.message : String(l);
+        o({ type: "FAILURE", error: f });
+      }
+    }, [t]);
+  return (
+    i.useEffect(
+      () => (
+        e || d(),
+        () => {
+          a.current?.abort();
+        }
+      ),
+      [d, e]
+    ),
+    { data: n.data, loading: n.loading, error: n.error, refetch: d }
+  );
+}
+function D({ disclaimerAccepted: t }) {
+  const e = i.useCallback(async (a) => {
+    const s = await fetch("/api/body_parts", { credentials: "include", signal: a });
+    if (!s.ok) {
+      const o = await s.json();
+      throw new Error(o.error || s.statusText);
+    }
+    const n = await s.json();
+    return Array.isArray(n.data) ? n.data : (console.warn("API response for /api/body_parts did not contain a 'data' array.", n), []);
+  }, []);
+  return A(e, !t);
+}
+function $() {
+  const [t, e] = i.useState(""),
+    [a, s] = i.useState(null),
+    [n, o] = i.useState(!0),
+    [d, m] = i.useState(null),
+    l = i.useCallback(async () => {
+      o(!0), m(null);
+      try {
+        const c = await fetch("/api/disclaimers", { credentials: "include" });
+        if (!c.ok) {
+          const u = await c.json().catch(() => null);
+          throw new Error(u?.error || c.statusText);
+        }
+        const x = await c.json();
+        e(x.text), s(x.accepted_at ?? null);
+      } catch (c) {
+        m(c instanceof Error ? c.message : String(c));
+      } finally {
+        o(!1);
+      }
+    }, []);
+  i.useEffect(() => {
+    l();
+  }, [l]);
+  const f = i.useCallback(async () => {
+    try {
+      const c = await fetch("/api/disclaimers", { method: "POST", credentials: "include" });
+      if (!c.ok) {
+        const u = await c.json().catch(() => null);
+        throw new Error(u?.error || c.statusText);
+      }
+      const x = await c.json();
+      s(x.accepted_at);
+    } catch (c) {
+      m(c instanceof Error ? c.message : String(c));
+    }
+  }, []);
+  return { disclaimerText: t, acceptedAt: a, loading: n, error: d, accept: f };
+}
+function L() {
+  const [t, e] = i.useState(null),
+    a = i.useCallback((s) => {
+      e((n) => (n === s ? null : s));
+    }, []);
+  return { selected: t, toggle: a };
+}
+function T({ selectedBodyPartId: t, className: e = "", onNavigate: a }) {
+  const s = t == null,
+    n = i.useCallback(() => {
+      t != null && (a ? a(t) : (window.location.pathname = `/muscle-tests/${t}`));
+    }, [t, a]);
+  return r.jsx(p, {
+    type: "button",
+    onClick: n,
+    disabled: s,
+    "aria-disabled": s,
+    size: "lg",
+    className: e,
+    title: s ? "Select a body part to continue" : "Go to muscle tests",
+    "data-testid": "body-part-next",
+    children: "Next",
+  });
+}
+function g({ text: t, error: e = !1, children: a }) {
+  return r.jsxs("div", { className: `text-center py-8 ${e ? "text-red-600" : ""}`, children: [r.jsx("p", { children: t }), a] });
+}
+function _() {
+  const { disclaimerText: t, acceptedAt: e, loading: a, error: s, accept: n } = $(),
+    { data: o, loading: d, error: m, refetch: l } = D({ disclaimerAccepted: e }),
+    { selected: f, toggle: c } = L(),
+    x = i.useCallback((u) => c(u), [c]);
+  return a
+    ? r.jsx(g, { text: "Loading disclaimer..." })
+    : s
+      ? r.jsx(g, { text: `Disclaimer Error: ${s}`, error: !0 })
+      : e
+        ? d
+          ? r.jsx(g, { text: "Loading body areas..." })
+          : m
+            ? r.jsx(g, {
+                text: `Error loading body parts: ${m}`,
+                error: !0,
+                children: r.jsx("button", { onClick: l, className: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600", children: "Retry" }),
+              })
+            : !Array.isArray(o) || o.length === 0
+              ? r.jsx(g, { text: "No body areas available." })
+              : r.jsxs("div", {
+                  className: "space-y-8",
+                  children: [
+                    r.jsx(E, { children: "Select max 1 area. Click a selected area again to deselect." }),
+                    r.jsx("div", {
+                      className: "grid grid-cols-2 gap-[15px] justify-items-center",
+                      children: o.map((u) => r.jsx(S, { id: u.id, name: u.name, selected: f === u.id, onSelect: x }, u.id)),
+                    }),
+                    r.jsx("div", { className: "mt-8 flex justify-end", children: r.jsx(T, { selectedBodyPartId: f }) }),
+                  ],
+                })
+        : r.jsx(N, { open: !0, onAccept: n, text: t || "Loading disclaimer text..." });
+}
+export { _ as default };

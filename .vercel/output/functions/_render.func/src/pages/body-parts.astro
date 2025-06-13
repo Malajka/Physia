@@ -6,12 +6,12 @@ import Layout from "@/layouts/Layout.astro";
 export const prerender = false;
 
 // Server-side auth guard: redirect unauthenticated users to login
-const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
-if (!session) {
-  return Astro.redirect("/login");
-}
+// const {
+//   data: { session },
+// } = await Astro.locals.supabase.auth.getSession();
+// if (!session) {
+//   return Astro.redirect("/login");
+// }
 ---
 
 <Layout title="Select Body Area - Physia">

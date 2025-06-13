@@ -3,10 +3,10 @@ export const prerender = false;
 import Layout from "@/layouts/Layout.astro";
 
 // Fetch session to determine if user is authenticated
-const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
-const isAuthenticated = !!session;
+// const {
+//   data: { session },
+// } = await Astro.locals.supabase.auth.getSession();
+// const isAuthenticated = !!session;
 
 // If authenticated, redirect to sessions, otherwise show the landing page
 // if (isAuthenticated) {
@@ -34,7 +34,7 @@ const isAuthenticated = !!session;
           results—your body will thank you!
         </p>
         {
-          !isAuthenticated ? (
+          (
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <a
                 href="/login"
@@ -49,7 +49,7 @@ const isAuthenticated = !!session;
                 Create Account
               </a>
             </div>
-          ) : null
+          )
         }
       </section>
 

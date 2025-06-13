@@ -1,140 +1,37 @@
-import { fetchAllBodyParts } from "@/lib/services/body-parts";
+// src/hooks/useBodyParts.ts
+
+import { useFetch } from "@/hooks/useFetch";
 import type { BodyPartDto } from "@/types";
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback } from "react";
 
 interface UseBodyPartsOptions {
-  baseUrl?: string;
-  skipInitialFetch?: boolean;
-  disclaimerAccepted?: string | null | undefined;
+  disclaimerAccepted: string | null;
 }
 
-interface BodyPartsState {
-  data: BodyPartDto[];
-  loading: boolean;
-  error: string | null;
-}
+export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
+  const fetcher = useCallback(async (signal: AbortSignal) => {
+    const response = await fetch("/api/body_parts", {
+      credentials: "include",
+      signal,
+    });
 
-type BodyPartsAction =
-  | { type: "FETCH_START" }
-  | { type: "FETCH_SUCCESS"; payload: BodyPartDto[] }
-  | { type: "FETCH_ERROR"; error: string }
-  | { type: "FETCH_ABORT" }
-  | { type: "RESET" };
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || response.statusText);
+    }
 
-// Helper functions
-const getDefaultBaseUrl = (): string => {
-  if (typeof window !== "undefined") {
-    return window.location.origin;
-  }
-  return import.meta.env.PUBLIC_API_BASE || "";
-};
+    const result = await response.json();
 
-const isValidDisclaimerAccepted = (disclaimerAccepted: string | null | undefined): disclaimerAccepted is string => {
-  return typeof disclaimerAccepted === "string" && disclaimerAccepted.length > 0;
-};
+    // Defensive guard to ensure we always return an array
+    if (Array.isArray(result.data)) {
+      return result.data as BodyPartDto[];
+    }
 
-const isDisclaimerRejected = (disclaimerAccepted: string | null | undefined): boolean => {
-  return disclaimerAccepted === null;
-};
-
-const shouldInitiallyLoad = (skipInitialFetch: boolean, disclaimerAccepted: string | null | undefined): boolean => {
-  return !skipInitialFetch && isValidDisclaimerAccepted(disclaimerAccepted);
-};
-
-function bodyPartsReducer(state: BodyPartsState, action: BodyPartsAction): BodyPartsState {
-  switch (action.type) {
-    case "FETCH_START":
-      return { ...state, loading: true, error: null };
-    case "FETCH_SUCCESS":
-      return { data: action.payload, loading: false, error: null };
-    case "FETCH_ERROR":
-      return { data: [], loading: false, error: action.error };
-    case "FETCH_ABORT":
-      return { ...state, loading: false };
-    case "RESET":
-      return { data: [], loading: false, error: null };
-    default:
-      return state;
-  }
-}
-
-const createInitialState = (skipInitialFetch: boolean, disclaimerAccepted: string | null | undefined): BodyPartsState => ({
-  data: [],
-  loading: shouldInitiallyLoad(skipInitialFetch, disclaimerAccepted),
-  error: null,
-});
-
-export function useBodyParts({ baseUrl = getDefaultBaseUrl(), skipInitialFetch = false, disclaimerAccepted = undefined }: UseBodyPartsOptions = {}) {
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  const [state, dispatch] = useReducer(bodyPartsReducer, createInitialState(skipInitialFetch, disclaimerAccepted));
-
-  const abortPreviousRequest = useCallback(() => {
-    abortControllerRef.current?.abort();
+    console.warn("API response for /api/body_parts did not contain a 'data' array.", result);
+    return [];
   }, []);
 
-  const createNewAbortController = useCallback(() => {
-    abortPreviousRequest();
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-    return controller;
-  }, [abortPreviousRequest]);
-
-  const fetchBodyParts = useCallback(async (): Promise<void> => {
-    // Handle disclaimer rejection
-    if (isDisclaimerRejected(disclaimerAccepted)) {
-      dispatch({ type: "RESET" });
-      return;
-    }
-
-    // Validate disclaimer acceptance
-    if (!isValidDisclaimerAccepted(disclaimerAccepted)) {
-      return;
-    }
-
-    const controller = createNewAbortController();
-    dispatch({ type: "FETCH_START" });
-
-    try {
-      const bodyParts = await fetchAllBodyParts(baseUrl, { signal: controller.signal });
-
-      // Check if request was aborted
-      if (controller.signal.aborted) {
-        dispatch({ type: "FETCH_ABORT" });
-        return;
-      }
-
-      dispatch({ type: "FETCH_SUCCESS", payload: bodyParts });
-    } catch (error: unknown) {
-      // Ignore abort errors
-      if (error instanceof DOMException && error.name === "AbortError") {
-        dispatch({ type: "FETCH_ABORT" });
-        return;
-      }
-
-      const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
-      dispatch({ type: "FETCH_ERROR", error: errorMessage });
-    }
-  }, [baseUrl, disclaimerAccepted, createNewAbortController]);
-
-  // Effect for initial fetch and disclaimer changes
-  useEffect(() => {
-    if (shouldInitiallyLoad(skipInitialFetch, disclaimerAccepted)) {
-      fetchBodyParts();
-    } else if (isDisclaimerRejected(disclaimerAccepted)) {
-      dispatch({ type: "RESET" });
-    }
-
-    // Cleanup on unmount
-    return () => {
-      abortPreviousRequest();
-    };
-  }, [fetchBodyParts, skipInitialFetch, disclaimerAccepted, abortPreviousRequest]);
-
-  return {
-    bodyParts: state.data,
-    loading: state.loading,
-    error: state.error,
-    refetch: fetchBodyParts,
-  } as const;
+  // THE FIX: Explicitly provide the generic type to useFetch.
+  // This ensures the return type is correctly inferred by TypeScript.
+  return useFetch<BodyPartDto[]>(fetcher, !disclaimerAccepted);
 }

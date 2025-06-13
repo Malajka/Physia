@@ -35,7 +35,7 @@ const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMu
       ) : muscleTests && muscleTests.length > 0 ? (
         <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
       ) : (
-        <EmptyState message="No muscle tests available for this body part." {...backLink} />
+        <EmptyState message="No muscle tests available for this body part." {...backLink} label={backLink.text} />
       )
     }
   </div>

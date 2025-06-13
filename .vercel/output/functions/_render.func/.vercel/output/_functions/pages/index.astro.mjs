@@ -1,0 +1,84 @@
+/* empty css                                      */
+import {
+  c as createComponent,
+  a as createAstro,
+  b as renderComponent,
+  r as renderTemplate,
+  m as maybeRenderHead,
+} from "../chunks/astro/server_B181Abhk.mjs";
+import "kleur/colors";
+import { $ as $$Layout } from "../chunks/Layout_DXvctC9J.mjs";
+export { renderers } from "../renderers.mjs";
+
+const $$Astro = createAstro();
+const prerender = false;
+const $$Index = createComponent(
+  async ($$result, $$props, $$slots) => {
+    const Astro2 = $$result.createAstro($$Astro, $$props, $$slots);
+    Astro2.self = $$Index;
+    return renderTemplate`${renderComponent(
+      $$result,
+      "Layout",
+      $$Layout,
+      { title: "Physia - Personalized Exercise Plans" },
+      {
+        default: async (
+          $$result2
+        ) => renderTemplate`  ${maybeRenderHead()}<div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]"> <div class="container mx-auto px-4 py-12"> <section class="text-center max-w-3xl mx-auto mb-16" id="about"> <div class="flex flex-col items-center mb-6"> <img src="/physia-logo.png" alt="Physia illustration" class="h-24 mb-4 md:h-32 w-auto"> <h1 class="text-4xl md:text-5xl font-bold text-[var(--primary)] text-center">
+Personalized Exercise Plans for Overload-Related Muscle Pain
+</h1> </div> <p class="text-xl text-[var(--foreground)] mb-8">
+Discover a new way to move pain-free! Get a personalized exercise plan tailored to your unique muscle pain and overload points—created by
+          expert physiotherapists and fine-tuned by advanced AI.
+</p> <p class="text-xl text-[var(--foreground)] mb-8">
+Train smarter, recover faster, and feel better with routines designed just for you. Take control of your health and start seeing real
+          results—your body will thank you!
+</p> ${renderTemplate`<div class="flex flex-col sm:flex-row gap-4 justify-center items-center"> <a href="/login" class="w-fit max-w-36 sm:max-w-none sm:px-8 px-5 py-3 bg-[var(--primary)] hover:bg-dark-green text-[var(--primary-foreground)] font-medium rounded-xl shadow-md transition-colors">
+Log In
+</a> <a href="/register" class="w-fit max-w-44 sm:max-w-none sm:px-8 px-5 py-3 bg-[var(--card)] border border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--light-green)] font-medium rounded-xl shadow-md transition-colors">
+Create Account
+</a> </div>`} </section> <section class="grid md:grid-cols-3 gap-6 mb-20" id="services"> <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-1"> <div class="flex items-center mb-4"> <div class="w-12 h-12 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-xl flex items-center justify-center text-white text-xl font-bold mr-4">
+1
+</div> <h2 class="text-xl font-bold text-gray-800">Select Body Area</h2> </div> <p class="text-gray-600 text-base leading-relaxed">
+Choose from four key areas: Neck & Upper Back, Lower Back, Wrists & Forearms, or Hips & Knees.
+</p> </div> <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-1"> <div class="flex items-center mb-4"> <div class="w-12 h-12 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-xl flex items-center justify-center text-white text-xl font-bold mr-4">
+2
+</div> <h2 class="text-xl font-bold text-gray-800">Rate Your Pain</h2> </div> <p class="text-gray-600 text-base leading-relaxed">Use our simple sliding scale to indicate your pain level for specific muscle tests.</p> </div> <div class="bg-white p-8 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-1"> <div class="flex items-center mb-4"> <div class="w-12 h-12 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-xl flex items-center justify-center text-white text-xl font-bold mr-4">
+3
+</div> <h2 class="text-xl font-bold text-gray-800">Get Your Plan</h2> </div> <p class="text-gray-600 text-base leading-relaxed">
+Our AI generates a personalized exercise plan based on your inputs and expert physiotherapy data.
+</p> </div> </section> <section class="bg-white p-10 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-4xl mx-auto" id="benefits"> <h2 class="text-3xl font-bold text-center text-gray-800 mb-10">Why Choose Physia?</h2> <div class="grid md:grid-cols-2 gap-8"> <div class="group"> <div class="flex items-start mb-3"> <div class="w-8 h-8 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-lg flex items-center justify-center mr-3 mt-1"> <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path> </svg> </div> <h3 class="text-xl font-bold text-gray-800 group-hover:text-[var(--primary)] transition-colors">Expert Guidance</h3> </div> <p class="text-gray-600 text-base leading-relaxed ml-11">
+All exercises are developed by licensed physiotherapists with years of experience in treating muscle pain.
+</p> </div> <div class="group"> <div class="flex items-start mb-3"> <div class="w-8 h-8 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-lg flex items-center justify-center mr-3 mt-1"> <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path> </svg> </div> <h3 class="text-xl font-bold text-gray-800 group-hover:text-[var(--primary)] transition-colors">AI Personalization</h3> </div> <p class="text-gray-600 text-base leading-relaxed ml-11">
+Advanced AI tailors exercise plans to your specific needs and pain intensity for optimal results.
+</p> </div> <div class="group"> <div class="flex items-start mb-3"> <div class="w-8 h-8 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-lg flex items-center justify-center mr-3 mt-1"> <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path> </svg> </div> <h3 class="text-xl font-bold text-gray-800 group-hover:text-[var(--primary)] transition-colors">Track Progress</h3> </div> <p class="text-gray-600 text-base leading-relaxed ml-11">
+Save your sessions and track how your exercises and pain levels change over time with detailed analytics.
+</p> </div> <div class="group"> <div class="flex items-start mb-3"> <div class="w-8 h-8 bg-gradient-to-br from-[#1ea39a] to-[#16857f] rounded-lg flex items-center justify-center mr-3 mt-1"> <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20"> <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path> </svg> </div> <h3 class="text-xl font-bold text-gray-800 group-hover:text-[var(--primary)] transition-colors">Convenience</h3> </div> <p class="text-gray-600 text-base leading-relaxed ml-11">
+Access your personalized exercise plans anytime, anywhere through our responsive web platform.
+</p> </div> </div> </section> </div> </div> `,
+      }
+    )}`;
+  },
+  "/Users/monikabieniecka/Downloads/Physia/src/pages/index.astro",
+  void 0
+);
+
+const $$file = "/Users/monikabieniecka/Downloads/Physia/src/pages/index.astro";
+const $$url = "";
+
+const _page = /*#__PURE__*/ Object.freeze(
+  /*#__PURE__*/ Object.defineProperty(
+    {
+      __proto__: null,
+      default: $$Index,
+      file: $$file,
+      prerender,
+      url: $$url,
+    },
+    Symbol.toStringTag,
+    { value: "Module" }
+  )
+);
+
+const page = () => _page;
+
+export { page };

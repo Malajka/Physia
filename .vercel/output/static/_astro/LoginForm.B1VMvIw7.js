@@ -1,0 +1,29 @@
+import { j as o } from "./jsx-runtime.BMmiHB9I.js";
+import "./index.Cj_FO6QK.js";
+import { I as a } from "./SubmitButton.D_2OGRIf.js";
+import "./LinkButton.BhR02P1x.js";
+import { l as m } from "./auth.validator.Cf-Y9Meb.js";
+import { l as n, A as l, P as d } from "./PasswordField.DJKX4pBH.js";
+import "./index.DqldKjai.js";
+import "./api.C6upV_NU.js";
+const u = async (s) => {
+    const r = { email: s.get("email")?.toString() ?? "", password: s.get("password")?.toString() ?? "" },
+      e = m.safeParse(r);
+    if (!e.success) return { success: !1, error: e.error.errors.map((i) => i.message).join(", ") };
+    const t = await n(e.data);
+    return t.success && (window.location.href = "/sessions"), t;
+  },
+  j = function ({ initialError: r = null }) {
+    return o.jsxs(l, {
+      title: "Log In",
+      onSubmit: u,
+      submitText: "Log In",
+      submitTestId: "login-submit",
+      errors: r,
+      children: [
+        o.jsx(a, { id: "email", name: "email", label: "Email", type: "email", placeholder: "your@email.com", required: !0, "data-testid": "email" }),
+        o.jsx(d, { id: "password", name: "password", label: "Password", placeholder: "Your password", required: !0, "data-testid": "password" }),
+      ],
+    });
+  };
+export { j as LoginForm };

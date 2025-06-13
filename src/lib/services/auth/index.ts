@@ -8,6 +8,7 @@ async function authRequest(endpoint: string, data: AuthCredentialsDto, defaultEr
   try {
     const response = await fetch(endpoint, {
       method: "POST",
+      credentials: "include",
       headers: JSON_HEADERS,
       body: JSON.stringify(data),
     });

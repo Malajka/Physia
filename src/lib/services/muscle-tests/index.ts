@@ -1,3 +1,5 @@
+// src/lib/services/muscle-tests.ts
+
 import { fetchArray } from "@/lib/utils/fetch";
 import type { MuscleTestDto } from "@/types";
 import { z } from "zod";
@@ -11,11 +13,10 @@ const MuscleTestDtoSchema = z.object({
 });
 
 /**
- * Fetches and validates muscle tests for a specific body part
+ * Fetches and validates muscle tests for a specific body part.
+ * Now accepts RequestInit to pass custom headers.
  */
-export async function fetchMuscleTests(bodyPartId: number, apiBase: string): Promise<MuscleTestDto[]> {
-  // Use fetchArray to handle both raw arrays and { data: T[] } shapes
-  const list = await fetchArray<MuscleTestDto>(`${apiBase}/api/body_parts/${bodyPartId}/muscle_tests`);
-  // Validate each item against the Zod schema
+export async function fetchMuscleTests(bodyPartId: number, apiBase: string, init?: RequestInit): Promise<MuscleTestDto[]> {
+  const list = await fetchArray<MuscleTestDto>(`${apiBase}/api/body_parts/${bodyPartId}/muscle_tests`, init);
   return MuscleTestDtoSchema.array().parse(list);
 }
