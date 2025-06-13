@@ -21,8 +21,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
     const { email, password } = data;
 
-    // Wywołaj logowanie. Biblioteka @supabase/ssr sama zajmie się ustawieniem ciasteczek,
-    // używając handlerów 'set' zdefiniowanych w Twoim middleware.
+    // Call login. The @supabase/ssr library will handle setting cookies
+    // using the 'set' handlers defined in your middleware
     const { data: authData, error } = await locals.supabase.auth.signInWithPassword({
       email,
       password,
@@ -32,10 +32,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return jsonResponse({ error: "Invalid login credentials", debug: error.message }, 401);
     }
 
-    // --- USUNIĘTO BLOK RĘCZNEGO USTAWIANIA CIASTECZEK ---
-    // Nie musimy już nic robić. Ciasteczka zostały ustawione automatycznie.
+    // --- REMOVED MANUAL COOKIE SETTING BLOCK ---
+    // No need to do anything else. Cookies were set automatically
 
-    // Sukces - zwróć dane użytkownika i sesji.
+    // Success - return user and session data
     return jsonResponse({ user: authData.user, session: authData.session }, 200);
   } catch (unexpectedError) {
     const message = unexpectedError instanceof Error ? unexpectedError.message : "An unexpected error occurred";

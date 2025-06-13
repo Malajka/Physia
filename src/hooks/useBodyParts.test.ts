@@ -1,8 +1,8 @@
+import { useFetch } from "@/hooks/useFetch";
+import type { BodyPartDto } from "@/types";
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useBodyParts } from "./useBodyParts";
-import { useFetch } from "@/hooks/useFetch";
-import type { BodyPartDto } from "@/types";
 
 vi.mock("@/hooks/useFetch");
 const mockedUseFetch = vi.mocked(useFetch);
@@ -46,7 +46,7 @@ describe("useBodyParts", () => {
 
     beforeEach(() => {
       renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01" }));
-      // THE FIX: Używamy asercji typu, aby poinformować TypeScript o poprawnym typie.
+      // THE FIX: Use type assertion to inform TypeScript about the correct type
       fetcher = mockedUseFetch.mock.calls[0][0] as (signal: AbortSignal) => Promise<BodyPartDto[]>;
     });
 

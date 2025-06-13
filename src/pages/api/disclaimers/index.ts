@@ -6,7 +6,7 @@ import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types
 
 export const prerender = false;
 
-// Ten endpoint GET już poprawiliśmy i jest w porządku.
+// This GET endpoint has been fixed and is working correctly
 export const GET = withAuth(async ({ locals }) => {
   const { supabase, user } = locals;
   const { data: disclaimerData, error: disclaimerError } = await supabase
@@ -27,7 +27,7 @@ export const GET = withAuth(async ({ locals }) => {
 });
 
 // !!! TUTAJ JEST KLUCZOWA POPRAWKA !!!
-// W tym endpoincie POST dodajemy odświeżenie sesji.
+// In this POST endpoint we add session refresh
 export const POST = withAuth(async ({ locals }) => {
   const { supabase } = locals;
   const accepted_at = new Date().toISOString();
@@ -41,9 +41,9 @@ export const POST = withAuth(async ({ locals }) => {
     return jsonResponse({ error: error.message }, 500);
   }
 
-  // Krok 2 (NOWY I KLUCZOWY): Wymuś odświeżenie sesji.
-  // To spowoduje, że Supabase wyda nowy token JWT z zaktualizowanymi metadanymi
-  // i zapisze go w ciasteczkach, używając handlerów z Twojego middleware.
+  // Step 2 (NEW AND CRUCIAL): Force session refresh
+  // This will cause Supabase to issue a new JWT token with updated metadata
+  // and save it in cookies using your middleware handlers
   await supabase.auth.refreshSession();
 
   const payload: AcceptDisclaimerResponseDto = { accepted_at };

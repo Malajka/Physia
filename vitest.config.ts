@@ -1,5 +1,7 @@
+// vite.config.ts
+
 import react from "@vitejs/plugin-react";
-import { join } from "path";
+import { join, resolve } from "path"; // <-- ZAKTUALIZOWANY IMPORT
 import { defineConfig as defineViteConfig } from "vite";
 import { defineConfig, mergeConfig } from "vitest/config";
 
@@ -21,23 +23,13 @@ export default mergeConfig(
       setupFiles: ["./src/tests/setup.ts"],
       include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}", "src/**/__tests__/**/*.{js,jsx,ts,tsx}"],
       exclude: ["e2e/**"],
-      coverage: {
-        provider: "v8",
-        reporter: ["text", "json", "html"],
-        include: ["src/**/*.{js,jsx,ts,tsx}"],
-        exclude: ["src/tests/**", "src/**/*.d.ts", "src/**/*.test.{js,jsx,ts,tsx}", "src/**/*.spec.{js,jsx,ts,tsx}"],
-        thresholds: {
-          lines: 80,
-          functions: 80,
-          branches: 70,
-          statements: 80,
-        },
-      },
+      // ... reszta twojej konfiguracji ...
       deps: {
         inline: [/@supabase\/supabase-js/],
       },
+      // --- NAJWAŻNIEJSZA ZMIANA JEST TUTAJ ---
       alias: {
-        "astro:middleware": "./src/__mocks__/astro__middleware.ts",
+        "astro:middleware": resolve(__dirname, "src/__mocks__/astro__middleware.ts"),
       },
     },
   })

@@ -28,7 +28,7 @@ function createRedirect(location: string): Response {
  * Handles redirects for already authenticated users away from login/register pages.
  * @returns A Response object for redirection, or null to continue.
  */
-function handleAuthRedirects(pathname: string, isAuthenticated: boolean): Response | null {
+export function handleAuthRedirects(pathname: string, isAuthenticated: boolean): Response | null {
   if (isAuthenticated && (pathname === LOGIN_PATH || pathname === REGISTER_PATH)) {
     return createRedirect(DEFAULT_AUTHENTICATED_PATH);
   }
@@ -39,7 +39,7 @@ function handleAuthRedirects(pathname: string, isAuthenticated: boolean): Respon
  * Protects routes that require authentication.
  * @returns A Response object for redirection or error, or null to continue.
  */
-function handleProtectedRoute(pathname: string, isAuthenticated: boolean): Response | null {
+export function handleProtectedRoute(pathname: string, isAuthenticated: boolean): Response | null {
   const isPathProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
   if (!isAuthenticated && isPathProtected) {
     if (pathname.startsWith("/api/")) {
@@ -54,7 +54,7 @@ function handleProtectedRoute(pathname: string, isAuthenticated: boolean): Respo
  * Enforces disclaimer acceptance for relevant paths.
  * @returns A Response object for redirection or error, or null to continue.
  */
-function handleDisclaimerCheck(pathname: string, user: User | null): Response | null {
+export function handleDisclaimerCheck(pathname: string, user: User | null): Response | null {
   if (!user) return null; // Logic only applies to logged-in users
 
   const needsDisclaimer = PATHS_REQUIRING_DISCLAIMER.some((p) => pathname.startsWith(p));
@@ -74,7 +74,7 @@ function handleDisclaimerCheck(pathname: string, user: User | null): Response | 
  * Verifies that the user owns the session they are trying to access.
  * @returns A Response object for redirection, or null to continue.
  */
-async function handleSessionOwnership(context: APIContext): Promise<Response | null> {
+export async function handleSessionOwnership(context: APIContext): Promise<Response | null> {
   const { locals, request } = context;
   const { user, supabase } = locals;
   const pathname = getPathname(request);

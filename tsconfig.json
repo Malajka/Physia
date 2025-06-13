@@ -6,6 +6,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
+    "types": ["vitest/globals"],
     "paths": {
       "@/*": ["./src/*"]
     }

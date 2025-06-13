@@ -5,10 +5,10 @@ import type { Locator } from "@playwright/test";
  * Zaawansowane czekanie na elementy z niezawodnością
  */
 export async function waitForElementVisible(locator: Locator, options = { timeout: 15000 }): Promise<void> {
-  // Najpierw poczekaj na załadowanie strony
+  // First wait for the page to load
   await locator.page().waitForLoadState("domcontentloaded");
 
-  // Spróbuj kilka razy zobaczyć element (retry pattern)
+  // Try to see the element several times (retry pattern)
   let retries = 3;
   while (retries > 0) {
     try {
