@@ -1,7 +1,7 @@
 // src/lib/services/muscle-test-page-data.ts
 
 import type { APIContext } from "astro";
-import { fetchMuscleTestsAndBodyPartName } from "../body-parts";
+import { fetchMuscleTestsAndBodyPartName } from "../body-parts/index";
 
 /**
  * Fetches all necessary data for the muscle tests page, handling authentication

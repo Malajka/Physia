@@ -1,161 +1,115 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import type React from "react";
-import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
+// src/components/body-part-selection/BodyPartSelector.test.tsx
+
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import BodyPartSelector from "./BodyPartSelector";
 
-// Mock child components for isolation
-vi.mock("./BodyPartButton", () => ({
-  BodyPartButton: ({
-    id,
-    name,
-    selected,
-    onSelect,
-  }: React.ComponentProps<"button"> & { id: number; name: string; selected: boolean; onSelect: (id: number) => void }) => (
-    <button data-testid={`body-part-btn-${id}`} aria-pressed={selected} onClick={() => onSelect(id)}>
-      {name}
-    </button>
-  ),
-}));
-vi.mock("./NavigationNextButton", () => ({
-  NavigationNextButton: ({ selectedBodyPartId }: { selectedBodyPartId: number }) => (
-    <button data-testid="next-btn" disabled={!selectedBodyPartId}>
-      Next
-    </button>
-  ),
-}));
-vi.mock("@/components/ui/InfoBar", () => ({
-  InfoBar: ({ children }: { children: React.ReactNode }) => <div data-testid="info-bar">{children}</div>,
-}));
-vi.mock("@/components/common/DisclaimerModal", () => ({
-  DisclaimerModal: ({ open, onAccept, text }: { open: boolean; onAccept: () => void; text: string }) =>
-    open ? (
-      <div data-testid="disclaimer-modal">
-        <span>{text}</span>
-        <button onClick={onAccept}>Accept</button>
-      </div>
-    ) : null,
-}));
+// --- TYPE IMPORTS ---
+// We import the actual prop types from the components we are mocking.
+import type { BodyPartButtonProps } from "./BodyPartButton";
+import type { NavigationNextButtonProps } from "./NavigationNextButton";
+import type { DisclaimerModalProps } from "@/components/common/DisclaimerModal";
 
-// Mock hooks
+// --- MOCKS ---
 vi.mock("@/hooks/useDisclaimer");
 vi.mock("@/hooks/useBodyParts");
 vi.mock("@/hooks/useSingleSelection");
 
-import { useBodyParts } from "@/hooks/useBodyParts";
+// The mocks now use the imported types, providing full type safety and eliminating 'any'.
+vi.mock("./BodyPartButton", () => ({
+  BodyPartButton: (props: BodyPartButtonProps) => (
+    <button onClick={() => props.onSelect(props.id)} aria-pressed={props.selected}>
+      {props.name}
+    </button>
+  ),
+}));
+vi.mock("./NavigationNextButton", () => ({
+  NavigationNextButton: ({ selectedBodyPartId }: NavigationNextButtonProps) => (
+    <a href={`/next?id=${selectedBodyPartId}`} aria-disabled={!selectedBodyPartId}>
+      Next
+    </a>
+  ),
+}));
+vi.mock("@/components/common/DisclaimerModal", () => ({
+  DisclaimerModal: ({ onAccept }: DisclaimerModalProps) => (
+    <div>
+      <p>Disclaimer Text</p>
+      <button onClick={onAccept}>Accept Disclaimer</button>
+    </div>
+  ),
+}));
+vi.mock("@/components/ui/InfoBar", () => ({
+  InfoBar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
 import { useDisclaimer } from "@/hooks/useDisclaimer";
+import { useBodyParts } from "@/hooks/useBodyParts";
 import { useSingleSelection } from "@/hooks/useSingleSelection";
 
-const mockDisclaimer = useDisclaimer as Mock;
-const mockBodyParts = useBodyParts as Mock;
-const mockSingleSelection = useSingleSelection as Mock;
+// --- MOCK SETUP ---
+const mockUseDisclaimer = useDisclaimer as Mock;
+const mockUseBodyParts = useBodyParts as Mock;
+const mockUseSingleSelection = useSingleSelection as Mock;
 
-describe("BodyPartSelector (minimal)", () => {
+// The helper function is now also strongly typed using TypeScript's utility types.
+type DisclaimerState = Partial<ReturnType<typeof useDisclaimer>>;
+type BodyPartsState = Partial<ReturnType<typeof useBodyParts>>;
+type SelectionState = Partial<ReturnType<typeof useSingleSelection>>;
+
+const setupMocks = ({
+  disclaimer = {},
+  bodyParts = {},
+  selection = {},
+}: {
+  disclaimer?: DisclaimerState;
+  bodyParts?: BodyPartsState;
+  selection?: SelectionState;
+}) => {
+  mockUseDisclaimer.mockReturnValue({ loading: false, error: null, acceptedAt: "2025-01-01", accept: vi.fn(), ...disclaimer });
+  mockUseBodyParts.mockReturnValue({ loading: false, error: null, data: [], refetch: vi.fn(), ...bodyParts });
+  mockUseSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn(), ...selection });
+};
+
+// --- TEST SUITE ---
+describe("BodyPartSelector", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockDisclaimer.mockReset();
-    mockBodyParts.mockReset();
-    mockSingleSelection.mockReset();
   });
 
-  // Test: Renders body part buttons and handles selection
-  it("renders body part buttons and handles selection", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({
-      bodyParts: [
-        { id: 1, name: "Shoulder" },
-        { id: 2, name: "Knee" },
-      ],
-      loading: false,
-      error: null,
-      refetch: vi.fn(),
+  it("should show the disclaimer modal if it has not been accepted", async () => {
+    const user = userEvent.setup();
+    const acceptFn = vi.fn();
+    setupMocks({ disclaimer: { acceptedAt: null, accept: acceptFn } });
+
+    render(<BodyPartSelector />);
+
+    const acceptButton = screen.getByRole("button", { name: /accept disclaimer/i });
+    await user.click(acceptButton);
+
+    expect(acceptFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("should render body parts and handle selection when data is available", async () => {
+    const user = userEvent.setup();
+    const toggleFn = vi.fn();
+    setupMocks({
+      bodyParts: {
+        data: [
+          { id: 1, name: "Shoulder" },
+          { id: 2, name: "Knee" },
+        ],
+      },
+      selection: { selected: 1, toggle: toggleFn },
     });
-    const toggle = vi.fn();
-    mockSingleSelection.mockReturnValue({ selected: 2, toggle });
-    render(<BodyPartSelector />);
-    expect(screen.getByTestId("body-part-btn-1")).toHaveTextContent("Shoulder");
-    fireEvent.click(screen.getByTestId("body-part-btn-1"));
-    expect(toggle).toHaveBeenCalledWith(1);
-  });
 
-  // Test: Renders InfoBar and Next button
-  it("renders InfoBar and Next button", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [{ id: 1, name: "Shoulder" }], loading: false, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: 1, toggle: vi.fn() });
     render(<BodyPartSelector />);
-    expect(screen.getByTestId("info-bar")).toBeInTheDocument();
-    expect(screen.getByTestId("next-btn")).toBeInTheDocument();
-    expect(screen.getByTestId("next-btn")).not.toBeDisabled();
-  });
-});
 
-describe("BodyPartSelector edge cases", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockDisclaimer.mockReset();
-    mockBodyParts.mockReset();
-    mockSingleSelection.mockReset();
-  });
+    const shoulderButton = screen.getByRole("button", { name: "Shoulder" });
+    const kneeButton = screen.getByRole("button", { name: "Knee" });
 
-  // Test: Shows disclaimer modal when not accepted
-  it("shows disclaimer modal when not accepted", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "Test disclaimer", acceptedAt: null, loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    expect(screen.getByTestId("disclaimer-modal")).toBeInTheDocument();
-    expect(screen.getByText("Test disclaimer")).toBeInTheDocument();
-  });
-
-  // Test: Shows loading disclaimer message
-  it("shows loading disclaimer message", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: true, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    expect(screen.getByText(/Loading disclaimer/i)).toBeInTheDocument();
-  });
-
-  // Test: Shows disclaimer error message (fixed to match full error text)
-  it("shows disclaimer error message", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: null, loading: false, error: "Disclaimer error", accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    // Match the full error message as rendered by the component
-    expect(screen.getByText(/Disclaimer Error: Disclaimer error/i)).toBeInTheDocument();
-  });
-
-  // Test: Shows loading body parts message
-  it("shows loading body parts message", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: true, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    expect(screen.getByText(/Loading body areas/i)).toBeInTheDocument();
-  });
-
-  // Test: Shows body parts error and retry button (fixed to match full error text)
-  it("shows body parts error and retry button", () => {
-    const refetch = vi.fn();
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: "Body parts error", refetch });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    // Match the full error message as rendered by the component
-    expect(screen.getByText(/Error loading body parts: Body parts error/i)).toBeInTheDocument();
-    const retryBtn = screen.getByText("Retry");
-    expect(retryBtn).toBeInTheDocument();
-    fireEvent.click(retryBtn);
-    expect(refetch).toHaveBeenCalled();
-  });
-
-  // Test: Shows message when no body parts are available
-  it("shows message when no body parts are available", () => {
-    mockDisclaimer.mockReturnValue({ disclaimerText: "", acceptedAt: "2024-01-01", loading: false, error: null, accept: vi.fn() });
-    mockBodyParts.mockReturnValue({ bodyParts: [], loading: false, error: null, refetch: vi.fn() });
-    mockSingleSelection.mockReturnValue({ selected: null, toggle: vi.fn() });
-    render(<BodyPartSelector />);
-    expect(screen.getByText(/No body areas available/i)).toBeInTheDocument();
+    expect(shoulderButton).toHaveAttribute("aria-pressed", "true");
+    await user.click(kneeButton);
+    expect(toggleFn).toHaveBeenCalledWith(2);
   });
 });

@@ -26,6 +26,7 @@ describe("buildTrainingPlanPrompt", () => {
     const muscleTests: (MuscleTestDto & { pain_intensity: number })[] = [
       { id: 1, body_part_id: 1, name: "Biceps", description: "Elbow flexion", created_at: "2024-01-01", pain_intensity: 7 },
     ];
+
     const exercises: ExerciseDto[] = [];
     const prompt = buildTrainingPlanPrompt("Arm", muscleTests, exercises);
     expect(prompt).toContain("Body Part: Arm");

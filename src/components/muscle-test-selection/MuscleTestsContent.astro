@@ -20,7 +20,7 @@ const { muscleTests, fetchError, bodyPartId, backLink } = Astro.props as Props;
   ) : muscleTests.length > 0 ? (
     <MuscleTestForm client:load bodyPartId={bodyPartId} muscleTests={muscleTests} />
   ) : (
-    <EmptyState message="No muscle tests available for this body part." {...backLink} />
+    <EmptyState message="No muscle tests available for this body part." text="No muscle tests available for this body part." {...backLink} />
   )
 }
 

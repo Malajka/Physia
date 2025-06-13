@@ -26,6 +26,7 @@ describe("FeedbackBodySchema", () => {
   it("accepts rating 1", () => {
     expect(() => FeedbackBodySchema.parse({ rating: 1 })).not.toThrow();
   });
+
   it("rejects rating below 0", () => {
     expect(() => FeedbackBodySchema.parse({ rating: -1 })).toThrow();
   });

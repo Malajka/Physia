@@ -1,226 +1,118 @@
-// import { handleRequest } from "@/middleware/middlewareHandler";
-// import type { Session } from "@supabase/supabase-js";
-// import { beforeEach, describe, expect, it, vi } from "vitest";
-// import { GET, POST } from "./index";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { GET, POST } from "./index";
+import { jsonResponse } from "@/lib/utils/response";
+import type { APIContext } from "astro";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-// // Types for the mock context and API calls
-// interface MockSupabase {
-//   from: ReturnType<typeof vi.fn>;
-//   auth: {
-//     getSession: ReturnType<typeof vi.fn>;
-//     setSession?: ReturnType<typeof vi.fn>;
-//     updateUser: ReturnType<typeof vi.fn>;
-//   };
-// }
+vi.mock("@/lib/middleware/withAuth", () => ({
+  withAuth: vi.fn((handler) => handler),
+}));
 
-// interface MockLocals {
-//   supabase: MockSupabase;
-// }
+vi.mock("@/lib/utils/response", () => ({
+  jsonResponse: vi.fn(),
+}));
 
-// type GetPostArgs = Parameters<typeof GET>[0];
+const mockedJsonResponse = vi.mocked(jsonResponse);
 
-// const mockNext = vi.fn().mockResolvedValue(new Response("ok"));
+const mockSingle = vi.fn();
+const mockUpdateUser = vi.fn();
+const mockRefreshSession = vi.fn();
 
-// function createMockSession(userMetadata = {}): Session {
-//   return {
-//     access_token: "mock-token",
-//     refresh_token: "mock-refresh",
-//     expires_in: 3600,
-//     token_type: "bearer",
-//     user: {
-//       id: "user-1",
-//       user_metadata: userMetadata,
-//       app_metadata: {},
-//       aud: "authenticated",
-//       created_at: new Date().toISOString(),
-//       email: "",
-//       phone: "",
-//     },
-//   };
-// }
+const mockSupabaseClient = {
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      order: vi.fn(() => ({
+        limit: vi.fn(() => ({
+          single: mockSingle,
+        })),
+      })),
+    })),
+  })),
+  auth: {
+    updateUser: mockUpdateUser,
+    refreshSession: mockRefreshSession,
+  },
+} as unknown as SupabaseClient;
 
-// function makeContext({
-//   pathname = "/sessions/1",
-//   session = null,
-//   sessionOwner = true,
-//   cookies = {} as Record<string, string>,
-// }: {
-//   pathname?: string;
-//   session?: Session | null;
-//   sessionOwner?: boolean;
-//   cookies?: Record<string, string>;
-// } = {}) {
-//   const getSession = vi.fn().mockResolvedValue({
-//     data: { session },
-//     error: null,
-//   });
-//   const setSession = vi.fn().mockResolvedValue({ error: null });
-//   const select = vi.fn().mockReturnThis();
-//   const eq = vi.fn().mockReturnThis();
-//   const single = vi.fn().mockResolvedValue({
-//     data: sessionOwner && session ? { user_id: session.user.id } : { user_id: "other" },
-//     error: sessionOwner && session ? null : "error",
-//   });
-//   const from = vi.fn().mockReturnValue({ select, eq, single });
+const createMockContext = (user: Partial<User>): APIContext =>
+  ({
+    locals: {
+      supabase: mockSupabaseClient,
+      user: user as User,
+    },
+  }) as unknown as APIContext;
 
-//   const supabase = { auth: { getSession, setSession, updateUser: vi.fn() }, from };
+describe("GET /api/disclaimers", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-//   const context = {
-//     locals: { supabase },
-//     cookies: {
-//       get: vi.fn((key: string) => ({ value: cookies[key] })),
-//     },
-//     request: { url: `http://localhost${pathname}` },
-//   };
-//   return { context, supabase, getSession, setSession, select, eq, single };
-// }
+  it("should return 200 with content and acceptance date if user accepted", async () => {
+    const mockUser = { user_metadata: { disclaimer_accepted_at: "2024-01-01T12:00:00Z" } };
+    mockSingle.mockResolvedValue({ data: { content: "Disclaimer text" }, error: null });
 
-// describe("middlewareHandler", () => {
-//   beforeEach(() => {
-//     vi.clearAllMocks();
-//   });
+    const context = createMockContext(mockUser);
+    await GET(context);
 
-//   it("redirects to /login if not authenticated", async () => {
-//     const { context } = makeContext({ session: null });
-//     const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-//     expect(res.status).toBe(302);
-//     expect(res.headers.get("Location")).toBe("/login");
-//   });
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ text: "Disclaimer text", accepted_at: "2024-01-01T12:00:00Z" }, 200);
+  });
 
-//   it("redirects to /sessions if not session owner", async () => {
-//     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
-//     const { context } = makeContext({ session, sessionOwner: false });
-//     const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-//     expect(res.status).toBe(302);
-//     expect(res.headers.get("Location")).toBe("/sessions");
-//   });
+  it("should return 200 with content and null if user has not accepted", async () => {
+    const mockUser = { user_metadata: {} };
+    mockSingle.mockResolvedValue({ data: { content: "Disclaimer text" }, error: null });
 
-//   it("calls next() for valid session and owner", async () => {
-//     const session = createMockSession({ disclaimer_accepted_at: "2024-01-01" });
-//     const { context } = makeContext({ session });
-//     const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-//     expect(mockNext).toHaveBeenCalled();
-//     expect(res).toBeInstanceOf(Response);
-//     expect(res.status).toBe(200);
-//   });
+    const context = createMockContext(mockUser);
+    await GET(context);
 
-//   it("calls next() for unprotected route", async () => {
-//     const { context } = makeContext({ pathname: "/public" });
-//     const res = (await handleRequest(context as unknown as Parameters<typeof handleRequest>[0], mockNext)) as Response;
-//     expect(mockNext).toHaveBeenCalled();
-//     expect(res).toBeInstanceOf(Response);
-//   });
-// });
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ text: "Disclaimer text", accepted_at: null }, 200);
+  });
 
-// function createMockSupabase({
-//   disclaimerContent = "Test disclaimer text",
-//   getSessionData = { session: { user: { user_metadata: { disclaimer_accepted_at: "2024-01-01" } } } },
-//   getSessionError = null,
-//   disclaimerError = null,
-//   updateUserError = null,
-// } = {}): MockSupabase {
-//   return {
-//     from: vi.fn().mockReturnValue({
-//       select: vi.fn().mockReturnThis(),
-//       order: vi.fn().mockReturnThis(),
-//       limit: vi.fn().mockReturnThis(),
-//       single: vi.fn().mockResolvedValue({
-//         data: disclaimerError ? null : { content: disclaimerContent },
-//         error: disclaimerError,
-//       }),
-//     }),
-//     auth: {
-//       getSession: vi.fn().mockResolvedValue({
-//         data: getSessionData,
-//         error: getSessionError,
-//       }),
-//       updateUser: vi.fn().mockResolvedValue({ error: updateUserError }),
-//     },
-//   };
-// }
+  it("should return 500 if fetching disclaimer content fails", async () => {
+    const dbError = { message: "Database query failed" };
+    mockSingle.mockResolvedValue({ data: null, error: dbError });
 
-// describe("/api/disclaimers GET", () => {
-//   let locals: MockLocals;
-//   beforeEach(() => {
-//     vi.clearAllMocks();
-//   });
+    const context = createMockContext({ user_metadata: {} });
+    await GET(context);
 
-//   it("returns disclaimer text and accepted_at on success", async () => {
-//     locals = { supabase: createMockSupabase() };
-//     const response = await GET({ locals } as unknown as GetPostArgs);
-//     expect(response.status).toBe(200);
-//     const body = await response.json();
-//     expect(body.text).toBe("Test disclaimer text");
-//     expect(body.accepted_at).toBe("2024-01-01");
-//   });
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ error: "Database query failed" }, 500);
+  });
+});
 
-//   it("returns accepted_at as null if not accepted", async () => {
-//     const sessionWithoutDisclaimer = createMockSession({});
-//     locals = {
-//       supabase: {
-//         from: vi.fn().mockReturnValue({
-//           select: vi.fn().mockReturnThis(),
-//           order: vi.fn().mockReturnThis(),
-//           limit: vi.fn().mockReturnThis(),
-//           single: vi.fn().mockResolvedValue({
-//             data: { content: "Test disclaimer text" },
-//             error: null,
-//           }),
-//         }),
-//         auth: {
-//           getSession: vi.fn().mockResolvedValue({
-//             data: { session: sessionWithoutDisclaimer },
-//             error: null,
-//           }),
-//           updateUser: vi.fn().mockResolvedValue({ error: null }),
-//         },
-//       },
-//     };
-//     const response = await GET({ locals } as unknown as GetPostArgs);
-//     expect(response.status).toBe(200);
-//     const body = await response.json();
-//     expect(body.accepted_at).toBeNull();
-//   });
+describe("POST /api/disclaimers", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
 
-//   it("returns 500 if disclaimer fetch fails", async () => {
-//     locals = { supabase: createMockSupabase({ disclaimerError: null }) };
-//     locals.supabase.from = vi.fn().mockReturnValue({
-//       select: vi.fn().mockReturnThis(),
-//       order: vi.fn().mockReturnThis(),
-//       limit: vi.fn().mockReturnThis(),
-//       single: vi.fn().mockResolvedValue({ data: null, error: { message: "fail" } }),
-//     });
-//     const response = await GET({ locals } as unknown as GetPostArgs);
-//     expect(response.status).toBe(500);
-//     const body = await response.json();
-//     expect(body.error).toMatch(/fail/);
-//   });
-// });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
-// describe("/api/disclaimers POST", () => {
-//   let locals: MockLocals;
-//   beforeEach(() => {
-//     vi.clearAllMocks();
-//   });
+  it("should update user, refresh session, and return 201 on success", async () => {
+    const fakeNow = new Date("2024-06-13T10:00:00Z");
+    vi.setSystemTime(fakeNow);
 
-//   it("returns 201 and accepted_at on success", async () => {
-//     vi.useFakeTimers();
-//     const now = new Date("2024-05-25T12:00:00.000Z");
-//     vi.setSystemTime(now);
-//     locals = { supabase: createMockSupabase() };
-//     const response = await POST({ locals } as unknown as GetPostArgs);
-//     expect(response.status).toBe(201);
-//     const body = await response.json();
-//     expect(body.accepted_at).toBe(now.toISOString());
-//     vi.useRealTimers();
-//   });
+    mockUpdateUser.mockResolvedValue({ error: null });
+    mockRefreshSession.mockResolvedValue({ data: {}, error: null });
 
-//   it("returns 500 if updateUser fails", async () => {
-//     locals = { supabase: createMockSupabase({ updateUserError: null }) };
-//     locals.supabase.auth.updateUser = vi.fn().mockResolvedValue({ error: { message: "update failed" } });
-//     const response = await POST({ locals } as unknown as GetPostArgs);
-//     expect(response.status).toBe(500);
-//     const body = await response.json();
-//     expect(body.error).toMatch(/update failed/);
-//   });
-// });
+    const context = createMockContext({});
+    await POST(context);
+
+    expect(mockUpdateUser).toHaveBeenCalledWith({
+      data: { disclaimer_accepted_at: fakeNow.toISOString() },
+    });
+    expect(mockRefreshSession).toHaveBeenCalledTimes(1);
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ accepted_at: fakeNow.toISOString() }, 201);
+  });
+
+  it("should return 500 if updating user metadata fails", async () => {
+    const updateError = { message: "Update failed" };
+    mockUpdateUser.mockResolvedValue({ error: updateError });
+
+    const context = createMockContext({});
+    await POST(context);
+
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ error: "Update failed" }, 500);
+    expect(mockRefreshSession).not.toHaveBeenCalled();
+  });
+});

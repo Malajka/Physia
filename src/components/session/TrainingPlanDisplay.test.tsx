@@ -15,6 +15,7 @@ const mockTrainingPlan = {
 Start with arm circles
 Light stretching
 
+
 ### Workout
 Standard push-ups
 Keep your core engaged

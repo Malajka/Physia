@@ -1,6 +1,6 @@
 // Your component file, e.g., src/components/body-part-selection/BodyPartSelector.tsx
 
-import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
+import { BodyPartButton } from "./BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
 import { InfoBar } from "@/components/ui";
 import { useBodyParts } from "@/hooks/useBodyParts";
@@ -41,12 +41,6 @@ export default function BodyPartSelector() {
     );
   }
 
-  // --- THE FINAL FIX ---
-  // This condition is now robust and defensive. It handles all possible cases:
-  // 1. `bodyParts` is `null` (initial state from useFetch) -> `!Array.isArray(null)` is true.
-  // 2. `bodyParts` is `{}` (the problematic value) -> `!Array.isArray({})` is true.
-  // 3. `bodyParts` is `[]` (empty list from API) -> `!Array.isArray` is false, but `.length === 0` is true.
-  // The crucial part is that `.length` is NEVER accessed if `bodyParts` is not an array, preventing the crash.
   if (!Array.isArray(bodyParts) || bodyParts.length === 0) {
     return <StatusMessage text="No body areas available." />;
   }
