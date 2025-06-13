@@ -50,12 +50,12 @@ const pageTitle = "My Exercise Sessions";
 ---
 
 <Layout title={pageTitle}>
-  <div className="container mx-auto p-8" data-testid="sessions-page">
-    <h1 className="text-3xl font-bold mb-8">My Exercise Sessions</h1>
+  <div class="container mx-auto p-8" data-testid="sessions-page">
+    <h1 class="text-3xl font-bold mb-8">My Exercise Sessions</h1>
 
     {
       fetchError && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
           <p>Error loading sessions: {fetchError.message}</p>
         </div>
       )
@@ -63,25 +63,25 @@ const pageTitle = "My Exercise Sessions";
 
     {
       !sessionsTyped.length ? (
-        <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg text-center">
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-8">No sessions yet</h2>
-          <p className="text-xl text-[var(--foreground)] mb-8">Start by creating your first personalized exercise plan!</p>
+        <div class="bg-blue-50 border border-blue-200 p-6 rounded-lg text-center">
+          <h2 class="text-2xl font-bold text-[var(--foreground)] mb-8">No sessions yet</h2>
+          <p class="text-xl text-[var(--foreground)] mb-8">Start by creating your first personalized exercise plan!</p>
           <LinkButton href="/body-parts" variant="nav-primary" data-testid="create-first-session">
             Create New Session
           </LinkButton>
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {sessionsTyped.map((session) => (
-            <div className="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-4" data-testid={`session-item-${session.id}`}>
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-semibold text-lg">{session.plan.title || `Session for ${session.bodyPartName}`}</h3>
-                <span className="text-xs text-gray-500">{new Date(session.created_at).toLocaleDateString()}</span>
+            <div class="bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow p-4" data-testid={`session-item-${session.id}`}>
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-semibold text-lg">{session.plan.title || `Session for ${session.bodyPartName}`}</h3>
+                <span class="text-xs text-gray-500">{new Date(session.created_at).toLocaleDateString()}</span>
               </div>
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">{session.plan.description || "Personalized exercise plan"}</p>
+              <p class="text-sm text-gray-600 mb-4 line-clamp-2">{session.plan.description || "Personalized exercise plan"}</p>
               <a
                 href={`/sessions/${session.id}`}
-                className="text-[#14a49b] hover:underline text-sm font-medium"
+                class="text-[#14a49b] hover:underline text-sm font-medium"
                 data-testid={`session-details-link-${session.id}`}
               >
                 View Details →

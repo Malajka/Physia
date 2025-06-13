@@ -24,9 +24,9 @@ const showAuthButtons = !isAuthenticated && !isAuthPage();
 const showUserButtons = isAuthenticated;
 ---
 
-<nav className="flex items-center w-full z-[9]" role="navigation" aria-label="Main navigation">
+<nav class="flex items-center w-full z-[9]" role="navigation" aria-label="Main navigation">
   <!-- Desktop Navigation -->
-  <ul className="hidden lg:flex flex-1 justify-center items-center space-x-6" role="menubar">
+  <ul class="hidden lg:flex flex-1 justify-center items-center space-x-6" role="menubar">
     {
       NAVIGATION_SECTIONS.map((section) => (
         <li>
@@ -39,15 +39,15 @@ const showUserButtons = isAuthenticated;
   </ul>
 
   <!-- Mobile Navigation -->
-  <details className="lg:hidden ml-auto relative" role="group">
+  <details class="lg:hidden ml-auto relative" role="group">
     <summary
-      className="list-none p-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg"
+      class="list-none p-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--primary)] rounded-lg"
       aria-label="Toggle navigation menu"
       role="button"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        className="h-6 w-6 text-[var(--primary)]"
+        class="h-6 w-6 text-[var(--primary)]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -58,11 +58,11 @@ const showUserButtons = isAuthenticated;
       </svg>
     </summary>
 
-    <ul className="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 shadow-md space-y-2 text-right border border-[var(--border)]" role="menu">
+    <ul class="absolute right-0 mt-2 w-48 bg-[var(--card)] p-4 shadow-md space-y-2 text-right border border-[var(--border)]" role="menu">
       {
         NAVIGATION_SECTIONS.map((section) => (
           <li>
-            <LinkButton href={`/#${section}`} variant="nav-link" className="block">
+            <LinkButton href={`/#${section}`} variant="nav-link" class="block">
               {capitalizeFirst(section)}
             </LinkButton>
           </li>
@@ -73,12 +73,12 @@ const showUserButtons = isAuthenticated;
         showAuthButtons && (
           <>
             <li>
-              <LinkButton href="/login" variant="nav-primary" className="block w-full">
+              <LinkButton href="/login" variant="nav-primary" class="block w-full">
                 Log in
               </LinkButton>
             </li>
             <li>
-              <LinkButton href="/register" variant="nav-secondary" className="block w-full">
+              <LinkButton href="/register" variant="nav-secondary" class="block w-full">
                 Register
               </LinkButton>
             </li>
@@ -90,12 +90,12 @@ const showUserButtons = isAuthenticated;
         showUserButtons && (
           <>
             <li>
-              <LinkButton href="/sessions" variant="nav-link" className="block">
+              <LinkButton href="/sessions" variant="nav-link" class="block">
                 My Sessions
               </LinkButton>
             </li>
             <li>
-              <LinkButton href="/body-parts" variant="nav-link" className="block" data-testid="create-new-session-mobile">
+              <LinkButton href="/body-parts" variant="nav-link" class="block" data-testid="create-new-session-mobile">
                 Create New Session
               </LinkButton>
             </li>
@@ -103,7 +103,7 @@ const showUserButtons = isAuthenticated;
               <!-- @ts-ignore -->
               <LogoutButton
                 client:load
-                className="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
+                class="block w-full bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
               />
             </li>
           </>
@@ -113,7 +113,7 @@ const showUserButtons = isAuthenticated;
   </details>
 
   <!-- Desktop Auth/User Buttons -->
-  <ul className="hidden lg:flex items-center space-x-6">
+  <ul class="hidden lg:flex items-center space-x-6">
     {
       showAuthButtons && (
         <>
@@ -135,12 +135,12 @@ const showUserButtons = isAuthenticated;
       showUserButtons && (
         <>
           <li>
-            <LinkButton href="/sessions" variant="nav-link" className="block">
+            <LinkButton href="/sessions" variant="nav-link" class="block">
               My Sessions
             </LinkButton>
           </li>
           <li>
-            <LinkButton href="/body-parts" variant="nav-link" className="block" data-testid="create-new-session-desktop">
+            <LinkButton href="/body-parts" variant="nav-link" class="block" data-testid="create-new-session-desktop">
               Create New Session
             </LinkButton>
           </li>
@@ -148,7 +148,7 @@ const showUserButtons = isAuthenticated;
             <!-- @ts-ignore -->
             <LogoutButton
               client:load
-              className="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
+              class="bg-transparent border border-[var(--gray-text)] text-[var(--gray-text)] hover:bg-[var(--light-green)] font-bold px-6 rounded-xl transition-colors"
             />
           </li>
         </>
