@@ -57,7 +57,7 @@ Please return a JSON object with the following structure:
       "name": "Exercise Name",
       "description": "Brief instructions on how to perform the exercise",
       "sets": 3,
-      "reps": 10,
+      "rep": 15,
       "rest_time_seconds": 60,
       "notes": "Any specific notes for this exercise"
     }
