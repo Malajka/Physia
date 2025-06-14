@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./index";
 import { createSession } from "@/lib/services/session";
 import { errorResponse, successResponse } from "@/lib/utils/api";
 import { parseAndValidate } from "@/lib/utils/request";
-import type { APIContext } from "astro";
-import type { CreateSessionCommandDto, SessionDto } from "@/types";
+import type { CreateSessionCommandDto, SessionDetailDto } from "@/types";
 import { ErrorCode } from "@/types";
+import type { APIContext } from "astro";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { POST } from "./index";
 
 vi.mock("@/lib/middleware/withAuth", () => ({
-  withAuth: (handler: any) => handler,
+  withAuth: vi.fn((handler) => (context: APIContext) => handler(context, "user-123")),
 }));
 
 vi.mock("@/lib/services/session");
@@ -24,16 +24,28 @@ const mockedParseAndValidate = vi.mocked(parseAndValidate);
 const createMockContext = (body: any): APIContext =>
   ({
     request: { json: () => Promise.resolve(body) } as Request,
-    locals: { supabase: {} },
+    locals: {
+      supabase: {},
+      user: null,
+    },
   }) as unknown as APIContext;
 
 describe("POST /api/session/generate", () => {
   const userId = "user-123";
   const validCommand: CreateSessionCommandDto = {
-    muscleTestIds: [1, 2],
-    bodyPartId: 1,
+    body_part_id: 1,
+    tests: [],
   };
-  const createdSession: SessionDto = { id: 99, user_id: userId, created_at: "now", body_part_id: 1 };
+  const createdSession: SessionDetailDto = {
+    id: 99,
+    user_id: userId,
+    created_at: "now",
+    body_part_id: 1,
+    disclaimer_accepted_at: "now",
+    training_plan: [],
+    session_tests: [],
+    feedback_rating: null,
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -44,7 +56,7 @@ describe("POST /api/session/generate", () => {
     mockedCreateSession.mockResolvedValue({ session: createdSession, error: null });
 
     const context = createMockContext(validCommand);
-    await POST(context, userId);
+    await POST(context);
 
     expect(mockedCreateSession).toHaveBeenCalledWith(context.locals.supabase, userId, validCommand);
     expect(mockedSuccessResponse).toHaveBeenCalledWith(createdSession, 201);
@@ -55,7 +67,7 @@ describe("POST /api/session/generate", () => {
     mockedParseAndValidate.mockRejectedValue(validationErrorResponse);
 
     const context = createMockContext({});
-    const response = await POST(context, userId);
+    const response = await POST(context);
 
     expect(response).toBe(validationErrorResponse);
     expect(mockedCreateSession).not.toHaveBeenCalled();
@@ -66,7 +78,7 @@ describe("POST /api/session/generate", () => {
     mockedCreateSession.mockResolvedValue({ session: null, error: "disclaimer_required" });
 
     const context = createMockContext(validCommand);
-    await POST(context, userId);
+    await POST(context);
 
     expect(mockedErrorResponse).toHaveBeenCalledWith(
       ErrorCode.DISCLAIMER_REQUIRED,
@@ -81,7 +93,7 @@ describe("POST /api/session/generate", () => {
     mockedCreateSession.mockResolvedValue({ session: null, error: notFoundError });
 
     const context = createMockContext(validCommand);
-    await POST(context, userId);
+    await POST(context);
 
     expect(mockedErrorResponse).toHaveBeenCalledWith(ErrorCode.RESOURCE_NOT_FOUND, notFoundError, 404);
   });
@@ -91,7 +103,7 @@ describe("POST /api/session/generate", () => {
     mockedCreateSession.mockResolvedValue({ session: null, error: "Some other DB error" });
 
     const context = createMockContext(validCommand);
-    await POST(context, userId);
+    await POST(context);
 
     expect(mockedErrorResponse).toHaveBeenCalledWith(ErrorCode.SERVER_ERROR, "An error occurred while creating the session", 500);
   });
@@ -101,7 +113,7 @@ describe("POST /api/session/generate", () => {
     mockedParseAndValidate.mockRejectedValue(unexpectedError);
 
     const context = createMockContext(validCommand);
-    await POST(context, userId);
+    await POST(context);
 
     expect(mockedErrorResponse).toHaveBeenCalledWith(ErrorCode.SERVER_ERROR, "Unexpected error", 500);
   });

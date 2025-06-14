@@ -33,7 +33,7 @@ export async function ensureLoggedOut(page: Page, context: BrowserContext): Prom
 
     await page.waitForTimeout(500);
   } catch (error) {
-    console.error("Error in ensureLoggedOut:", error);
+    throw new Error(`Error in ensureLoggedOut: ${error}`);
   }
 }
 

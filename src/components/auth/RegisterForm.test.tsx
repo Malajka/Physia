@@ -1,8 +1,8 @@
+import { useRegister } from "@/hooks/useRegister";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RegisterForm } from "./RegisterForm";
-import { useRegister } from "@/hooks/useRegister";
 
 vi.mock("@/hooks/useRegister");
 const mockedUseRegister = vi.mocked(useRegister);
@@ -15,7 +15,9 @@ describe("RegisterForm", () => {
     mockedUseRegister.mockReturnValue({
       registrationSuccess: false,
       error: null,
+      isLoading: false,
       submitRegistration: mockSubmitRegistration,
+      resetForm: vi.fn(),
     });
   });
 
@@ -49,7 +51,9 @@ describe("RegisterForm", () => {
     mockedUseRegister.mockReturnValue({
       registrationSuccess: false,
       error: "Email already in use",
+      isLoading: false,
       submitRegistration: mockSubmitRegistration,
+      resetForm: vi.fn(),
     });
     render(<RegisterForm />);
     expect(screen.getByText("Email already in use")).toBeInTheDocument();
@@ -64,7 +68,9 @@ describe("RegisterForm", () => {
     mockedUseRegister.mockReturnValue({
       registrationSuccess: true,
       error: null,
+      isLoading: false,
       submitRegistration: mockSubmitRegistration,
+      resetForm: vi.fn(),
     });
     render(<RegisterForm />);
 

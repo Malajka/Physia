@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  NODE_VERSION: "22.14.0"
-
 jobs:
   lint:
     name: Code Linting

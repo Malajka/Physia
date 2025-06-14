@@ -1,7 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { APIContext, AstroCookies } from "astro";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./logout";
-import type { APIContext } from "astro";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 const mockSignOut = vi.fn();
 const mockSupabaseClient = {
@@ -11,9 +11,34 @@ const mockSupabaseClient = {
 } as unknown as SupabaseClient;
 
 const createMockContext = (): APIContext => ({
+  request: {
+    json: vi.fn(),
+  } as unknown as Request,
   locals: {
     supabase: mockSupabaseClient,
+    user: null,
   },
+  site: new URL("http://localhost"),
+  generator: "astro",
+  url: new URL("http://localhost"),
+  params: {},
+  props: {},
+  redirect: vi.fn(),
+  cookies: {
+    get: vi.fn(),
+    set: vi.fn(),
+    delete: vi.fn(),
+    has: vi.fn(),
+    getAll: vi.fn(),
+    headers: vi.fn(),
+  } as unknown as AstroCookies,
+  clientAddress: "127.0.0.1",
+  rewrite: vi.fn(),
+  preferredLocale: "en",
+  preferredLocaleList: ["en"],
+  currentLocale: "en",
+  getActionResult: vi.fn(),
+  callAction: vi.fn(),
 });
 
 describe("POST /api/logout", () => {

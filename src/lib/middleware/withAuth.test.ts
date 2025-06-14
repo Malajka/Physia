@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { APIRouteContext } from "astro";
-import { withAuth } from "./withAuth";
 import { errorResponse } from "@/lib/utils/api";
 import { ErrorCode } from "@/types";
+import type { APIContext } from "astro";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { withAuth } from "./withAuth";
 
 vi.mock("@/lib/utils/api", () => ({
   errorResponse: vi.fn(),
@@ -16,14 +16,14 @@ describe("withAuth middleware", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockHandler.mockReturnValue(mockSuccessResponse);
-    (errorResponse as vi.Mock).mockReturnValue(mockErrorResponse);
+    (errorResponse as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockErrorResponse);
   });
 
   it("should call the handler with user id when user is authenticated", () => {
     const mockUser = { id: "user-123", email: "test@example.com" };
     const mockContext = {
       locals: { user: mockUser },
-    } as unknown as APIRouteContext;
+    } as unknown as APIContext;
 
     const protectedRoute = withAuth(mockHandler);
     const result = protectedRoute(mockContext);
@@ -37,7 +37,7 @@ describe("withAuth middleware", () => {
   it("should return an authentication error when user is null", () => {
     const mockContext = {
       locals: { user: null },
-    } as unknown as APIRouteContext;
+    } as unknown as APIContext;
 
     const protectedRoute = withAuth(mockHandler);
     const result = protectedRoute(mockContext);
@@ -51,7 +51,7 @@ describe("withAuth middleware", () => {
   it("should return an authentication error when locals.user is undefined", () => {
     const mockContext = {
       locals: {},
-    } as unknown as APIRouteContext;
+    } as unknown as APIContext;
 
     const protectedRoute = withAuth(mockHandler);
     const result = protectedRoute(mockContext);

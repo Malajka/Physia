@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./login";
 import { loginSchema } from "@/lib/validators/auth.validator";
+import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
+import type { APIContext, AstroCookies } from "astro";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ZodError } from "zod";
-import type { APIRoute, APIContext } from "astro";
-import type { Session, User, SupabaseClient } from "@supabase/supabase-js";
+import { POST } from "./login";
 
 vi.mock("@/lib/validators/auth.validator", () => ({
   loginSchema: {
@@ -25,7 +25,29 @@ const createMockContext = (body: any | null, throwsOnJson = false): APIContext =
   } as unknown as Request,
   locals: {
     supabase: mockSupabaseClient,
+    user: null,
   },
+  site: new URL("http://localhost"),
+  generator: "astro",
+  url: new URL("http://localhost"),
+  params: {},
+  props: {},
+  redirect: vi.fn(),
+  cookies: {
+    get: vi.fn(),
+    set: vi.fn(),
+    delete: vi.fn(),
+    has: vi.fn(),
+    getAll: vi.fn(),
+    headers: vi.fn(),
+  } as unknown as AstroCookies,
+  clientAddress: "127.0.0.1",
+  rewrite: vi.fn(),
+  preferredLocale: "en",
+  preferredLocaleList: ["en"],
+  currentLocale: "en",
+  getActionResult: vi.fn(),
+  callAction: vi.fn(),
 });
 
 describe("POST /api/login", () => {
