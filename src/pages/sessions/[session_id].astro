@@ -1,6 +1,4 @@
 ---
-
-
 import { FeedbackRating } from "@/components/session/FeedbackRating";
 import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
 import Layout from "@/layouts/Layout.astro";
@@ -8,11 +6,9 @@ import type { TrainingPlan } from "@/lib/services/training-plan";
 
 export const prerender = false;
 
-
 const {
   data: { user },
 } = await Astro.locals.supabase.auth.getUser();
-
 
 if (!user) {
   return Astro.redirect("/login?error=authentication_required");
@@ -21,26 +17,22 @@ if (!user.user_metadata?.disclaimer_accepted_at) {
   return Astro.redirect("/body-parts?error=disclaimer_required");
 }
 
-
 const sessionId = Number(Astro.params.session_id);
 const pageTitle = `Session ${sessionId}`;
 let trainingSession: { training_plan: TrainingPlan } | null = null;
-
 
 const supabase = Astro.locals.supabase;
 const { data: sessionRow, error: fetchError } = await supabase
   .from("sessions")
   .select("training_plan")
   .eq("id", sessionId)
-  .eq("user_id", user.id) 
+  .eq("user_id", user.id)
   .single();
 
 if (fetchError || !sessionRow) {
-  
   return Astro.redirect("/sessions?error=not_found");
 }
 trainingSession = { training_plan: sessionRow.training_plan as TrainingPlan };
-
 
 let exerciseImagesMap: Record<number, { file_path: string; metadata: unknown }[]> = {};
 if (trainingSession) {
@@ -62,7 +54,7 @@ if (trainingSession) {
   }
 }
 ---
-<!-- @ts-nocheck -->      
+
 <Layout title={pageTitle}>
   <div class="min-h-screen bg-gradient-to-br from-[#b8e6d9] via-[#d4f1e8] to-[#e8f5e1]">
     <div class="container mx-auto p-8">
@@ -72,15 +64,12 @@ if (trainingSession) {
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Session {sessionId}</h1>
       </div>
 
-      
       {
         trainingSession ? (
           <div class="max-w-7xl mx-auto">
-            <!-- @ts-ignore -->
             <TrainingPlanDisplay client:load trainingPlan={trainingSession.training_plan} exerciseImagesMap={exerciseImagesMap} />
             <div class="mt-12 bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] max-w-2xl mx-auto">
               <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">How was your session?</h3>
-              <!-- @ts-ignore -->
               <FeedbackRating client:load sessionId={sessionId} />
             </div>
           </div>
