@@ -1,16 +1,15 @@
+import { fetchFeedback } from "@/lib/services/session/feedback";
 import { render, screen, waitFor } from "@testing-library/react";
 import type React from "react";
 import { beforeEach, describe, expect, it, vi, type MockedFunction } from "vitest";
 import { FeedbackRating } from "./FeedbackRating";
-import { fetchFeedback } from "@/lib/services/session/feedback";
-// Mock Button
+
 vi.mock("@/components/ui/Button", () => ({
   Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
     <button {...props}>{children}</button>
   ),
 }));
 
-// Mock feedback services
 vi.mock("@/lib/services/session/feedback", () => ({
   fetchFeedback: vi.fn(),
   submitFeedback: vi.fn(),

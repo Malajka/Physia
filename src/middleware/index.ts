@@ -1,9 +1,9 @@
 // src/middleware/index.ts
 
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { defineMiddleware } from "astro:middleware";
 import type { User } from "@supabase/supabase-js";
 import type { APIContext } from "astro";
+import { defineMiddleware } from "astro:middleware";
 
 // --- Constants ---
 const LOGIN_PATH = "/login";
@@ -94,7 +94,7 @@ export async function handleSessionOwnership(context: APIContext): Promise<Respo
 }
 
 // --- Main Middleware Entry Point ---
-export const onRequest = defineMiddleware(async (context, next) => {
+export const onRequest = defineMiddleware(async (context: APIContext, next: () => Promise<Response>) => {
   const supabase = createServerClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_PUBLIC_KEY, {
     cookies: {
       get: (key) => context.cookies.get(key)?.value,

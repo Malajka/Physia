@@ -1,13 +1,5 @@
-// src/lib/utils/fetch.ts
-
 import type { DataArrayResponse, DataResponse, ErrorResponse } from "@/types";
 
-/**
- * Generic JSON fetcher with centralized error handling.
- * This is the core function for all API calls.
- * @param url The endpoint URL.
- * @param init Optional RequestInit object, used to pass headers from SSR.
- */
 export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, {
     credentials: "include",
@@ -37,9 +29,6 @@ export async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> 
   return body;
 }
 
-/**
- * A wrapper for fetchJson that expects an array response.
- */
 export async function fetchArray<T>(url: string, init?: RequestInit): Promise<T[]> {
   const result = await fetchJson<T[] | DataArrayResponse<T>>(url, init);
   if (Array.isArray(result)) {
@@ -48,21 +37,11 @@ export async function fetchArray<T>(url: string, init?: RequestInit): Promise<T[
   return result?.data ?? [];
 }
 
-/**
- * A wrapper for fetchJson that expects a single data item response.
- */
 export async function fetchData<T>(url: string, init?: RequestInit): Promise<T> {
   const result = await fetchJson<DataResponse<T>>(url, init);
   return result.data;
 }
 
-/**
- * Performs a fetch request with a timeout, aborting if it exceeds the limit.
- * This is the function that was missing.
- * @param url The endpoint URL.
- * @param options The RequestInit options.
- * @param timeoutMs The timeout in milliseconds.
- */
 export async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);

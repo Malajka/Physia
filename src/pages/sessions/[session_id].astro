@@ -1,5 +1,5 @@
 ---
-// src/pages/sessions/[session_id].astro
+
 
 import { FeedbackRating } from "@/components/session/FeedbackRating";
 import { TrainingPlanDisplay } from "@/components/session/TrainingPlanDisplay";
@@ -8,12 +8,12 @@ import type { TrainingPlan } from "@/lib/services/training-plan";
 
 export const prerender = false;
 
-// --- THE FINAL FIX: Use the secure getUser() method ---
+
 const {
   data: { user },
 } = await Astro.locals.supabase.auth.getUser();
 
-// Server-side guard: require authenticated user and disclaimer acceptance
+
 if (!user) {
   return Astro.redirect("/login?error=authentication_required");
 }
@@ -21,27 +21,27 @@ if (!user.user_metadata?.disclaimer_accepted_at) {
   return Astro.redirect("/body-parts?error=disclaimer_required");
 }
 
-// Grab the session_id from the route params
+
 const sessionId = Number(Astro.params.session_id);
 const pageTitle = `Session ${sessionId}`;
 let trainingSession: { training_plan: TrainingPlan } | null = null;
 
-// Fetch session details for the authenticated user, using the secure user.id
+
 const supabase = Astro.locals.supabase;
 const { data: sessionRow, error: fetchError } = await supabase
   .from("sessions")
   .select("training_plan")
   .eq("id", sessionId)
-  .eq("user_id", user.id) // This query is now fully secure
+  .eq("user_id", user.id) 
   .single();
 
 if (fetchError || !sessionRow) {
-  // If the session is not found or not owned by the user, redirect.
+  
   return Astro.redirect("/sessions?error=not_found");
 }
 trainingSession = { training_plan: sessionRow.training_plan as TrainingPlan };
 
-// Fetch exercise images (this logic is correct)
+
 let exerciseImagesMap: Record<number, { file_path: string; metadata: unknown }[]> = {};
 if (trainingSession) {
   const exerciseIds = trainingSession.training_plan.exercises.map((ex) => ex.id);

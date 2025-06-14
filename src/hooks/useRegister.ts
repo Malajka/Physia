@@ -9,10 +9,6 @@ export interface UseRegisterReturn {
   resetForm: () => void;
 }
 
-/**
- * Custom hook for managing registration state and process
- * @returns Object with registration state and submit function
- */
 export const useRegister = (): UseRegisterReturn => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);

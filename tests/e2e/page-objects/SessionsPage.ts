@@ -22,13 +22,11 @@ export class SessionsPage extends BasePage {
   }
 
   async logout() {
-    // Find and click visible logout button
     const buttons = await this.logoutButtons.all();
     let logoutButtonClicked = false;
 
     for (const btn of buttons) {
       if (await btn.isVisible()) {
-        // Wait for logout response if available
         await btn.click();
         logoutButtonClicked = true;
         break;
@@ -65,28 +63,24 @@ export class SessionsPage extends BasePage {
   }
 
   async clickCreateNewSession() {
-    // Try desktop navigation link first
     const createNewSessionDesktop = this.getByTestId("create-new-session-desktop");
     if (await createNewSessionDesktop.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createNewSessionDesktop.click();
       return;
     }
 
-    // Try mobile navigation link
     const createNewSessionMobile = this.getByTestId("create-new-session-mobile");
     if (await createNewSessionMobile.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createNewSessionMobile.click();
       return;
     }
 
-    // Fallback: try the sessions page button for users with no sessions
     const createFirstSessionButton = this.getByTestId("create-first-session");
     if (await createFirstSessionButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await createFirstSessionButton.click();
       return;
     }
 
-    // Last fallback: navigate directly to body-parts
     await this.goto("/body-parts");
   }
 
@@ -118,10 +112,8 @@ export class SessionsPage extends BasePage {
   }
 
   async expectSessionDetailsVisible() {
-    // Use the enhanced utility method for better reliability with increased timeout
-    await this.waitForSessionElement("session-title", 60000); // Increased timeout
+    await this.waitForSessionElement("session-title", 60000);
 
-    // Check additional elements with extended timeouts
     await expect(this.getByTestId("session-title")).toBeVisible({ timeout: 60000 });
     await expect(this.getByTestId("session-description")).toBeVisible({ timeout: 10000 });
     await expect(this.page.locator('[data-testid^="session-exercise-"]').first()).toBeVisible({ timeout: 10000 });

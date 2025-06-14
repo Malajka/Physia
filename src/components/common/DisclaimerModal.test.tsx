@@ -3,7 +3,6 @@ import type React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { DisclaimerModal, type DisclaimerModalProps } from "./DisclaimerModal";
 
-// Mock Modal and Button to avoid external dependencies
 vi.mock("@/components/ui/Modal", () => ({
   Modal: ({ open, title, children, footer }: React.PropsWithChildren<{ open: boolean; title: string; footer: React.ReactNode }>) =>
     open ? (

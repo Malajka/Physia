@@ -5,10 +5,6 @@ export interface LogoutResult {
   error?: string;
 }
 
-/**
- * Handles user logout with API call and cleanup
- * @returns Promise<LogoutResult> - Result of the logout attempt
- */
 export const logoutUser = async (): Promise<LogoutResult> => {
   try {
     const response = await fetch("/api/auth/logout", {
@@ -25,7 +21,6 @@ export const logoutUser = async (): Promise<LogoutResult> => {
       };
     }
 
-    // Success - redirect to login page
     window.location.href = "/login";
 
     return { success: true };

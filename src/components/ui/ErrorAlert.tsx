@@ -2,16 +2,11 @@ import { errorAlertBase } from "@/lib/constants/uiClasses";
 import React, { type ReactNode } from "react";
 
 export interface ErrorAlertProps<T> extends React.HTMLAttributes<HTMLDivElement> {
-  /** Single error or array of errors of type T */
   errors: T | T[] | null;
-  /** Optional custom renderer for each error item */
+
   render?: (error: T) => ReactNode;
 }
 
-/**
- * A generic error alert component for displaying one or more errors.
- * Uses a role="alert" and aria-live for accessibility.
- */
 export function ErrorAlert<T extends string | ReactNode = string>({ errors, render, ...props }: ErrorAlertProps<T>) {
   const hasErrors = !!errors && (!Array.isArray(errors) || errors.length > 0);
   const list: T[] = errors ? (Array.isArray(errors) ? errors : [errors]) : [];

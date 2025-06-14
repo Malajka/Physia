@@ -3,7 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { Slider } from "./Slider";
 
-// Helper to get the thumb element
 const getThumb = () => document.querySelector(".slider-thumb") as HTMLElement;
 
 describe("Slider", () => {
@@ -15,12 +14,11 @@ describe("Slider", () => {
   it("calls onValueChange when value changes", async () => {
     const onValueChange = vi.fn();
     render(<Slider value={[2]} onValueChange={onValueChange} />);
-    // Simulate keyboard interaction (Radix handles arrow keys)
+
     const thumb = getThumb();
     thumb.focus();
     await userEvent.keyboard("{arrowright}");
-    // We can't simulate drag easily, but Radix should call onValueChange on key events
-    // So we check that the callback is called (may need to adjust depending on Radix version)
+
     expect(onValueChange).toHaveBeenCalled();
   });
 

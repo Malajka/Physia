@@ -42,13 +42,11 @@ export async function getExercisesForMuscleTests(supabase: SupabaseClient, muscl
     .in("muscle_test_id", muscle_test_ids);
 }
 
-// Helper function to get the first muscle test image from exercise images
 export function getMuscleTestImage(exerciseImages: { file_path: string; metadata: any }[] | null) {
   if (!exerciseImages) return null;
   return exerciseImages.find((img) => img.metadata?.purpose === "muscle_test")?.file_path || null;
 }
 
-// Helper function to get exercise images (excluding muscle test images)
 export function getExerciseImages(exerciseImages: { file_path: string; metadata: any }[] | null) {
   if (!exerciseImages) return [];
   return exerciseImages.filter((img) => img.metadata?.purpose === "exercise").sort((a, b) => (a.metadata?.order || 0) - (b.metadata?.order || 0));

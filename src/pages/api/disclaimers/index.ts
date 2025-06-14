@@ -18,7 +18,7 @@ export const GET = withAuth(async ({ locals }) => {
   if (disclaimerError || !disclaimerData) {
     return jsonResponse({ error: disclaimerError?.message ?? "Failed to load disclaimer" }, 500);
   }
-  const accepted_at = user.user_metadata?.disclaimer_accepted_at ?? null;
+  const accepted_at = user?.user_metadata?.disclaimer_accepted_at ?? null;
   const payload: DisclaimersContentDto & { accepted_at?: string | null } = {
     text: disclaimerData.content,
     accepted_at: accepted_at as string | null,
@@ -26,13 +26,10 @@ export const GET = withAuth(async ({ locals }) => {
   return jsonResponse(payload, 200);
 });
 
-// !!! TUTAJ JEST KLUCZOWA POPRAWKA !!!
-// In this POST endpoint we add session refresh
 export const POST = withAuth(async ({ locals }) => {
   const { supabase } = locals;
   const accepted_at = new Date().toISOString();
 
-  // Krok 1: Zaktualizuj metadane w bazie danych.
   const { error } = await supabase.auth.updateUser({
     data: { disclaimer_accepted_at: accepted_at },
   });
@@ -41,9 +38,6 @@ export const POST = withAuth(async ({ locals }) => {
     return jsonResponse({ error: error.message }, 500);
   }
 
-  // Step 2 (NEW AND CRUCIAL): Force session refresh
-  // This will cause Supabase to issue a new JWT token with updated metadata
-  // and save it in cookies using your middleware handlers
   await supabase.auth.refreshSession();
 
   const payload: AcceptDisclaimerResponseDto = { accepted_at };

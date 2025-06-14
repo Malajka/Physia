@@ -3,18 +3,8 @@ import type { SupabaseClient } from "@/db/supabase.client";
 import { generateTrainingPlan } from "@/lib/services/training-plan";
 import type { CreateSessionCommandDto, ExerciseDto, SessionDetailDto } from "@/types";
 
-// Type representing a sessions row with its nested session_tests
 type SessionWithTests = Tables<"sessions"> & { session_tests: Tables<"session_tests">[] };
 
-/**
- * Creates a new session with the provided muscle tests and generates a personalized
- * exercise plan using OpenRouter AI.
- *
- * @param supabase - The authenticated Supabase client
- * @param userId - The ID of the authenticated user
- * @param command - The session creation command with body part and tests
- * @returns A promise resolving to the created session details or an error
- */
 export async function createSession(
   supabase: SupabaseClient,
   userId: string,
@@ -81,7 +71,6 @@ export async function createSession(
   }
 }
 
-// Helper: validate that the body part exists
 async function validateBodyPart(supabase: SupabaseClient, bodyPartId: number): Promise<Pick<Tables<"body_parts">, "id" | "name">> {
   const { data: bodyPartData, error: bodyPartQueryError } = await supabase.from("body_parts").select("id, name").eq("id", bodyPartId).single();
 
@@ -91,7 +80,6 @@ async function validateBodyPart(supabase: SupabaseClient, bodyPartId: number): P
   return bodyPartData;
 }
 
-// Helper: validate muscle tests belong to the body part
 async function validateMuscleTests(
   supabase: SupabaseClient,
   bodyPartId: number,
@@ -115,7 +103,6 @@ async function validateMuscleTests(
   return muscleTestsData;
 }
 
-// Helper: insert a new session and return its record including created_at
 async function insertSession(supabase: SupabaseClient, userId: string, bodyPartId: number, disclaimerAt: string): Promise<Tables<"sessions">> {
   const { data: insertedSessionData, error: insertionError } = await supabase
     .from("sessions")
@@ -143,7 +130,6 @@ async function insertSession(supabase: SupabaseClient, userId: string, bodyPartI
   return insertedSessionData;
 }
 
-// Helper: record the session tests in bulk
 async function recordSessionTests(
   supabase: SupabaseClient,
   sessionId: number,
@@ -161,7 +147,6 @@ async function recordSessionTests(
   }
 }
 
-// Helper: fetch muscle tests and their exercises with images
 async function fetchTestsAndExercises(
   supabase: SupabaseClient,
   testIds: number[]
@@ -209,7 +194,6 @@ async function fetchTestsAndExercises(
   return { muscleTests: muscleTestsData, exercises: exercisesWithImages };
 }
 
-// Helper: generate training plan via LLM and update session record
 async function generateAndSaveTrainingPlan(
   supabase: SupabaseClient,
   userId: string,

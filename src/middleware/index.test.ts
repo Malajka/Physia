@@ -1,9 +1,5 @@
-// src/middleware/index.test.ts
-
 import type { User } from "@supabase/supabase-js";
 import { describe, expect, it } from "vitest";
-
-// Removed vi.mock from here as it's replaced by configuration in vite.config.ts
 
 import { handleAuthRedirects, handleDisclaimerCheck, handleProtectedRoute } from "./index";
 

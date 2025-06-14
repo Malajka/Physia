@@ -1,5 +1,3 @@
-// src/pages/api/login.ts (POPRAWIONY)
-
 import { jsonResponse } from "@/lib/utils/response";
 import { loginSchema } from "@/lib/validators/auth.validator";
 import type { AuthCredentialsDto } from "@/types";
@@ -21,8 +19,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
     const { email, password } = data;
 
-    // Call login. The @supabase/ssr library will handle setting cookies
-    // using the 'set' handlers defined in your middleware
     const { data: authData, error } = await locals.supabase.auth.signInWithPassword({
       email,
       password,
@@ -32,10 +28,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return jsonResponse({ error: "Invalid login credentials", debug: error.message }, 401);
     }
 
-    // --- REMOVED MANUAL COOKIE SETTING BLOCK ---
-    // No need to do anything else. Cookies were set automatically
-
-    // Success - return user and session data
     return jsonResponse({ user: authData.user, session: authData.session }, 200);
   } catch (unexpectedError) {
     const message = unexpectedError instanceof Error ? unexpectedError.message : "An unexpected error occurred";

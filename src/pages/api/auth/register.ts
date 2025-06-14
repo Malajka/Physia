@@ -19,7 +19,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
     const { email, password } = data;
 
-    // Attempt to sign up with Supabase
     const { data: registrationResult, error: signUpError } = await locals.supabase.auth.signUp({
       email,
       password,
@@ -28,9 +27,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       },
     });
 
-    // Handle signup errors
     if (signUpError) {
-      // Conflict: email already registered or unique constraint violation
       const errorMessageLower = signUpError.message.toLowerCase();
       const duplicateEmailPatterns = ["already registered", "duplicate", "unique constraint", "taken"];
       if (duplicateEmailPatterns.some((pattern) => errorMessageLower.includes(pattern))) {
@@ -45,7 +42,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return jsonResponse({ error: signUpError.message }, 400);
     }
 
-    // Success - return user data
     return jsonResponse(
       {
         user: registrationResult.user,

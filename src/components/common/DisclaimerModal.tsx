@@ -4,16 +4,14 @@ import * as React from "react";
 export interface DisclaimerModalProps {
   open: boolean;
   onAccept: () => void;
-  /** The dynamic disclaimer text to display */
+
   text: string;
 }
 
 export const DisclaimerModal: React.FC<DisclaimerModalProps> = ({ open, onAccept, text }) => (
   <Modal
     open={open}
-    onClose={() => {
-      /* Prevent closing without acceptance */
-    }}
+    onClose={() => {}}
     title="Medical Disclaimer"
     footer={
       <div className="flex justify-between items-center w-full">

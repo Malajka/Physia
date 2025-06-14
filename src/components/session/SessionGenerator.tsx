@@ -10,9 +10,6 @@ interface SessionGeneratorProps {
   tests: TestInput[];
 }
 
-/**
- * React component to generate a new training session via /api/sessions
- */
 export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, tests }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +22,7 @@ export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, 
       if (result.error) {
         throw new Error(result.error);
       }
-      // Redirect to the new session details page
+
       if (result.id) {
         window.location.href = `/sessions/${result.id}`;
       } else {
@@ -46,7 +43,7 @@ export const SessionGenerator: React.FC<SessionGeneratorProps> = ({ bodyPartId, 
         disabled={loading}
         className="px-6 py-3 bg-[#1B9B6B] text-white rounded-xl shadow-md hover:bg-[#156F53] disabled:opacity-50 disabled:cursor-not-allowed font-semibold transition-colors"
       >
-        {loading ? "Generating..." : "Generate Training Session"}
+        {loading ? "Generating..." : "Generate Training Sessions"}
       </button>
     </div>
   );

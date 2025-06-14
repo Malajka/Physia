@@ -99,7 +99,7 @@ function generateMockTrainingPlan(
   }
 
   return {
-    title: `${bodyPartName} Recovery Plan`,
+    title: `${bodyPartName} Recovery Plan`.replace(/\b\w/g, (char: string) => char.toUpperCase()),
     description: `A personalized training plan to address pain in the ${bodyPartName} area, focusing on strength and mobility.`,
     warnings: ["Discontinue any exercise that causes sharp pain", "Consult with a healthcare professional if symptoms worsen"],
     exercises: selected.map((ex) => {

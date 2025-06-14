@@ -75,7 +75,6 @@ describe("createSession", () => {
       }),
     } as unknown as SupabaseClient;
 
-    // Mock generateTrainingPlan
     vi.spyOn(trainingPlanService, "generateTrainingPlan").mockResolvedValue({
       trainingPlan: {
         exercises: [],
@@ -86,7 +85,6 @@ describe("createSession", () => {
       error: null,
     });
 
-    // Wywołanie funkcji
     const result = await createSession(supabase, userId, command);
     expect(result.session).not.toBeNull();
     expect(result.error).toBeNull();

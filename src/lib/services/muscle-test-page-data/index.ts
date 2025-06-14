@@ -1,34 +1,20 @@
-// src/lib/services/muscle-test-page-data.ts
-
 import type { APIContext } from "astro";
 import { fetchMuscleTestsAndBodyPartName } from "../body-parts/index";
 
-/**
- * Fetches all necessary data for the muscle tests page, handling authentication
- * context for server-side rendering.
- * @param astroContext The global Astro object from the page.
- */
 export async function getMuscleTestsPageData(astroContext: APIContext) {
   const { params, request, url } = astroContext;
   const bodyPartId = params.body_part_id;
 
-  // THE FIX: Extract the 'cookie' header from the incoming browser request.
   const cookie = request.headers.get("cookie");
 
-  // Create the `init` object for server-side fetch calls.
   const fetchOptions: RequestInit = {
     headers: {
-      // Conditionally add the cookie header if it exists.
       ...(cookie ? { cookie } : {}),
     },
   };
 
   try {
-    const { muscleTests, bodyPartName } = await fetchMuscleTestsAndBodyPartName(
-      bodyPartId,
-      url.origin, // Dynamically get the base URL
-      fetchOptions // Pass the authentication headers down
-    );
+    const { muscleTests, bodyPartName } = await fetchMuscleTestsAndBodyPartName(bodyPartId, url.origin, fetchOptions);
 
     return {
       muscleTests,

@@ -37,7 +37,6 @@ export class RegisterPage extends BasePage {
       await expect(this.passwordConfirmInput).toBeVisible({ timeout: 10000 });
       await expect(this.submitButton).toBeVisible({ timeout: 10000 });
     } catch (error) {
-      // Take a screenshot for debugging
       await this.page.screenshot({ path: "form-not-visible.png" });
       throw error;
     }
@@ -47,22 +46,18 @@ export class RegisterPage extends BasePage {
     await this.waitForForm();
 
     try {
-      // Clear and fill email
       await this.emailInput.clear();
       await this.emailInput.fill(email);
       await this.page.waitForTimeout(100);
 
-      // Clear and fill password
       await this.passwordInput.clear();
       await this.passwordInput.fill(password);
       await this.page.waitForTimeout(100);
 
-      // Clear and fill password confirmation
       await this.passwordConfirmInput.clear();
       await this.passwordConfirmInput.fill(passwordConfirm);
       await this.page.waitForTimeout(100);
 
-      // Verify values
       const emailValue = await this.emailInput.inputValue();
       const passwordValue = await this.passwordInput.inputValue();
       const confirmValue = await this.passwordConfirmInput.inputValue();
@@ -78,20 +73,16 @@ export class RegisterPage extends BasePage {
 
   async submit() {
     try {
-      // Ensure button is enabled
       await expect(this.submitButton).toBeEnabled({ timeout: 5000 });
 
-      // Click and wait for response
       await Promise.all([this.page.waitForLoadState("networkidle"), this.submitButton.click()]);
 
-      // Check for errors
       const hasError = await this.errorMessage.isVisible().catch(() => false);
       if (hasError) {
         const errorText = await this.errorMessage.textContent();
         throw new Error(`Registration failed: ${errorText}`);
       }
 
-      // Wait for success
       await expect(this.successMessage).toBeVisible({ timeout: 15000 });
       await expect(this.page).toHaveURL(/\/body-parts/, { timeout: 15000 });
     } catch (error) {
@@ -111,7 +102,6 @@ export class RegisterPage extends BasePage {
     await expect(this.createFirstSessionLink).toHaveAttribute("href", "/body-parts");
     await expect(this.createFirstSessionLink).toHaveText(/Create First Session/i);
 
-    // Verify we're redirected to the correct page
     await expect(this.page).toHaveURL(/\/body-parts/, { timeout: 15000 });
   }
 
@@ -147,8 +137,6 @@ export class RegisterPage extends BasePage {
           });
         }
       });
-    } catch {
-      // Could not clear storage - non-critical
-    }
+    } catch {}
   }
 }

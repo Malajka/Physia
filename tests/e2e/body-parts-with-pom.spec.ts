@@ -19,43 +19,32 @@ test.describe("Body Parts Selection (with POM)", () => {
     sessionsPage = new SessionsPage(page);
     bodyPartsPage = new BodyPartsPage(page);
 
-    // Ensure clean state before each test with more thorough cleanup
     await AuthHelper.ensureLoggedOut(page, context);
 
-    // Wait a bit to ensure cleanup is complete
     await page.waitForTimeout(1000);
   });
 
   test.afterEach(async () => {
-    // Clean up after each test
     await AuthHelper.ensureLoggedOut(page, context);
   });
 
   test("Minimal create session flow", async () => {
-    // Step 1: Login using POM
     await loginPage.navigateToLogin();
     await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
-    // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
 
-    // Verify successful login by checking we're NOT on login page anymore
     await page.waitForURL("**/sessions", { timeout: 30000 });
     await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
-    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
 
-    // Step 3: Navigate to body parts using navigation link
     await sessionsPage.clickCreateNewSession();
 
-    // Step 4: Wait for navigation to body-parts page
     await page.waitForURL("**/body-parts", { timeout: 10000 });
 
-    // Step 5: Accept disclaimer if visible
     await bodyPartsPage.acceptDisclaimerIfVisible();
 
-    // Step 6: Select a body part
     const bodyPartButtonLocator = page.getByTestId("body-part-upper-back");
     try {
       await expect(bodyPartButtonLocator, "Body part button 'body-part-upper-back' should be visible.").toBeVisible({ timeout: 20000 });
@@ -65,69 +54,51 @@ test.describe("Body Parts Selection (with POM)", () => {
     }
     await bodyPartButtonLocator.click();
 
-    // Step 7: Click the "Next" button
     const nextButtonLocator = page.getByTestId("body-part-next");
     await expect(nextButtonLocator, "'Next' button should be enabled after selecting a body part.").toBeEnabled({ timeout: 10000 });
     await nextButtonLocator.click();
   });
 
   test("should accept disclaimer when visible", async () => {
-    // Step 1: Login using POM
     await loginPage.navigateToLogin();
     await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
-    // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
 
-    // Verify successful login by checking we're NOT on login page anymore
     await page.waitForURL("**/sessions", { timeout: 30000 });
     await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
-    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
 
-    // Step 3: Navigate to body parts using navigation link
     await sessionsPage.clickCreateNewSession();
 
-    // Step 4: Wait for navigation to body-parts page
     await page.waitForURL("**/body-parts", { timeout: 10000 });
 
-    // Step 5: Accept disclaimer if visible
     await bodyPartsPage.acceptDisclaimerIfVisible();
 
-    // Verify we're still on body parts page
     await expect(page).toHaveURL(/\/body-parts/);
   });
 
   test("should enable next button after selecting body part", async () => {
-    // Step 1: Login using POM
     await loginPage.navigateToLogin();
     await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
-    // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
 
-    // Verify successful login by checking we're NOT on login page anymore
     await page.waitForURL("**/sessions", { timeout: 30000 });
     await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
-    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
 
-    // Step 3: Navigate to body parts using navigation link
     await sessionsPage.clickCreateNewSession();
 
-    // Step 4: Wait for navigation to body-parts page
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
 
-    // Wait a bit more for body parts to load
     await page.waitForTimeout(3000);
 
-    // Initially next button should be disabled
     await bodyPartsPage.expectNextButtonDisabled();
 
-    // Try to select any available body part
     const bodyPartTestIds = ["body-part-upper-back", "body-part-lower-back", "body-part-arms-and-wrists", "body-part-hips-and-knees"];
     let selected = false;
 
@@ -139,45 +110,34 @@ test.describe("Body Parts Selection (with POM)", () => {
           selected = true;
           break;
         }
-      } catch {
-        // Body part not found, trying next
-      }
+      } catch {}
     }
 
     if (!selected) {
       throw new Error("No body parts available for selection");
     }
 
-    // Next button should now be enabled
     await bodyPartsPage.expectNextButtonEnabled();
   });
 
   test("should navigate to next step after body part selection", async () => {
-    // Step 1: Login using POM
     await loginPage.navigateToLogin();
     await loginPage.loginUser(TEST_USER.email, TEST_USER.password);
 
-    // Step 2: Wait for successful login and navigation
     await page.waitForTimeout(3000);
 
-    // Verify successful login by checking we're NOT on login page anymore
     await page.waitForURL("**/sessions", { timeout: 30000 });
     await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 
-    // Then verify we're on sessions page
     await sessionsPage.expectOnSessionsPage();
 
-    // Step 3: Navigate to body parts using navigation link
     await sessionsPage.clickCreateNewSession();
 
-    // Step 4: Wait for navigation to body-parts page
     await page.waitForURL("**/body-parts", { timeout: 10000 });
     await bodyPartsPage.acceptDisclaimerIfVisible();
 
-    // Wait a bit more for body parts to load
     await page.waitForTimeout(3000);
 
-    // Try to select any available body part
     const bodyPartTestIds = ["body-part-upper-back", "body-part-lower-back", "body-part-arms-and-wrists", "body-part-hips-and-knees"];
     let selected = false;
 
@@ -189,13 +149,10 @@ test.describe("Body Parts Selection (with POM)", () => {
           selected = true;
           break;
         }
-      } catch {
-        // Body part not found, trying next
-      }
+      } catch {}
     }
 
     if (!selected) {
-      // Take a screenshot for debugging
       await page.screenshot({ path: `debug-no-body-parts-${Date.now()}.png`, fullPage: true });
 
       throw new Error("No body parts available for selection");
@@ -203,7 +160,6 @@ test.describe("Body Parts Selection (with POM)", () => {
 
     await bodyPartsPage.clickNext();
 
-    // Should navigate away from body-parts page
     await expect(page).not.toHaveURL(/\/body-parts$/);
   });
 });

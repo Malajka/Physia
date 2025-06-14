@@ -1,12 +1,10 @@
-// Your component file, e.g., src/components/body-part-selection/BodyPartSelector.tsx
-
-import { BodyPartButton } from "./BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
 import { InfoBar } from "@/components/ui";
 import { useBodyParts } from "@/hooks/useBodyParts";
 import { useDisclaimer } from "@/hooks/useDisclaimer";
 import { useSingleSelection } from "@/hooks/useSingleSelection";
 import { useCallback } from "react";
+import { BodyPartButton } from "./BodyPartButton";
 import { NavigationNextButton } from "./NavigationNextButton";
 
 function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
@@ -49,7 +47,7 @@ export default function BodyPartSelector() {
     <div className="space-y-8">
       <InfoBar>Select max 1 area. Click a selected area again to deselect.</InfoBar>
       <div className="grid grid-cols-2 gap-[15px] justify-items-center">
-        {/* This map is now 100% safe because the condition above guarantees `bodyParts` is a non-empty array here. */}
+        {}
         {bodyParts.map((bodyPart) => (
           <BodyPartButton
             key={bodyPart.id}

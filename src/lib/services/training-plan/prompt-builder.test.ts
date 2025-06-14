@@ -31,6 +31,5 @@ describe("buildTrainingPlanPrompt", () => {
     const prompt = buildTrainingPlanPrompt("Arm", muscleTests, exercises);
     expect(prompt).toContain("Body Part: Arm");
     expect(prompt).toContain("Biceps: Pain Intensity 7/10");
-    // Should not throw or include exercises section for Biceps
   });
 });

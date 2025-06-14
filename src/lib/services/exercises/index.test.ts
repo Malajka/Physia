@@ -14,7 +14,6 @@ describe("getExercisesForSession", () => {
   });
 
   it("returns exercises for valid session (happy path)", async () => {
-    // Mock supabase client
     const supabase = {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
@@ -22,7 +21,6 @@ describe("getExercisesForSession", () => {
       single: vi.fn().mockResolvedValue({ data: { body_part_id: 1 }, error: null }),
     } as unknown as SupabaseClient;
 
-    // Mock helpers
     const muscleTests = [{ id: 10, name: "Test", description: "desc", body_part_id: 1, created_at: "2024-01-01T00:00:00Z" }];
     const exercisesData = [
       {

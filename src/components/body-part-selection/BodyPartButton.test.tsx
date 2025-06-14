@@ -1,10 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { BodyPartButton } from "./BodyPartButton";
 
-// Mock the slugify utility to isolate the component. This makes the test
-// more predictable and focused only on the BodyPartButton's logic.
 vi.mock("@/lib/utils/slugify", () => ({
   slugify: (name: string) => `mock-slug-for-${name.toLowerCase()}`,
 }));
@@ -19,7 +17,6 @@ describe("BodyPartButton", () => {
     onSelect: onSelectMock,
   };
 
-  // Ensure mocks are reset before each test for isolation
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -32,7 +29,7 @@ describe("BodyPartButton", () => {
     expect(button).toBeInTheDocument();
     expect(screen.getByText("Shoulder")).toBeInTheDocument();
     expect(button).toHaveAttribute("aria-pressed", "false");
-    // We verify the background image is set, which implicitly tests slugify's usage
+
     expect(button).toHaveStyle("background-image: url(/images/body-parts/mock-slug-for-shoulder.png)");
   });
 
@@ -44,8 +41,6 @@ describe("BodyPartButton", () => {
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute("aria-pressed", "true");
 
-    // Instead of testing for CSS classes, we test for a perceivable outcome.
-    // In this case, the selected button should have a different text style.
     const nameSpan = screen.getByText("Shoulder");
     expect(nameSpan.className).toContain("text-primary");
   });

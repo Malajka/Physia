@@ -73,42 +73,37 @@ describe("TrainingPlanDisplay", () => {
   it("renders exercise details correctly", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
-    expect(screen.getAllByTestId("session-exercise-1")).toHaveLength(3); // appears in 3 sections
+    expect(screen.getAllByTestId("session-exercise-1")).toHaveLength(3);
     expect(screen.getByTestId("session-exercise-2")).toBeInTheDocument();
 
-    expect(screen.getAllByText("Push-ups")).toHaveLength(3); // appears in 3 sections
+    expect(screen.getAllByText("Push-ups")).toHaveLength(3);
     expect(screen.getByText("Pull-ups")).toBeInTheDocument();
 
-    expect(screen.getAllByText("3 sets").length).toBeGreaterThanOrEqual(3); // appears multiple times
-    expect(screen.getAllByText("10 reps")).toHaveLength(3); // only push-ups has 10 reps
-    expect(screen.getAllByText("60s rest")).toHaveLength(3); // only push-ups has 60s rest
+    expect(screen.getAllByText("3 sets").length).toBeGreaterThanOrEqual(3);
+    expect(screen.getAllByText("10 reps")).toHaveLength(3);
+    expect(screen.getAllByText("60s rest")).toHaveLength(3);
   });
 
   it("displays exercise notes when present", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
-    expect(screen.getAllByText("Modify by doing knee push-ups if needed")).toHaveLength(3); // appears in 3 sections
+    expect(screen.getAllByText("Modify by doing knee push-ups if needed")).toHaveLength(3);
   });
 
   it("renders only exercise images (filtering out muscle test images)", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
     const images = screen.getAllByRole("img");
-    // Push-ups appears in 3 sections (warmup, workout, cooldown) with 2 images each = 6 images
-    // Pull-ups appears in 1 section with 1 image = 1 image
-    // Total: 7 images
+
     expect(images.length).toBe(7);
 
-    // Check that only exercise images are present
     const pushupImages = images.filter((img) => img.getAttribute("src")?.includes("pushup"));
     const pullupImages = images.filter((img) => img.getAttribute("src")?.includes("pullup"));
 
-    // Push-ups: 2 unique images × 3 sections = 6 images
     expect(pushupImages.length).toBe(6);
-    // Pull-ups: 1 unique image × 1 section = 1 image
+
     expect(pullupImages.length).toBe(1);
 
-    // Verify no muscle test images are present
     const muscleTestImages = images.filter((img) => img.getAttribute("src")?.includes("muscle-test"));
     expect(muscleTestImages.length).toBe(0);
   });
@@ -116,12 +111,10 @@ describe("TrainingPlanDisplay", () => {
   it("displays section cards with correct styling", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
-    // Check section titles
     expect(screen.getByText("Warm-Up")).toBeInTheDocument();
     expect(screen.getByText("Workout")).toBeInTheDocument();
     expect(screen.getByText("Cool-Down")).toBeInTheDocument();
 
-    // Check for section-specific styling classes
     const sectionCards = screen.getAllByRole("heading", { level: 3 });
     sectionCards.forEach((card) => {
       expect(card).toHaveClass("text-2xl", "font-bold", "text-gray-800");
@@ -147,7 +140,7 @@ describe("TrainingPlanDisplay", () => {
     render(<TrainingPlanDisplay trainingPlan={planWithEmptyDesc} exerciseImagesMap={{}} />);
 
     expect(screen.getByText("Empty Exercise")).toBeInTheDocument();
-    expect(screen.getAllByText("Simple description without sections")).toHaveLength(2); // appears in 2 sections
+    expect(screen.getAllByText("Simple description without sections")).toHaveLength(2);
   });
 
   it("handles training plan without warnings", () => {
@@ -181,6 +174,6 @@ describe("TrainingPlanDisplay", () => {
     render(<TrainingPlanDisplay trainingPlan={planWithoutSections} exerciseImagesMap={{}} />);
 
     const noExercisesMessages = screen.getAllByText("No exercises for this section");
-    expect(noExercisesMessages).toHaveLength(3); // One for each section
+    expect(noExercisesMessages).toHaveLength(3);
   });
 });

@@ -11,9 +11,8 @@ export const prerender = false;
 
 export const POST: APIRoute = withAuth(async ({ request, locals }, userId) => {
   try {
-    // Parse and validate request payload
     const command = await parseAndValidate<CreateSessionCommandDto>(request, CreateSessionSchema);
-    // Call service layer
+
     const { session: createdSession, error } = await createSession(locals.supabase, userId, command);
     if (error) {
       if (error === "disclaimer_required") {

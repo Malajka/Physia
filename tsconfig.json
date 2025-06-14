@@ -6,7 +6,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "astro/client"],
     "paths": {
       "@/*": ["./src/*"]
     }

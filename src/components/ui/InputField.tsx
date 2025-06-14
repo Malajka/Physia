@@ -79,6 +79,5 @@ function InputFieldComponent({
   );
 }
 
-/** Memoized InputField for performance optimization */
 export const InputField = React.memo(InputFieldComponent);
 InputField.displayName = "InputField";

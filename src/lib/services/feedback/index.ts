@@ -1,9 +1,6 @@
 import type { SupabaseClient } from "@/db/supabase.client";
 import type { FeedbackRatingDto, ServiceResultDto } from "@/types";
 
-/**
- * Retrieves the feedback rating for a session and user.
- */
 export async function getFeedbackForSession(
   supabase: SupabaseClient,
   userId: string,
@@ -27,9 +24,6 @@ export async function getFeedbackForSession(
   return { data: feedbackRatingDto };
 }
 
-/**
- * Inserts or updates the feedback rating for a session and user.
- */
 export async function upsertFeedback(
   supabase: SupabaseClient,
   userId: string,

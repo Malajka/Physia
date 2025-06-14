@@ -17,7 +17,7 @@ const createMockContext = (bodyPartId: string, cookie?: string): APIContext => {
       headers,
     }),
     url: new URL(`http://test.com/muscle-tests/${bodyPartId}`),
-  } as APIContext;
+  } as unknown as APIContext;
 };
 
 describe("getMuscleTestsPageData", () => {

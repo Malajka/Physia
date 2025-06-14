@@ -84,7 +84,6 @@ describe("POST /api/auth/register", () => {
   });
 
   it("returns 400 on validation error", async () => {
-    // Password too short
     const request = createMockRequest({ email: "test@example.com", password: "123" });
     const response = await POST({ request, locals } as PostArgs);
     expect(response.status).toBe(400);

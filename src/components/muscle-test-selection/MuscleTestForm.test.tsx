@@ -4,7 +4,6 @@ import type React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import MuscleTestForm from "./MuscleTestForm";
 
-// Mock Button and MuscleTestItem
 vi.mock("@/components/ui/Button", () => ({
   Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
     <button {...props}>{children}</button>
@@ -59,12 +58,11 @@ describe("MuscleTestForm", () => {
     });
 
     render(<MuscleTestForm bodyPartId={1} muscleTests={muscleTests} />);
-    // Set painIntensity for first test
+
     fireEvent.change(screen.getByTestId("slider-1"), { target: { value: 5 } });
     fireEvent.click(screen.getByRole("button", { name: /create session/i }));
     expect(window.location.href).toMatch(/\/session\/generate\?bodyPartId=1&tests=/);
 
-    // Restore the original location
     Object.defineProperty(window, "location", {
       value: originalLocation,
       writable: true,

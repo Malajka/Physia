@@ -1,7 +1,7 @@
+import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useDisclaimer } from "./useDisclaimer";
-import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";
 
 global.fetch = vi.fn();
 const mockedFetch = vi.mocked(fetch);
@@ -73,12 +73,12 @@ describe("useDisclaimer", () => {
 
   describe("accept function", () => {
     it("should successfully accept the disclaimer and update the acceptedAt state", async () => {
-      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockDisclaimerContent))); // Initial load
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockDisclaimerContent)));
       const { result } = renderHook(() => useDisclaimer());
 
       await waitFor(() => expect(result.current.loading).toBe(false));
 
-      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockAcceptanceResponse))); // POST request
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockAcceptanceResponse)));
 
       await act(async () => {
         await result.current.accept();
@@ -90,12 +90,12 @@ describe("useDisclaimer", () => {
     });
 
     it("should set an error state if accepting the disclaimer fails", async () => {
-      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockDisclaimerContent))); // Initial load
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(mockDisclaimerContent)));
       const { result } = renderHook(() => useDisclaimer());
 
       await waitFor(() => expect(result.current.loading).toBe(false));
 
-      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify({ error: "Update failed" }), { status: 500 })); // POST request
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify({ error: "Update failed" }), { status: 500 }));
 
       await act(async () => {
         await result.current.accept();

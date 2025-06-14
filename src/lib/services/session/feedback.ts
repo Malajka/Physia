@@ -6,9 +6,6 @@ export interface FeedbackApiResponse {
   error?: string;
 }
 
-/**
- * Fetch feedback for a session by ID
- */
 export async function fetchFeedback(sessionId: number): Promise<FeedbackApiResponse> {
   const response = await fetch(`/api/sessions/${sessionId}/feedback`);
   const result: FeedbackApiResponse = await response.json();
@@ -16,9 +13,6 @@ export async function fetchFeedback(sessionId: number): Promise<FeedbackApiRespo
   return result;
 }
 
-/**
- * Submit feedback rating for a session
- */
 export async function submitFeedback(sessionId: number, rating: SubmitFeedbackCommandDto["rating"]): Promise<FeedbackApiResponse> {
   const response = await fetch(`/api/sessions/${sessionId}/feedback`, {
     method: "POST",

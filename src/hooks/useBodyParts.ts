@@ -1,5 +1,3 @@
-// src/hooks/useBodyParts.ts
-
 import { useFetch } from "@/hooks/useFetch";
 import type { BodyPartDto } from "@/types";
 import { useCallback } from "react";
@@ -22,7 +20,6 @@ export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
 
     const result = await response.json();
 
-    // Defensive guard to ensure we always return an array
     if (Array.isArray(result.data)) {
       return result.data as BodyPartDto[];
     }
@@ -31,7 +28,5 @@ export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
     return [];
   }, []);
 
-  // THE FIX: Explicitly provide the generic type to useFetch.
-  // This ensures the return type is correctly inferred by TypeScript.
   return useFetch<BodyPartDto[]>(fetcher, !disclaimerAccepted);
 }

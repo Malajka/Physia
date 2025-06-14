@@ -1,5 +1,6 @@
 // src/db/supabase.client.test.ts
 
+import type { Mock } from "vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the entire @supabase/supabase-js module
@@ -9,7 +10,7 @@ vi.mock("@supabase/supabase-js", () => ({
 
 describe("Supabase Client (supabase.client.ts)", () => {
   // Get the mocked function to track it in tests
-  let createClient: vi.Mock;
+  let createClient: Mock;
 
   beforeEach(async () => {
     // IMPORTANT: Clear module cache before each test
@@ -21,7 +22,7 @@ describe("Supabase Client (supabase.client.ts)", () => {
 
     // Import the mocked `createClient` function to assign it to our variable
     const { createClient: mockCreateClient } = await import("@supabase/supabase-js");
-    createClient = mockCreateClient as vi.Mock;
+    createClient = mockCreateClient as Mock;
   });
 
   it("powinien zainicjalizować klienta Supabase, gdy zmienne środowiskowe są ustawione", async () => {

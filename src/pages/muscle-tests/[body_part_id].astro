@@ -8,18 +8,7 @@ import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
 
 export const prerender = false;
 
-// The global `onRequest` middleware should handle authentication and disclaimer checks.
-// If execution reaches this point, we assume the user is authenticated
-// and has an accepted disclaimer if required by the route.
-
-// `getMuscleTestsPageData` will use Astro.locals (already populated by middleware)
-// or Astro.params to fetch page-specific data.
 const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Number(Astro.params.body_part_id));
-
-// Note: If `getMuscleTestsPageData` itself encounters an unrecoverable auth issue
-// (e.g., session becomes invalid between middleware and this page load, which is rare),
-// it should ideally handle that by returning an appropriate error state (e.g., in `fetchError`)
-// rather than this page attempting another redirect that might conflict with middleware.
 ---
 
 <Layout title={pageTitle}>

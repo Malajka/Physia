@@ -1,5 +1,3 @@
-// Assuming this is src/pages/api/sessions/[session_id]/exercises.ts
-
 import { withAuth } from "@/lib/middleware/withAuth";
 import { getExercisesForSession } from "@/lib/services/exercises";
 import { jsonResponse } from "@/lib/utils/response";
@@ -13,11 +11,7 @@ const ParamsSchema = z.object({
   session_id: z.coerce.number().int().positive(),
 });
 
-// We wrap the entire route in `withAuth`.
 export const GET: APIRoute = withAuth(async ({ locals, params }, userId) => {
-  // `userId` is now securely provided by the `withAuth` middleware.
-  // All the manual `getSession` logic is gone.
-
   const parseResult = ParamsSchema.safeParse(params);
   if (!parseResult.success) {
     return jsonResponse({ error: "Invalid session_id", details: parseResult.error.flatten() }, 400);
@@ -25,7 +19,6 @@ export const GET: APIRoute = withAuth(async ({ locals, params }, userId) => {
   const sessionId = parseResult.data.session_id;
 
   try {
-    // We use the authenticated `locals.supabase` client and the secure `userId`.
     const { exercises, error } = await getExercisesForSession(locals.supabase, userId, sessionId);
 
     if (error) {

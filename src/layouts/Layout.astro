@@ -4,7 +4,6 @@ import "../styles/global.css";
 
 const { title = "Physia - Exercise Plans" } = Astro.props;
 
-// Check if user is authenticated
 const {
   data: { session },
 } = await Astro.locals.supabase.auth.getSession();

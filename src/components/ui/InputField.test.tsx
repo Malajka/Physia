@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { InputField } from "./InputField";
 
-// Mock ErrorAlert to avoid rendering its internals
 vi.mock("@/components/ui/ErrorAlert", () => ({
   ErrorAlert: ({ errors }: { errors: string }) => <div data-testid="error-alert">{errors}</div>,
 }));

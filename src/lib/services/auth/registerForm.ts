@@ -6,20 +6,13 @@ export interface RegisterFormResult extends AuthFormSubmitResult {
   registrationSuccess?: boolean;
 }
 
-/**
- * Handles registration form submission with validation and authentication
- * @param formData - Form data containing email, password, and passwordConfirm
- * @returns Promise<RegisterFormResult> - Result of the registration attempt
- */
 export const handleRegisterSubmit = async (formData: FormData): Promise<RegisterFormResult> => {
-  // Extract credentials from form data
   const formValues = {
     email: formData.get("email")?.toString() ?? "",
     password: formData.get("password")?.toString() ?? "",
     passwordConfirm: formData.get("passwordConfirm")?.toString() ?? "",
   };
 
-  // Validate form data including password confirmation
   const parseResult = registerWithConfirmSchema.safeParse(formValues);
   if (!parseResult.success) {
     return {
@@ -28,7 +21,6 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
     };
   }
 
-  // Attempt registration with only email and password
   try {
     const result = await register({
       email: parseResult.data.email,
@@ -36,7 +28,6 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
     });
 
     if (!result.success) {
-      // Special handling for email already exists error
       if (typeof result.error === "string" && result.error.includes("|EMAIL_ALREADY_EXISTS")) {
         return {
           success: false,
@@ -49,7 +40,6 @@ export const handleRegisterSubmit = async (formData: FormData): Promise<Register
       };
     }
 
-    // Registration successful
     return {
       success: true,
       registrationSuccess: true,

@@ -2,7 +2,6 @@ import type { AuthCredentialsDto } from "@/types";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { login, register } from "./index";
 
-// Helper to mock fetch
 function mockFetch(response: unknown, ok = true) {
   global.fetch = vi.fn().mockResolvedValue({
     ok,

@@ -30,7 +30,6 @@ test.describe("User Registration (with POM)", () => {
     const response = await responsePromise;
     expect(response.status()).toBe(200);
 
-    // Check for registration success
     const hasSuccessMessage = await registerPage.successMessage.isVisible().catch(() => false);
     const hasCreateButton = await registerPage.createFirstSessionLink.isVisible().catch(() => false);
     const isOnBodyPartsPage = page.url().includes("/body-parts");
@@ -41,7 +40,7 @@ test.describe("User Registration (with POM)", () => {
 
   test("should show error when email is already registered", async () => {
     const existingUser = TestDataHelper.getExistingTestUser();
-    const validPassword = TestDataHelper.getValidPassword(); // Use valid password to avoid password validation errors
+    const validPassword = TestDataHelper.getValidPassword();
 
     await registerPage.fillForm(existingUser.email, validPassword);
     await registerPage.submitButton.click();

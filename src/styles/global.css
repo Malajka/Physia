@@ -76,13 +76,12 @@
 
 @layer base {
   * {
-    @apply border-border; /* To jest poprawne i zostaje */
+    @apply border-border;
 
-    /* Zastępujemy 'outline-ring' i jego modyfikatory bezpośrednimi regułami CSS */
     outline-width: 0;
     outline-style: solid;
     outline-offset: 2px;
-    /* Używamy wartości z Twojej zmiennej --ring i dodajemy 50% przezroczystości */
+
     outline-color: oklch(from var(--ring) l c h / 0.5);
   }
   body {

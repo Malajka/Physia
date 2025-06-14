@@ -46,7 +46,7 @@ describe("useBodyParts", () => {
 
     beforeEach(() => {
       renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01" }));
-      // THE FIX: Use type assertion to inform TypeScript about the correct type
+
       fetcher = mockedUseFetch.mock.calls[0][0] as (signal: AbortSignal) => Promise<BodyPartDto[]>;
     });
 

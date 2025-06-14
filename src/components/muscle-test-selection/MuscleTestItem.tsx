@@ -26,7 +26,6 @@ function formatDescriptionText(description: string | null | undefined): Formatte
   const warnings: string[] = [];
   const notes: string[] = [];
 
-  // Split by section markers
   const sections = description.split(/###/).filter((section) => section.trim().length > 0);
 
   sections.forEach((section) => {
@@ -39,9 +38,7 @@ function formatDescriptionText(description: string | null | undefined): Formatte
     const sectionType = lines[0].toLowerCase().trim();
     const content = lines.slice(1);
 
-    // If first line doesn't match any section type, treat as default content
     if (!["steps", "info", "warning", "note", "instructions", "expect", "important", "remember"].includes(sectionType)) {
-      // This is content without section marker - add it to info by default
       const allLines = [lines[0], ...content];
       allLines.forEach((line) => {
         const cleanLine = line.trim();
@@ -52,12 +49,10 @@ function formatDescriptionText(description: string | null | undefined): Formatte
       return;
     }
 
-    // Process content for the identified section
     content.forEach((line) => {
       const cleanLine = line.trim();
       if (cleanLine.length === 0) return;
 
-      // Remove bullet points and numbers if present
       const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
 
       switch (sectionType) {
@@ -81,7 +76,6 @@ function formatDescriptionText(description: string | null | undefined): Formatte
     });
   });
 
-  // If no sections found, try to parse as simple text with line breaks
   if (steps.length === 0 && info.length === 0 && warnings.length === 0 && notes.length === 0) {
     const lines = description.split("\n").filter((line) => line.trim().length > 0);
     lines.forEach((line) => {
@@ -99,9 +93,6 @@ function formatDescriptionText(description: string | null | undefined): Formatte
 }
 
 export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestItemProps) {
-  // Debug: log exercises to check if images are present
-
-  // Get the muscle test image from the first exercise's images
   const muscleTestImage = test.exercises?.[0]?.exercise_images ? getMuscleTestImage(test.exercises[0].exercise_images) : null;
 
   const getPainColor = (v: number) => {
@@ -120,9 +111,9 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
         </h2>
       </div>
 
-      {/* Instructions and Image Side by Side (centered in grid) */}
+      {}
       <div className="mb-6 flex flex-col md:grid md:grid-cols-2 md:items-center md:gap-4 space-y-4 md:space-y-0">
-        {/* Steps Section */}
+        {}
         {steps.length > 0 && (
           <div>
             <h3 className="text-sm font-medium text-gray-600 mb-3 uppercase tracking-wide">Instructions</h3>
@@ -138,7 +129,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
             </ol>
           </div>
         )}
-        {/* Muscle Test Image - left on desktop, center on mobile */}
+        {}
         {muscleTestImage && (
           <div className="flex items-center justify-center md:justify-start w-full">
             <img src={muscleTestImage} alt={test.name} className="w-56 h-56 object-contain rounded-md" />
@@ -146,7 +137,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
         )}
       </div>
 
-      {/* Warnings Section */}
+      {}
       {warnings.length > 0 && (
         <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r">
           <div className="flex items-start">
@@ -171,7 +162,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
         </div>
       )}
 
-      {/* Info Section */}
+      {}
       {info.length > 0 && (
         <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r">
           <div className="flex items-start">
@@ -196,7 +187,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
         </div>
       )}
 
-      {/* Notes Section */}
+      {}
       {notes.length > 0 && (
         <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r">
           <div className="flex items-start">
@@ -221,7 +212,7 @@ export function MuscleTestItem({ test, value, onChange, animating }: MuscleTestI
         </div>
       )}
 
-      {/* Fallback if no content is categorized */}
+      {}
       {steps.length === 0 && info.length === 0 && warnings.length === 0 && notes.length === 0 && test.description && (
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-gray-700 text-sm leading-relaxed">{test.description}</p>

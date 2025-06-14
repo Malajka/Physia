@@ -7,10 +7,6 @@ export interface SessionGenerationResult {
   id?: number;
 }
 
-/**
- * Starts the session generation process by calling the API.
- * Throws on error, returns session detail data on success.
- */
 export async function startSessionGeneration(
   bodyPartId: number,
   tests: { muscle_test_id: number; pain_intensity: number }[]

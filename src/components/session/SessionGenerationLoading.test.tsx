@@ -4,7 +4,6 @@ import type React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { SessionGenerationLoading } from "./SessionGenerationLoading";
 
-// Mock UI components
 vi.mock("@/components/ui/Button", () => ({
   Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => {
     return <button {...props}>{children}</button>;
@@ -17,7 +16,6 @@ vi.mock("@/components/ui/Spinner", () => ({
   Spinner: (props: React.HTMLAttributes<HTMLDivElement>) => <div data-testid="spinner" {...props} />,
 }));
 
-// Mock useSessionGeneration - FIXED: correct path
 vi.mock("@/hooks/useSessionGeneration", () => ({
   useSessionGeneration: vi.fn(),
 }));
