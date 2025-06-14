@@ -7,6 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+# Test coverage
+coverage/
+
 # Bower dependency directory (https://bower.io/)
 bower_components
 
