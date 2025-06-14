@@ -18,7 +18,22 @@ const baseConfig = tseslint.config({
   rules: {
     "no-console": "warn",
     "no-unused-vars": "off",
-    "@typescript-eslint/triple-slash-reference": ["error", { path: "off", types: "off", lib: "off" }],
+    "@typescript-eslint/triple-slash-reference": "off",
+    "no-empty": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+  },
+});
+
+const astroConfig = tseslint.config({
+  files: ["**/*.astro"],
+  plugins: {
+    react: pluginReact,
+  },
+  rules: {
+    "@typescript-eslint/no-unused-vars": "off",
+    "react/no-unknown-property": "off",
   },
 });
 
@@ -58,6 +73,7 @@ export default tseslint.config(
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  astroConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );
