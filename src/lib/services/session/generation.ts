@@ -32,7 +32,7 @@ export async function startSessionGeneration(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    let message = `Server error: ${response.statusText}`;
+    let message = `Server error: ${response.statusText} ${bodyPartId} ${tests}`;
     if (errorData.error) {
       const errObj = errorData.error as { code?: string; message?: string; details?: { reason?: string } };
       if (typeof errObj.details?.reason === "string") {
@@ -54,3 +54,5 @@ export async function startSessionGeneration(
   const data = await response.json();
   return { data, id: data.id };
 }
+
+console.log("OPENROUTER_USE_MOCK:", import.meta.env.OPENROUTER_USE_MOCK);
