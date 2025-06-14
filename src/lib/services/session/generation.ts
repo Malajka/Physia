@@ -54,7 +54,3 @@ export async function startSessionGeneration(
   const data = await response.json();
   return { data, id: data.id };
 }
-
-console.log("OPENROUTER_USE_MOCK:", import.meta.env.OPENROUTER_USE_MOCK);
-  console.log("import.meta.env.OPENROUTER_USE_MOCK:", import.meta.env.OPENROUTER_USE_MOCK);
-  console.log("process.env.OPENROUTER_USE_MOCK:", process.env.OPENROUTER_USE_MOCK);

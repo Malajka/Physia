@@ -14,7 +14,7 @@ export const prerender = false;
 
 // `getMuscleTestsPageData` will use Astro.locals (already populated by middleware)
 // or Astro.params to fetch page-specific data.
-const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Astro);
+const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Number(Astro.params.body_part_id));
 
 // Note: If `getMuscleTestsPageData` itself encounters an unrecoverable auth issue
 // (e.g., session becomes invalid between middleware and this page load, which is rare),

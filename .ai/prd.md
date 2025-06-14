@@ -74,7 +74,7 @@ many visits and needs modifications depending on intensity.
 **Acceptance Criteria**:
 
 - Up to three muscle tests displayed for the selected body area.
-- A slider allows rating each muscle test from 0 (no pain) to 10 (pain prevents work).
+- A slider allows rating each muscle test from 0 (no pain) to 10 (pain prevents work) with 1 image for test.
 - Upon clicking Submit, the system calls the LLM API and displays the generated training session plan.
 
 ### US-003: Feedback system

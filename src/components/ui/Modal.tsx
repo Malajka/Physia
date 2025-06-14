@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, title, children, fo
       />
 
       {/* Modal content */}
-      <div role="dialog" aria-modal="true" className={cn("relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-lg w-full")}>
+      <div role="dialog" aria-modal="true" className={cn("relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md mx-4")}>
         {title && <h2 className="text-lg font-semibold mb-4">{title}</h2>}
         <div className="mb-4">{children}</div>
         {footer && <div className="flex justify-end gap-2">{footer}</div>}

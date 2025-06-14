@@ -181,19 +181,20 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
                   <p className="text-sm text-amber-800 italic">{exercise.notes}</p>
                 </div>
               )}
-
               {/* Exercise Images */}
-              {exerciseImagesMap[exercise.id]?.length > 0 && (
+              {exerciseImagesMap[exercise.id]?.filter((img) => (img.metadata as any)?.purpose === "exercise").length > 0 && (
                 <div className="mt-3">
-                  <div className="flex flex-wrap gap-2">
-                    {exerciseImagesMap[exercise.id].map((img, imgIndex) => (
-                      <img
-                        key={imgIndex}
-                        src={img.file_path}
-                        alt={exercise.name}
-                        className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                      />
-                    ))}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {exerciseImagesMap[exercise.id]
+                      .filter((img) => (img.metadata as any)?.purpose === "exercise")
+                      .map((img, imgIndex) => (
+                        <img
+                          key={imgIndex}
+                          src={img.file_path}
+                          alt={exercise.name}
+                          className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                        />
+                      ))}
                   </div>
                 </div>
               )}
@@ -234,8 +235,8 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
               </svg>
             </div>
             <div className="ml-3">
-              <h4 className="text-sm font-medium text-red-800 uppercase tracking-wide mb-2">Important Safety Information</h4>
-              <ul className="text-sm text-red-700 space-y-1">
+              <h4 className="text-s font-medium text-red-800 uppercase tracking-wide mb-1">Important Safety Information</h4>
+              <ul className="text-s text-red-700 space-y-1">
                 {trainingPlan.warnings.map((warning, index) => (
                   <li key={index} className="flex items-start">
                     <span className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>

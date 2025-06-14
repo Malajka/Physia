@@ -7,10 +7,7 @@ interface UseSessionGenerationParams {
   tests: { muscle_test_id: number; pain_intensity: number }[];
 }
 
-export function useSessionGeneration(
-  bodyPartId: number,
-  tests: { muscle_test_id: number; pain_intensity: number }[]
-) {
+export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id: number; pain_intensity: number }[]) {
   const [statusMessage, setStatusMessage] = useState("Preparing session data...");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,9 +43,8 @@ export function useSessionGeneration(
       }
 
       setSessionDetail(result.data);
-    
-   window.location.href = `/sessions/${result.id}`;
 
+      window.location.href = `/sessions/${result.id}`;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorMessage);

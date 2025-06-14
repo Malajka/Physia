@@ -1,6 +1,6 @@
 import type { AuthFormSubmitResult } from "@/hooks/useAuthForm";
-import type { AuthCredentialsDto } from "@/types";
 import { JSON_HEADERS } from "@/lib/utils/api";
+import type { AuthCredentialsDto } from "@/types";
 /**
  * Generic function for authentication requests (login/register)
  */

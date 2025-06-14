@@ -43,6 +43,11 @@ export interface MuscleTestDto {
   description: Tables<"muscle_tests">["description"];
   /** When this muscle test record was created */
   created_at: Tables<"muscle_tests">["created_at"];
+  /** Associated exercises with their images */
+  exercises?: {
+    id: number;
+    exercise_images: ExerciseImageDto[];
+  }[];
 }
 
 // 4. Exercises and Images

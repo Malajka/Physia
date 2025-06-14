@@ -44,10 +44,14 @@ Stretch chest muscles
 
 const mockExerciseImagesMap = {
   1: [
-    { file_path: "/images/pushup1.jpg", metadata: null },
-    { file_path: "/images/pushup2.jpg", metadata: null },
+    { file_path: "/images/pushup1.jpg", metadata: { purpose: "exercise" } },
+    { file_path: "/images/pushup2.jpg", metadata: { purpose: "exercise" } },
+    { file_path: "/images/pushup-muscle-test.jpg", metadata: { purpose: "muscle_test" } },
   ],
-  2: [{ file_path: "/images/pullup1.jpg", metadata: null }],
+  2: [
+    { file_path: "/images/pullup1.jpg", metadata: { purpose: "exercise" } },
+    { file_path: "/images/pullup-muscle-test.jpg", metadata: { purpose: "muscle_test" } },
+  ],
 };
 
 describe("TrainingPlanDisplay", () => {
@@ -86,26 +90,42 @@ describe("TrainingPlanDisplay", () => {
     expect(screen.getAllByText("Modify by doing knee push-ups if needed")).toHaveLength(3); // appears in 3 sections
   });
 
-  it("renders exercise images when available", () => {
+  it("renders only exercise images (filtering out muscle test images)", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
     const images = screen.getAllByRole("img");
-    expect(images.length).toBeGreaterThan(3); // push-ups appears in multiple sections, plus pull-ups
+    // Push-ups appears in 3 sections (warmup, workout, cooldown) with 2 images each = 6 images
+    // Pull-ups appears in 1 section with 1 image = 1 image
+    // Total: 7 images
+    expect(images.length).toBe(7);
 
-    // Check that images with expected sources are present
+    // Check that only exercise images are present
     const pushupImages = images.filter((img) => img.getAttribute("src")?.includes("pushup"));
     const pullupImages = images.filter((img) => img.getAttribute("src")?.includes("pullup"));
 
-    expect(pushupImages.length).toBeGreaterThan(0);
-    expect(pullupImages.length).toBeGreaterThan(0);
+    // Push-ups: 2 unique images × 3 sections = 6 images
+    expect(pushupImages.length).toBe(6);
+    // Pull-ups: 1 unique image × 1 section = 1 image
+    expect(pullupImages.length).toBe(1);
+
+    // Verify no muscle test images are present
+    const muscleTestImages = images.filter((img) => img.getAttribute("src")?.includes("muscle-test"));
+    expect(muscleTestImages.length).toBe(0);
   });
 
-  it("displays section cards (Warm-Up, Workout, Cool-Down)", () => {
+  it("displays section cards with correct styling", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
+    // Check section titles
     expect(screen.getByText("Warm-Up")).toBeInTheDocument();
     expect(screen.getByText("Workout")).toBeInTheDocument();
     expect(screen.getByText("Cool-Down")).toBeInTheDocument();
+
+    // Check for section-specific styling classes
+    const sectionCards = screen.getAllByRole("heading", { level: 3 });
+    sectionCards.forEach((card) => {
+      expect(card).toHaveClass("text-2xl", "font-bold", "text-gray-800");
+    });
   });
 
   it("handles empty exercise descriptions", () => {

@@ -5,16 +5,70 @@ import { getExercisesForMuscleTests, getMuscleTestsForBodyPart } from "./helpers
 describe("getMuscleTestsForBodyPart", () => {
   it("calls supabase.from with correct params and returns result", async () => {
     const mockSelect = vi.fn().mockReturnThis();
-    const mockEq = vi.fn().mockResolvedValue({ data: [{ id: 1, name: "Test", description: "desc" }], error: null });
+    const mockEq = vi.fn().mockResolvedValue({
+      data: [
+        {
+          id: 1,
+          name: "Test",
+          description: "desc",
+          exercises: [
+            {
+              id: 2,
+              exercise_images: [
+                {
+                  id: 3,
+                  file_path: "test.jpg",
+                  metadata: {},
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      error: null,
+    });
     const mockSupabase = {
       from: vi.fn().mockReturnValue({ select: mockSelect, eq: mockEq }),
     } as unknown as SupabaseClient;
 
     const result = await getMuscleTestsForBodyPart(mockSupabase, 42);
     expect(mockSupabase.from).toHaveBeenCalledWith("muscle_tests");
-    expect(mockSelect).toHaveBeenCalledWith("id, name, description");
+    expect(mockSelect).toHaveBeenCalledWith(`
+      id, 
+      name, 
+      description,
+      exercises (
+        id,
+        exercise_images (
+          id,
+          file_path,
+          metadata
+        )
+      )
+    `);
     expect(mockEq).toHaveBeenCalledWith("body_part_id", 42);
-    expect(result).toEqual({ data: [{ id: 1, name: "Test", description: "desc" }], error: null });
+    expect(result).toEqual({
+      data: [
+        {
+          id: 1,
+          name: "Test",
+          description: "desc",
+          exercises: [
+            {
+              id: 2,
+              exercise_images: [
+                {
+                  id: 3,
+                  file_path: "test.jpg",
+                  metadata: {},
+                },
+              ],
+            },
+          ],
+        },
+      ],
+      error: null,
+    });
   });
 });
 
