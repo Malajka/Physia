@@ -7,34 +7,10 @@ interface UseSessionGenerationParams {
   tests: { muscle_test_id: number; pain_intensity: number }[];
 }
 
-// Overloaded function signatures for backward compatibility
-export function useSessionGeneration(params: UseSessionGenerationParams): {
-  statusMessage: string;
-  error: string | null;
-  retry: () => Promise<void>;
-  isLoading: boolean;
-  sessionDetail: SessionDetailDto | null;
-  startGeneration: () => Promise<void>;
-};
 export function useSessionGeneration(
   bodyPartId: number,
   tests: { muscle_test_id: number; pain_intensity: number }[]
-): {
-  statusMessage: string;
-  error: string | null;
-  retry: () => Promise<void>;
-  isLoading: boolean;
-  sessionDetail: SessionDetailDto | null;
-  startGeneration: () => Promise<void>;
-};
-export function useSessionGeneration(
-  paramsOrBodyPartId: UseSessionGenerationParams | number,
-  tests?: { muscle_test_id: number; pain_intensity: number }[]
 ) {
-  // Handle both parameter formats
-  const { bodyPartId, tests: testsArray } =
-    typeof paramsOrBodyPartId === "object" ? paramsOrBodyPartId : { bodyPartId: paramsOrBodyPartId, tests: tests || [] };
-
   const [statusMessage, setStatusMessage] = useState("Preparing session data...");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +19,7 @@ export function useSessionGeneration(
   const generationInitiatedRef = useRef(false);
 
   const startGeneration = useCallback(async () => {
-    if (!bodyPartId || !testsArray?.length) {
+    if (!bodyPartId || !tests?.length) {
       setError("Invalid request parameters");
       setIsLoading(false);
       return;
@@ -57,7 +33,7 @@ export function useSessionGeneration(
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setStatusMessage("Sending data to the AI engine...");
-      const result = await startSessionGeneration(bodyPartId, testsArray);
+      const result = await startSessionGeneration(bodyPartId, tests);
 
       setStatusMessage("Finalizing your personalized training plan...");
 
@@ -70,14 +46,16 @@ export function useSessionGeneration(
       }
 
       setSessionDetail(result.data);
-      window.location.href = `/sessions/${result.id}`;
+    
+   window.location.href = `/sessions/${result.id}`;
+
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
       setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
-  }, [bodyPartId, testsArray]);
+  }, [bodyPartId, tests]);
 
   const retry = useCallback(async () => {
     generationInitiatedRef.current = false;
@@ -89,13 +67,13 @@ export function useSessionGeneration(
       return;
     }
 
-    if (!bodyPartId || !testsArray?.length) {
+    if (!bodyPartId || !tests?.length) {
       return;
     }
 
     generationInitiatedRef.current = true;
     startGeneration();
-  }, [bodyPartId, testsArray, startGeneration]);
+  }, [bodyPartId, tests, startGeneration]);
 
   return {
     statusMessage,

@@ -1,4 +1,4 @@
-<!-- ---
+---
 import { SessionGenerationLoading } from "@/components/session/SessionGenerationLoading";
 import Layout from "@/layouts/Layout.astro";
 
@@ -53,12 +53,6 @@ const pageTitle = "Generating Training Plan";
 ---
 
 <Layout title={pageTitle}>
-  @ts-ignore -->
-  <!-- <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} client:load />
-</Layout> -->
-import type { APIRoute } from "astro";
-
-export const POST: APIRoute = async () => {
-  console.log("TEST: Endpoint /api/sessions został trafiony.");
-  return new Response(JSON.stringify({ status: "ok" }), { status: 200 });
-};
+  <!-- @ts-ignore -->
+  <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} client:load />
+</Layout>
