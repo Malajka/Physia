@@ -188,7 +188,6 @@ Keep your posture straight
     render(<MuscleTestItem test={testWithNullDesc} value={3} onChange={vi.fn()} animating={false} />);
 
     expect(screen.getByText("Test Name")).toBeInTheDocument();
-    // Should not crash and should render without description sections
   });
 
   it("removes bullet points and numbers from content", () => {

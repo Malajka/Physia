@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Schema for validating the Create Session API request body
 export const CreateSessionSchema = z.object({
   body_part_id: z.number().int().positive(),
   tests: z

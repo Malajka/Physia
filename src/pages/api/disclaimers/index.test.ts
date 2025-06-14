@@ -1,152 +1,118 @@
-import type { Session } from "@supabase/supabase-js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET, POST } from "./index";
+import { jsonResponse } from "@/lib/utils/response";
+import type { APIContext } from "astro";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 
-// Types for the mock context and API calls
-interface MockSupabase {
-  from: ReturnType<typeof vi.fn>;
+vi.mock("@/lib/middleware/withAuth", () => ({
+  withAuth: vi.fn((handler) => handler),
+}));
+
+vi.mock("@/lib/utils/response", () => ({
+  jsonResponse: vi.fn(),
+}));
+
+const mockedJsonResponse = vi.mocked(jsonResponse);
+
+const mockSingle = vi.fn();
+const mockUpdateUser = vi.fn();
+const mockRefreshSession = vi.fn();
+
+const mockSupabaseClient = {
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      order: vi.fn(() => ({
+        limit: vi.fn(() => ({
+          single: mockSingle,
+        })),
+      })),
+    })),
+  })),
   auth: {
-    getSession: ReturnType<typeof vi.fn>;
-    setSession?: ReturnType<typeof vi.fn>;
-    updateUser: ReturnType<typeof vi.fn>;
-  };
-}
+    updateUser: mockUpdateUser,
+    refreshSession: mockRefreshSession,
+  },
+} as unknown as SupabaseClient;
 
-interface MockLocals {
-  supabase: MockSupabase;
-}
-
-type GetPostArgs = Parameters<typeof GET>[0];
-
-function createMockSession(userMetadata = {}): Session {
-  return {
-    access_token: "mock-token",
-    refresh_token: "mock-refresh",
-    expires_in: 3600,
-    token_type: "bearer",
-    user: {
-      id: "user-1",
-      user_metadata: userMetadata,
-      app_metadata: {},
-      aud: "authenticated",
-      created_at: new Date().toISOString(),
-      email: "",
-      phone: "",
+const createMockContext = (user: Partial<User>): APIContext =>
+  ({
+    locals: {
+      supabase: mockSupabaseClient,
+      user: user as User,
     },
-  };
-}
+  }) as unknown as APIContext;
 
-// Middleware tests moved to src/middleware/index.test.ts
-
-function createMockSupabase({
-  disclaimerContent = "Test disclaimer text",
-  getSessionData = { session: { user: { user_metadata: { disclaimer_accepted_at: "2024-01-01" } } } },
-  getSessionError = null,
-  disclaimerError = null,
-  updateUserError = null,
-} = {}): MockSupabase {
-  return {
-    from: vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({
-        data: disclaimerError ? null : { content: disclaimerContent },
-        error: disclaimerError,
-      }),
-    }),
-    auth: {
-      getSession: vi.fn().mockResolvedValue({
-        data: getSessionData,
-        error: getSessionError,
-      }),
-      updateUser: vi.fn().mockResolvedValue({ error: updateUserError }),
-    },
-  };
-}
-
-describe("/api/disclaimers GET", () => {
-  let locals: MockLocals;
+describe("GET /api/disclaimers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("returns disclaimer text and accepted_at on success", async () => {
-    locals = { supabase: createMockSupabase() };
-    const response = await GET({ locals } as unknown as GetPostArgs);
-    expect(response.status).toBe(200);
-    const body = await response.json();
-    expect(body.text).toBe("Test disclaimer text");
-    expect(body.accepted_at).toBe("2024-01-01");
+  it("should return 200 with content and acceptance date if user accepted", async () => {
+    const mockUser = { user_metadata: { disclaimer_accepted_at: "2024-01-01T12:00:00Z" } };
+    mockSingle.mockResolvedValue({ data: { content: "Disclaimer text" }, error: null });
+
+    const context = createMockContext(mockUser);
+    await GET(context);
+
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ text: "Disclaimer text", accepted_at: "2024-01-01T12:00:00Z" }, 200);
   });
 
-  it("returns accepted_at as null if not accepted", async () => {
-    const sessionWithoutDisclaimer = createMockSession({});
-    locals = {
-      supabase: {
-        from: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnThis(),
-          order: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({
-            data: { content: "Test disclaimer text" },
-            error: null,
-          }),
-        }),
-        auth: {
-          getSession: vi.fn().mockResolvedValue({
-            data: { session: sessionWithoutDisclaimer },
-            error: null,
-          }),
-          updateUser: vi.fn().mockResolvedValue({ error: null }),
-        },
-      },
-    };
-    const response = await GET({ locals } as unknown as GetPostArgs);
-    expect(response.status).toBe(200);
-    const body = await response.json();
-    expect(body.accepted_at).toBeNull();
+  it("should return 200 with content and null if user has not accepted", async () => {
+    const mockUser = { user_metadata: {} };
+    mockSingle.mockResolvedValue({ data: { content: "Disclaimer text" }, error: null });
+
+    const context = createMockContext(mockUser);
+    await GET(context);
+
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ text: "Disclaimer text", accepted_at: null }, 200);
   });
 
-  it("returns 500 if disclaimer fetch fails", async () => {
-    locals = { supabase: createMockSupabase({ disclaimerError: null }) };
-    locals.supabase.from = vi.fn().mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: null, error: { message: "fail" } }),
-    });
-    const response = await GET({ locals } as unknown as GetPostArgs);
-    expect(response.status).toBe(500);
-    const body = await response.json();
-    expect(body.error).toMatch(/fail/);
+  it("should return 500 if fetching disclaimer content fails", async () => {
+    const dbError = { message: "Database query failed" };
+    mockSingle.mockResolvedValue({ data: null, error: dbError });
+
+    const context = createMockContext({ user_metadata: {} });
+    await GET(context);
+
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ error: "Database query failed" }, 500);
   });
 });
 
-describe("/api/disclaimers POST", () => {
-  let locals: MockLocals;
+describe("POST /api/disclaimers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
   });
 
-  it("returns 201 and accepted_at on success", async () => {
-    vi.useFakeTimers();
-    const now = new Date("2024-05-25T12:00:00.000Z");
-    vi.setSystemTime(now);
-    locals = { supabase: createMockSupabase() };
-    const response = await POST({ locals } as unknown as GetPostArgs);
-    expect(response.status).toBe(201);
-    const body = await response.json();
-    expect(body.accepted_at).toBe(now.toISOString());
+  afterEach(() => {
     vi.useRealTimers();
   });
 
-  it("returns 500 if updateUser fails", async () => {
-    locals = { supabase: createMockSupabase({ updateUserError: null }) };
-    locals.supabase.auth.updateUser = vi.fn().mockResolvedValue({ error: { message: "update failed" } });
-    const response = await POST({ locals } as unknown as GetPostArgs);
-    expect(response.status).toBe(500);
-    const body = await response.json();
-    expect(body.error).toMatch(/update failed/);
+  it("should update user, refresh session, and return 201 on success", async () => {
+    const fakeNow = new Date("2024-06-13T10:00:00Z");
+    vi.setSystemTime(fakeNow);
+
+    mockUpdateUser.mockResolvedValue({ error: null });
+    mockRefreshSession.mockResolvedValue({ data: {}, error: null });
+
+    const context = createMockContext({});
+    await POST(context);
+
+    expect(mockUpdateUser).toHaveBeenCalledWith({
+      data: { disclaimer_accepted_at: fakeNow.toISOString() },
+    });
+    expect(mockRefreshSession).toHaveBeenCalledTimes(1);
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ accepted_at: fakeNow.toISOString() }, 201);
+  });
+
+  it("should return 500 if updating user metadata fails", async () => {
+    const updateError = { message: "Update failed" };
+    mockUpdateUser.mockResolvedValue({ error: updateError });
+
+    const context = createMockContext({});
+    await POST(context);
+
+    expect(mockedJsonResponse).toHaveBeenCalledWith({ error: "Update failed" }, 500);
+    expect(mockRefreshSession).not.toHaveBeenCalled();
   });
 });

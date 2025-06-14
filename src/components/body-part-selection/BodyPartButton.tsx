@@ -1,7 +1,7 @@
 import { slugify } from "@/lib/utils/slugify";
 import { memo } from "react";
 
-interface BodyPartButtonProps {
+export interface BodyPartButtonProps {
   id: number;
   name: string;
   selected: boolean;

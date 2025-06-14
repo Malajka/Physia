@@ -2,6 +2,9 @@
   "name": "astro-starter",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -23,29 +26,24 @@
     "dev:e2e": "astro dev --mode test"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/cloudflare": "^12.5.4",
-    "@astrojs/node": "^9.1.3",
-    "@astrojs/react": "4.2.2",
-    "@astrojs/sitemap": "3.3.0",
+    "@astrojs/react": "^3.6.0",
+    "@astrojs/sitemap": "^3.1.6",
+    "@astrojs/vercel": "^7.8.2",
     "@radix-ui/react-slider": "^1.3.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.49.4",
-    "@tailwindcss/vite": "4.0.17",
-    "astro": "5.5.5",
+    "astro": "^4.11.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.487.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^3.2.0",
-    "tailwindcss": "4.0.17",
-    "tw-animate-css": "^1.2.5",
-    "typescript": "^5.8.3",
-    "zod": "^3.25.61"
+    "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
+    "@astrojs/tailwind": "^5.1.0",
     "@eslint/compat": "1.2.7",
     "@eslint/js": "9.23.0",
     "@playwright/test": "^1.52.0",
@@ -57,11 +55,11 @@
     "@types/babel__template": "^7.4.4",
     "@types/babel__traverse": "^7.20.7",
     "@types/dotenv": "^6.1.1",
-    "@types/react": "^19.1.5",
-    "@types/react-dom": "^19.1.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "8.28.0",
     "@typescript-eslint/parser": "8.28.0",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-react": "^4.5.2",
     "@vitest/coverage-v8": "^1.3.1",
     "@vitest/ui": "^1.3.1",
     "dotenv": "^16.5.0",
@@ -78,6 +76,7 @@
     "jsdom": "^24.0.0",
     "lint-staged": "15.5.0",
     "prettier-plugin-astro": "0.14.1",
+    "tailwindcss": "^3.4.4",
     "typescript-eslint": "8.28.0",
     "vite": "^6.3.5",
     "vitest": "^1.3.1"

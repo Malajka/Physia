@@ -2,7 +2,8 @@
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import Layout from "@/layouts/Layout.astro";
 
-// Check for error parameter in URL
+export const prerender = false;
+
 const error = Astro.url.searchParams.get("error");
 const errorMessage = error === "email_in_use" ? "This email is already registered" : error ? "An error occurred during registration" : null;
 ---

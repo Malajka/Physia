@@ -3,19 +3,13 @@ import BodyPartSelector from "@/components/body-part-selection/BodyPartSelector"
 import PageHeader from "@/components/common/PageHeader.astro";
 import Layout from "@/layouts/Layout.astro";
 
-// Server-side auth guard: redirect unauthenticated users to login
-const {
-  data: { session },
-} = await Astro.locals.supabase.auth.getSession();
-if (!session) {
-  return Astro.redirect("/login");
-}
+export const prerender = false;
 ---
 
 <Layout title="Select Body Area - Physia">
   <div class="container mx-auto py-8 px-2 sm:px-4">
     <PageHeader title="Select Body Area" subtitle="Please select the body area where you experience overload-related muscle pain:" />
-
+    <!-- @ts-ignore -->
     <BodyPartSelector client:load />
   </div>
 </Layout>

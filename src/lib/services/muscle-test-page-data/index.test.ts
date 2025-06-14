@@ -1,52 +1,84 @@
-import * as bodyPartsService from "@/lib/services/body-parts";
-import * as pageTitleUtil from "@/lib/utils/getPageTitle";
-import * as validator from "@/lib/validators/bodyPart.validator";
-import type { AstroGlobal } from "astro";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { APIContext } from "astro";
+import { fetchMuscleTestsAndBodyPartName } from "../body-parts";
 import { getMuscleTestsPageData } from "./index";
 
-const astroGlobalMock: Pick<AstroGlobal, "params" | "request"> = {
-  params: { body_part_id: "5" },
-  request: new Request("https://example.com/muscle-tests/5"),
+vi.mock("../body-parts");
+const mockedFetchData = vi.mocked(fetchMuscleTestsAndBodyPartName);
+
+const createMockContext = (bodyPartId: string, cookie?: string): APIContext => {
+  const headers = new Headers();
+  if (cookie) {
+    headers.set("cookie", cookie);
+  }
+  return {
+    params: { body_part_id: bodyPartId },
+    request: new Request(`http://test.com/muscle-tests/${bodyPartId}`, {
+      headers,
+    }),
+    url: new URL(`http://test.com/muscle-tests/${bodyPartId}`),
+  } as unknown as APIContext;
 };
 
-const backLink = { href: "/body-parts", label: "← Go back to body parts selection" };
-
 describe("getMuscleTestsPageData", () => {
+  const mockData = {
+    muscleTests: [{ id: 1, name: "Test", description: "", body_part_id: 5, created_at: "2024-01-01T00:00:00Z" }],
+    bodyPartName: "Shoulder",
+  };
+  const backLink = { href: "/body-parts", text: "← Go back to Body Part Selection" };
+
+  beforeEach(() => {
+    mockedFetchData.mockResolvedValue(mockData);
+  });
+
   afterEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
-  it("returns page data (happy path)", async () => {
-    vi.spyOn(validator, "validateBodyPartId").mockReturnValue(5);
-    vi.spyOn(bodyPartsService, "fetchMuscleTestsAndBodyPartName").mockResolvedValue({
-      muscleTests: [{ id: 1, name: "Test", description: "desc", body_part_id: 5, created_at: "2024-01-01T00:00:00Z" }],
-      bodyPartName: "Shoulder",
-    });
-    vi.spyOn(pageTitleUtil, "getPageTitle").mockReturnValue("Shoulder (5)");
+  describe("on success", () => {
+    it("should pass the cookie header to the fetch call when it exists", async () => {
+      const context = createMockContext("5", "session=my-secret-token");
+      await getMuscleTestsPageData(context);
 
-    const result = await getMuscleTestsPageData(astroGlobalMock as AstroGlobal);
-    expect(result).toEqual({
-      muscleTests: [{ id: 1, name: "Test", description: "desc", body_part_id: 5, created_at: "2024-01-01T00:00:00Z" }],
-      fetchError: null,
-      pageTitle: "Shoulder (5)",
-      bodyPartId: 5,
-      backLink,
+      expect(mockedFetchData).toHaveBeenCalledWith("5", "http://test.com", { headers: { cookie: "session=my-secret-token" } });
+    });
+
+    it("should pass an empty headers object when no cookie exists", async () => {
+      const context = createMockContext("5"); // No cookie
+      await getMuscleTestsPageData(context);
+
+      expect(mockedFetchData).toHaveBeenCalledWith("5", "http://test.com", { headers: {} });
+    });
+
+    it("should return correctly formatted page data", async () => {
+      const context = createMockContext("5");
+      const result = await getMuscleTestsPageData(context);
+
+      expect(result).toEqual({
+        muscleTests: mockData.muscleTests,
+        pageTitle: `Muscle Tests for ${mockData.bodyPartName}`,
+        bodyPartId: 5,
+        fetchError: null,
+        backLink,
+      });
     });
   });
 
-  it("returns error and empty muscleTests on fetch error", async () => {
-    vi.spyOn(validator, "validateBodyPartId").mockReturnValue(5);
-    vi.spyOn(bodyPartsService, "fetchMuscleTestsAndBodyPartName").mockRejectedValue(new Error("fail"));
-    vi.spyOn(pageTitleUtil, "getPageTitle").mockReturnValue("(5)");
+  describe("on failure", () => {
+    it("should return an error state when the fetch call fails", async () => {
+      const fetchError = new Error("API is down");
+      mockedFetchData.mockRejectedValue(fetchError);
+      const context = createMockContext("5");
 
-    const result = await getMuscleTestsPageData(astroGlobalMock as AstroGlobal);
-    expect(result).toEqual({
-      muscleTests: [],
-      fetchError: "fail",
-      pageTitle: "(5)",
-      bodyPartId: 5,
-      backLink,
+      const result = await getMuscleTestsPageData(context);
+
+      expect(result).toEqual({
+        muscleTests: [],
+        pageTitle: "Error",
+        bodyPartId: 5,
+        fetchError: ["API is down"],
+        backLink,
+      });
     });
   });
 });

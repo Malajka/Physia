@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loginSchema, registerSchema } from "./auth.validator";
 
-// Valid credentials
 const validEmail = "user@example.com";
 const validPassword = "strongpassword";
 

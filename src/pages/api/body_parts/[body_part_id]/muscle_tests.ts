@@ -2,7 +2,8 @@ import { withAuth } from "@/lib/middleware/withAuth";
 import { jsonResponse } from "@/lib/utils/response";
 import { z } from "zod";
 
-// Schema to parse and validate route parameter as a positive integer
+export const prerender = false;
+
 const ParamsSchema = z.object({
   body_part_id: z.coerce
     .number({
@@ -13,12 +14,9 @@ const ParamsSchema = z.object({
     .positive(),
 });
 
-// Columns to select from muscle_tests table
 const SELECT_COLUMNS = "id, body_part_id, name, description, created_at";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) => {
-  // Parse and validate body_part_id
   const parsed = ParamsSchema.safeParse(params);
   if (!parsed.success) {
     return jsonResponse({ error: "Invalid body_part_id", details: parsed.error.flatten() }, 400);
@@ -29,14 +27,12 @@ export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) =>
     const { data, error } = await supabase.from("muscle_tests").select(SELECT_COLUMNS).eq("body_part_id", bodyPartId);
 
     if (error) {
-      // Upstream (Supabase) failure
       return jsonResponse({ error: "Failed to fetch muscle tests", details: error.message }, 502);
     }
 
-    // Wrap and return data with explicit response type
     return jsonResponse({ data: data ?? [] }, 200);
-  } catch {
-    // Unexpected server error
+  } catch (e) {
+    console.error("Internal server error fetching muscle tests:", e);
     return jsonResponse({ error: "Internal server error" }, 500);
   }
 });

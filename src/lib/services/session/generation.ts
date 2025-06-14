@@ -7,16 +7,13 @@ export interface SessionGenerationResult {
   id?: number;
 }
 
-/**
- * Starts the session generation process by calling the API.
- * Throws on error, returns session detail data on success.
- */
 export async function startSessionGeneration(
   bodyPartId: number,
   tests: { muscle_test_id: number; pain_intensity: number }[]
 ): Promise<SessionGenerationResult> {
   const response = await fetch("/api/sessions", {
     method: "POST",
+    credentials: "include",
     headers: JSON_HEADERS,
     body: JSON.stringify({ body_part_id: bodyPartId, tests } as CreateSessionCommandDto),
   });
@@ -31,7 +28,7 @@ export async function startSessionGeneration(
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    let message = `Server error: ${response.statusText}`;
+    let message = `Server error: ${response.statusText} ${bodyPartId} ${tests}`;
     if (errorData.error) {
       const errObj = errorData.error as { code?: string; message?: string; details?: { reason?: string } };
       if (typeof errObj.details?.reason === "string") {

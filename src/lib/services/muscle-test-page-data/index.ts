@@ -1,37 +1,36 @@
-import { fetchMuscleTestsAndBodyPartName } from "@/lib/services/body-parts";
-import { getPageTitle } from "@/lib/utils/getPageTitle";
-import { validateBodyPartId } from "@/lib/validators/bodyPart.validator";
-import type { MuscleTestDto } from "@/types";
-import type { AstroGlobal } from "astro";
+import type { APIContext } from "astro";
+import { fetchMuscleTestsAndBodyPartName } from "../body-parts/index";
 
-// Move interface here for better visibility
-export interface MuscleTestsPageData {
-  muscleTests: MuscleTestDto[];
-  fetchError: string | null;
-  pageTitle: string;
-  bodyPartId: number;
-  backLink: { href: string; label: string };
-}
+export async function getMuscleTestsPageData(astroContext: APIContext) {
+  const { params, request, url } = astroContext;
+  const bodyPartId = params.body_part_id;
 
-/**
- * Gathers and returns all data needed for the muscle tests page
- */
-export async function getMuscleTestsPageData({ params, request }: AstroGlobal): Promise<MuscleTestsPageData> {
-  // Parse and validate bodyPartId from route params
-  const rawId = params.body_part_id ?? "";
-  const bodyPartId = validateBodyPartId(rawId);
-  const origin = new URL(request.url).origin;
-  const backLink = { href: "/body-parts", label: "← Go back to body parts selection" };
+  const cookie = request.headers.get("cookie");
+
+  const fetchOptions: RequestInit = {
+    headers: {
+      ...(cookie ? { cookie } : {}),
+    },
+  };
 
   try {
-    const { muscleTests, bodyPartName } = await fetchMuscleTestsAndBodyPartName(rawId, origin);
-    const pageTitle = getPageTitle(bodyPartName, bodyPartId);
+    const { muscleTests, bodyPartName } = await fetchMuscleTestsAndBodyPartName(bodyPartId, url.origin, fetchOptions);
 
-    return { muscleTests, fetchError: null, pageTitle, bodyPartId, backLink };
-  } catch (error) {
-    const fetchError = error instanceof Error ? error.message : String(error);
-    const pageTitle = getPageTitle("", bodyPartId);
-
-    return { muscleTests: [], fetchError, pageTitle, bodyPartId, backLink };
+    return {
+      muscleTests,
+      pageTitle: `Muscle Tests for ${bodyPartName}`,
+      bodyPartId: Number(bodyPartId),
+      fetchError: null,
+      backLink: { href: "/body-parts", text: "← Go back to Body Part Selection" },
+    };
+  } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : "An unknown error occurred.";
+    return {
+      muscleTests: [],
+      pageTitle: "Error",
+      bodyPartId: Number(bodyPartId),
+      fetchError: [errorMessage],
+      backLink: { href: "/body-parts", text: "← Go back to Body Part Selection" },
+    };
   }
 }

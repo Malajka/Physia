@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui";
 import { useCallback } from "react";
 
-interface NavigationNextButtonProps {
+export interface NavigationNextButtonProps {
   selectedBodyPartId: number | null;
   className?: string;
   onNavigate?: (id: number) => void;

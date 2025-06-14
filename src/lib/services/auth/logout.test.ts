@@ -1,73 +1,53 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { logoutUser } from "./logout";
+import { JSON_HEADERS } from "@/lib/utils/api";
 
-// Mock fetch
+vi.mock("@/lib/utils/api", () => ({
+  JSON_HEADERS: { "Content-Type": "application/json" },
+}));
+
 global.fetch = vi.fn();
 const mockedFetch = vi.mocked(fetch);
 
-beforeEach(() => {
-  Object.defineProperty(window, "location", {
-    value: { href: "" },
-    writable: true,
-  });
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
-
 describe("logoutUser", () => {
-  describe("Successful logout", () => {
-    it("returns success when API call succeeds", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: true,
-      } as Partial<Response> as Response);
-
-      const result = await logoutUser();
-
-      expect(fetch).toHaveBeenCalledWith("/api/auth/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-      expect(result).toEqual({ success: true });
-      expect(window.location.href).toBe("/login");
-    });
-
-    it("redirects to login page on success", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: true,
-      } as Partial<Response> as Response);
-
-      await logoutUser();
-
-      expect(window.location.href).toBe("/login");
+  beforeEach(() => {
+    vi.clearAllMocks();
+    Object.defineProperty(window, "location", {
+      value: { href: "" },
+      writable: true,
     });
   });
 
-  describe("Failed logout", () => {
-    it("returns error when API returns error response", async () => {
-      const errorMessage = "Session expired";
-      mockedFetch.mockResolvedValue({
-        ok: false,
-        status: 401,
-        json: vi.fn().mockResolvedValue({ error: errorMessage }),
-      } as Partial<Response> as Response);
+  describe("on success", () => {
+    it("should call the API with correct parameters, redirect, and return success", async () => {
+      mockedFetch.mockResolvedValueOnce(new Response(null, { status: 200 }));
 
       const result = await logoutUser();
 
-      expect(result).toEqual({
-        success: false,
-        error: errorMessage,
+      expect(mockedFetch).toHaveBeenCalledTimes(1);
+      expect(mockedFetch).toHaveBeenCalledWith("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: JSON_HEADERS,
       });
-      expect(window.location.href).toBe("");
+      expect(window.location.href).toBe("/login");
+      expect(result).toEqual({ success: true });
+    });
+  });
+
+  describe("on failure", () => {
+    it("should return an error if the API response is not ok", async () => {
+      const errorPayload = { message: "Session invalid" };
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify(errorPayload), { status: 401 }));
+
+      const result = await logoutUser();
+
+      expect(result).toEqual({ success: false, error: "Session invalid" });
+      expect(window.location.href).not.toBe("/login");
     });
 
-    it("returns default error when API returns no error text", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: false,
-        status: 500,
-        json: vi.fn().mockResolvedValue({}),
-      } as Partial<Response> as Response);
+    it("should return a default error message if payload has no error text", async () => {
+      mockedFetch.mockResolvedValueOnce(new Response(JSON.stringify({}), { status: 500 }));
 
       const result = await logoutUser();
 
@@ -75,23 +55,24 @@ describe("logoutUser", () => {
         success: false,
         error: "Logout failed (status: 500)",
       });
+      expect(window.location.href).not.toBe("/login");
     });
 
-    it("handles fetch network errors", async () => {
-      const networkError = new Error("Network connection failed");
-      mockedFetch.mockRejectedValue(networkError);
+    it("should handle network errors during fetch", async () => {
+      const networkError = new Error("Network request failed");
+      mockedFetch.mockRejectedValueOnce(networkError);
 
       const result = await logoutUser();
 
       expect(result).toEqual({
         success: false,
-        error: "Logout error: Network connection failed",
+        error: "Logout error: Network request failed",
       });
-      expect(window.location.href).toBe("");
+      expect(window.location.href).not.toBe("/login");
     });
 
-    it("handles non-Error exceptions", async () => {
-      mockedFetch.mockRejectedValue("String error");
+    it("should handle non-Error exceptions", async () => {
+      mockedFetch.mockRejectedValueOnce("A string error");
 
       const result = await logoutUser();
 
@@ -99,43 +80,7 @@ describe("logoutUser", () => {
         success: false,
         error: "Logout error: Unknown error",
       });
-    });
-
-    it("does not redirect on failed logout", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: false,
-        status: 400,
-        json: vi.fn().mockResolvedValue({ error: "Bad request" }),
-      } as Partial<Response> as Response);
-
-      await logoutUser();
-
-      expect(window.location.href).toBe("");
-    });
-  });
-
-  describe("API call configuration", () => {
-    it("makes POST request with correct headers", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: true,
-      } as Partial<Response> as Response);
-
-      await logoutUser();
-
-      expect(fetch).toHaveBeenCalledWith("/api/auth/logout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-    });
-
-    it("calls correct endpoint", async () => {
-      mockedFetch.mockResolvedValue({
-        ok: true,
-      } as Partial<Response> as Response);
-
-      await logoutUser();
-
-      expect(fetch).toHaveBeenCalledWith("/api/auth/logout", expect.any(Object));
+      expect(window.location.href).not.toBe("/login");
     });
   });
 });

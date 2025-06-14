@@ -10,12 +10,7 @@ const MuscleTestDtoSchema = z.object({
   created_at: z.string(),
 });
 
-/**
- * Fetches and validates muscle tests for a specific body part
- */
-export async function fetchMuscleTests(bodyPartId: number, apiBase: string): Promise<MuscleTestDto[]> {
-  // Use fetchArray to handle both raw arrays and { data: T[] } shapes
-  const list = await fetchArray<MuscleTestDto>(`${apiBase}/api/body_parts/${bodyPartId}/muscle_tests`);
-  // Validate each item against the Zod schema
+export async function fetchMuscleTests(bodyPartId: number, apiBase: string, init?: RequestInit): Promise<MuscleTestDto[]> {
+  const list = await fetchArray<MuscleTestDto>(`${apiBase}/api/body_parts/${bodyPartId}/muscle_tests`, init);
   return MuscleTestDtoSchema.array().parse(list);
 }

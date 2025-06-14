@@ -1,10 +1,10 @@
-import { BodyPartButton } from "@/components/body-part-selection/BodyPartButton";
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
 import { InfoBar } from "@/components/ui";
 import { useBodyParts } from "@/hooks/useBodyParts";
 import { useDisclaimer } from "@/hooks/useDisclaimer";
 import { useSingleSelection } from "@/hooks/useSingleSelection";
 import { useCallback } from "react";
+import { BodyPartButton } from "./BodyPartButton";
 import { NavigationNextButton } from "./NavigationNextButton";
 
 function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
@@ -18,21 +18,18 @@ function StatusMessage({ text, error = false, children }: { text: string; error?
 
 export default function BodyPartSelector() {
   const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();
-
-  const { bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts({ disclaimerAccepted: acceptedAt });
-
+  const { data: bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts({ disclaimerAccepted: acceptedAt });
   const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
   const handleSelect = useCallback((id: number) => toggle(id), [toggle]);
 
   if (discLoading) return <StatusMessage text="Loading disclaimer..." />;
   if (discError) return <StatusMessage text={`Disclaimer Error: ${discError}`} error />;
-
   if (!acceptedAt) {
     return <DisclaimerModal open onAccept={accept} text={disclaimerText || "Loading disclaimer text..."} />;
   }
 
   if (bpLoading) return <StatusMessage text="Loading body areas..." />;
-  if (bpError)
+  if (bpError) {
     return (
       <StatusMessage text={`Error loading body parts: ${bpError}`} error>
         <button onClick={refetch} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -40,8 +37,9 @@ export default function BodyPartSelector() {
         </button>
       </StatusMessage>
     );
+  }
 
-  if (!bodyParts || bodyParts.length === 0) {
+  if (!Array.isArray(bodyParts) || bodyParts.length === 0) {
     return <StatusMessage text="No body areas available." />;
   }
 
@@ -49,6 +47,7 @@ export default function BodyPartSelector() {
     <div className="space-y-8">
       <InfoBar>Select max 1 area. Click a selected area again to deselect.</InfoBar>
       <div className="grid grid-cols-2 gap-[15px] justify-items-center">
+        {}
         {bodyParts.map((bodyPart) => (
           <BodyPartButton
             key={bodyPart.id}

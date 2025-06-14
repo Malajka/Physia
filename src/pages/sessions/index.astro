@@ -3,26 +3,22 @@ import { LinkButton } from "@/components/ui/LinkButton";
 import Layout from "@/layouts/Layout.astro";
 import type { TrainingPlan } from "@/lib/services/training-plan";
 
-// Get the current user session
-const { data: authData } = await Astro.locals.supabase.auth.getSession();
-const session = authData.session;
+const {
+  data: { user },
+} = await Astro.locals.supabase.auth.getUser();
 
-// Redirect to login if not authenticated
-if (!session) {
+if (!user) {
   return Astro.redirect("/login?error=not_authenticated");
 }
 
-// Extract user ID
-const userId = session.user.id;
+const userId = user.id;
 
-// Fetch user's sessions and include the related body part name
 const { data: sessionsRaw, error: fetchError } = await Astro.locals.supabase
   .from("sessions")
   .select("id, created_at, training_plan, body_parts(name)")
   .eq("user_id", userId)
   .order("created_at", { ascending: false });
 
-// Map each raw row into a typed session object with `plan` property
 interface SessionRow {
   id: number;
   created_at: string;
@@ -46,7 +42,7 @@ const pageTitle = "My Exercise Sessions";
 ---
 
 <Layout title={pageTitle}>
-  <div class="container mx-auto p-8">
+  <div class="container mx-auto p-8" data-testid="sessions-page">
     <h1 class="text-3xl font-bold mb-8">My Exercise Sessions</h1>
 
     {

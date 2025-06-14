@@ -1,15 +1,9 @@
 import type { ExerciseDto, MuscleTestDto } from "@/types";
 
-/**
- * Formats muscle tests into a list with pain intensity and description.
- */
 function formatMuscleTestList(muscleTests: (MuscleTestDto & { pain_intensity: number })[]): string {
   return muscleTests.map((test) => `- ${test.name}: Pain Intensity ${test.pain_intensity}/10 - ${test.description}`).join("\n");
 }
 
-/**
- * Formats exercises grouped by muscle test for inclusion in the prompt.
- */
 function formatExercisesForMuscleTests(muscleTests: (MuscleTestDto & { pain_intensity: number })[], exercises: ExerciseDto[]): string {
   return muscleTests
     .map((test) => {
@@ -24,9 +18,6 @@ function formatExercisesForMuscleTests(muscleTests: (MuscleTestDto & { pain_inte
     .join("\n\n");
 }
 
-/**
- * Constructs the AI prompt for generating a personalized training plan.
- */
 export function buildTrainingPlanPrompt(
   bodyPartName: string,
   muscleTests: (MuscleTestDto & { pain_intensity: number })[],

@@ -1,54 +1,96 @@
-import type { AuthFormSubmitResult } from "@/hooks/useAuthForm";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import React from "react";
-import { describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthForm } from "./AuthForm";
+import { useAuthForm } from "@/hooks/useAuthForm";
 
-// Mock hook useAuthForm
-vi.mock("@/lib/hooks/useAuthForm", () => {
-  return {
-    useAuthForm: (onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult>, initialErrors: string[] | string | null) => ({
-      loading: false,
-      errors: initialErrors,
-      handleSubmit: (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new window.FormData(e.currentTarget);
-        onSubmit(formData);
-      },
-    }),
-  };
-});
+vi.mock("@/hooks/useAuthForm");
+const mockedUseAuthForm = vi.mocked(useAuthForm);
 
 describe("AuthForm", () => {
-  it("renders title and children", () => {
-    render(
-      <AuthForm title="Logowanie" onSubmit={vi.fn()} submitText="Zaloguj">
-        <input name="email" />
-      </AuthForm>
-    );
-    expect(screen.getByText("Logowanie")).toBeInTheDocument();
-    expect(screen.getByRole("textbox")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /zaloguj/i })).toBeInTheDocument();
+  const mockHandleSubmit = vi.fn((e) => e.preventDefault());
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockedUseAuthForm.mockReturnValue({
+      loading: false,
+      errors: [],
+      handleSubmit: mockHandleSubmit,
+    });
   });
 
-  it("renders errors if provided", () => {
+  it("should render correctly with initial props", () => {
     render(
-      <AuthForm title="Tytuł" onSubmit={vi.fn()} submitText="Wyślij" errors={["Błąd 1", "Błąd 2"]}>
-        <input name="test" />
+      <AuthForm title="Test Title" onSubmit={vi.fn()} submitText="Submit Me">
+        <input data-testid="child-input" />
       </AuthForm>
     );
-    expect(screen.getByText("Błąd 1")).toBeInTheDocument();
-    expect(screen.getByText("Błąd 2")).toBeInTheDocument();
+
+    expect(screen.getByRole("heading", { name: "Test Title" })).toBeInTheDocument();
+    expect(screen.getByTestId("child-input")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Submit Me" })).not.toBeDisabled();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 
-  it("calls onSubmit when form is submitted", async () => {
-    const onSubmit = vi.fn().mockResolvedValue({ success: true });
+  it("should call handleSubmit on form submission", async () => {
+    const user = userEvent.setup();
     render(
-      <AuthForm title="Tytuł" onSubmit={onSubmit} submitText="Wyślij">
-        <input name="test" defaultValue="abc" />
+      <AuthForm title="Test" onSubmit={vi.fn()} submitText="Submit" submitTestId="submit-btn">
+        <div />
       </AuthForm>
     );
-    fireEvent.submit(screen.getByTestId("auth-form"));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+
+    await user.click(screen.getByTestId("submit-btn"));
+
+    expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it("should display a loading state and disable the button", () => {
+    mockedUseAuthForm.mockReturnValue({
+      loading: true,
+      errors: [],
+      handleSubmit: mockHandleSubmit,
+    });
+
+    render(
+      <AuthForm title="Test" onSubmit={vi.fn()} submitText="Submit" submitTestId="submit-btn">
+        <div />
+      </AuthForm>
+    );
+
+    const submitButton = screen.getByTestId("submit-btn");
+    expect(submitButton).toBeDisabled();
+
+    const buttonWithLoadingText = screen.getByRole("button", { name: "Processing..." });
+    expect(buttonWithLoadingText).toBeInTheDocument();
+  });
+
+  it("should display errors returned from the useAuthForm hook", () => {
+    mockedUseAuthForm.mockReturnValue({
+      loading: false,
+      errors: ["Invalid email", "Password is too short"],
+      handleSubmit: mockHandleSubmit,
+    });
+
+    render(
+      <AuthForm title="Test" onSubmit={vi.fn()} submitText="Submit">
+        <div />
+      </AuthForm>
+    );
+
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByText("Invalid email")).toBeInTheDocument();
+    expect(screen.getByText("Password is too short")).toBeInTheDocument();
+  });
+
+  it("should pass initialErrors to the useAuthForm hook", () => {
+    const initialError = "An initial error from props";
+    render(
+      <AuthForm title="Test" onSubmit={vi.fn()} submitText="Submit" errors={initialError}>
+        <div />
+      </AuthForm>
+    );
+
+    expect(mockedUseAuthForm).toHaveBeenCalledWith(expect.any(Function), initialError);
   });
 });

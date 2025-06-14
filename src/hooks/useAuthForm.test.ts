@@ -23,6 +23,7 @@ describe("useAuthForm", () => {
     await act(async () => {
       await result.current.handleSubmit(fakeEvent);
     });
+
     expect(onSubmit).toHaveBeenCalled();
     expect(result.current.errors).toBe(null);
     expect(result.current.loading).toBe(false);

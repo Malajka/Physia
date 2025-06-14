@@ -1,96 +1,89 @@
-import { fetchMuscleTests } from "@/lib/services/muscle-tests";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchArray } from "@/lib/utils/fetch";
 import { validateBodyPartId, validateBodyPartsDto } from "@/lib/validators/bodyPart.validator";
-import type { BodyPartDto, MuscleTestDto } from "@/types";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { fetchMuscleTests } from "../muscle-tests";
 import { fetchAllBodyParts, fetchMuscleTestsAndBodyPartName } from "./index";
 
-// Mock dependencies
-vi.mock("@/lib/utils/fetch", () => ({
-  fetchArray: vi.fn(),
-}));
-vi.mock("@/lib/validators/bodyPart.validator", () => ({
-  validateBodyPartId: vi.fn(),
-  validateBodyPartsDto: vi.fn(),
-}));
-vi.mock("@/lib/services/muscle-tests", () => ({
-  fetchMuscleTests: vi.fn(),
-}));
+vi.mock("@/lib/utils/fetch");
+vi.mock("@/lib/validators/bodyPart.validator");
+vi.mock("../muscle-tests");
 
-describe("body-parts service", () => {
-  afterEach(() => {
-    vi.resetAllMocks();
+const mockedFetchArray = vi.mocked(fetchArray);
+const mockedValidateBodyPartId = vi.mocked(validateBodyPartId);
+const mockedValidateBodyPartsDto = vi.mocked(validateBodyPartsDto);
+const mockedFetchMuscleTests = vi.mocked(fetchMuscleTests);
+
+describe("Body Parts Service", () => {
+  const origin = "http://test.host";
+  const mockBodyParts = [{ id: 1, name: "Shoulder", created_at: "2024-01-01T00:00:00Z" }];
+  const mockMuscleTests = [{ id: 101, name: "Test 1", body_part_id: 1, description: "", created_at: "2024-01-01T00:00:00Z" }];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
   describe("fetchAllBodyParts", () => {
-    const origin = "http://localhost";
-    const bodyPartsRaw: BodyPartDto[] = [
-      { id: 1, name: "Shoulder", created_at: "2024-01-01T00:00:00Z" },
-      { id: 2, name: "Knee", created_at: "2024-01-01T00:00:00Z" },
-    ];
-    const validated: BodyPartDto[] = bodyPartsRaw;
+    it("should fetch, validate, and return body parts", async () => {
+      mockedFetchArray.mockResolvedValueOnce(mockBodyParts);
+      mockedValidateBodyPartsDto.mockReturnValue(mockBodyParts);
 
-    it("fetches and validates body parts", async () => {
-      (fetchArray as ReturnType<typeof vi.fn>).mockResolvedValue(bodyPartsRaw);
-      (validateBodyPartsDto as ReturnType<typeof vi.fn>).mockReturnValue(validated);
       const result = await fetchAllBodyParts(origin);
-      expect(fetchArray).toHaveBeenCalledWith(`${origin}/api/body_parts`, undefined);
-      expect(validateBodyPartsDto).toHaveBeenCalledWith(bodyPartsRaw);
-      expect(result).toEqual(validated);
+
+      expect(mockedFetchArray).toHaveBeenCalledWith(`${origin}/api/body_parts`, undefined);
+      expect(mockedValidateBodyPartsDto).toHaveBeenCalledWith(mockBodyParts);
+      expect(result).toEqual(mockBodyParts);
     });
 
-    it("passes signal to fetchArray", async () => {
-      (fetchArray as ReturnType<typeof vi.fn>).mockResolvedValue(bodyPartsRaw);
-      (validateBodyPartsDto as ReturnType<typeof vi.fn>).mockReturnValue(validated);
-      const signal = {} as AbortSignal;
-      await fetchAllBodyParts(origin, { signal });
-      expect(fetchArray).toHaveBeenCalledWith(`${origin}/api/body_parts`, signal);
+    it("should pass RequestInit to fetchArray", async () => {
+      const init: RequestInit = { headers: { Authorization: "Bearer token" } };
+      await fetchAllBodyParts(origin, init);
+      expect(mockedFetchArray).toHaveBeenCalledWith(expect.any(String), init);
     });
 
-    it("throws if validation fails", async () => {
-      (fetchArray as ReturnType<typeof vi.fn>).mockResolvedValue(bodyPartsRaw);
-      (validateBodyPartsDto as ReturnType<typeof vi.fn>).mockImplementation(() => {
-        throw new Error("Invalid");
+    it("should re-throw validation errors", async () => {
+      const validationError = new Error("Invalid DTO");
+      mockedValidateBodyPartsDto.mockImplementation(() => {
+        throw validationError;
       });
-      await expect(fetchAllBodyParts(origin)).rejects.toThrow("Invalid");
+      mockedFetchArray.mockResolvedValueOnce([]);
+
+      await expect(fetchAllBodyParts(origin)).rejects.toThrow(validationError);
     });
   });
 
   describe("fetchMuscleTestsAndBodyPartName", () => {
-    const origin = "http://localhost";
-    const bodyPartIdString = "1";
-    const bodyPartId = 1;
-    const muscleTests: MuscleTestDto[] = [{ id: 101, name: "Test 1", body_part_id: 1, description: "desc", created_at: "2024-01-01T00:00:00Z" }];
-    const bodyParts: BodyPartDto[] = [
-      { id: 1, name: "Shoulder", created_at: "2024-01-01T00:00:00Z" },
-      { id: 2, name: "Knee", created_at: "2024-01-01T00:00:00Z" },
-    ];
-
-    it("fetches muscle tests and body part name", async () => {
-      (validateBodyPartId as ReturnType<typeof vi.fn>).mockReturnValue(bodyPartId);
-      (fetchMuscleTests as ReturnType<typeof vi.fn>).mockResolvedValue(muscleTests);
-      (fetchArray as ReturnType<typeof vi.fn>).mockResolvedValue(bodyParts);
-      (validateBodyPartsDto as ReturnType<typeof vi.fn>).mockReturnValue(bodyParts);
-      const result = await fetchMuscleTestsAndBodyPartName(bodyPartIdString, origin);
-      expect(validateBodyPartId).toHaveBeenCalledWith(bodyPartIdString);
-      expect(fetchMuscleTests).toHaveBeenCalledWith(bodyPartId, origin);
-      expect(result).toEqual({ muscleTests, bodyPartName: "Shoulder" });
+    beforeEach(() => {
+      mockedValidateBodyPartId.mockReturnValue(1);
+      mockedFetchMuscleTests.mockResolvedValue(mockMuscleTests);
+      mockedFetchArray.mockResolvedValue(mockBodyParts);
+      mockedValidateBodyPartsDto.mockReturnValue(mockBodyParts);
     });
 
-    it("returns empty string if body part not found", async () => {
-      (validateBodyPartId as ReturnType<typeof vi.fn>).mockReturnValue(bodyPartId);
-      (fetchMuscleTests as ReturnType<typeof vi.fn>).mockResolvedValue(muscleTests);
-      (fetchArray as ReturnType<typeof vi.fn>).mockResolvedValue([{ id: 3, name: "Other", created_at: "2024-01-01T00:00:00Z" }]);
-      (validateBodyPartsDto as ReturnType<typeof vi.fn>).mockReturnValue([{ id: 3, name: "Other", created_at: "2024-01-01T00:00:00Z" }]);
-      const result = await fetchMuscleTestsAndBodyPartName(bodyPartIdString, origin);
-      expect(result).toEqual({ muscleTests, bodyPartName: "" });
+    it("should fetch data and return muscle tests with the correct body part name", async () => {
+      const result = await fetchMuscleTestsAndBodyPartName("1", origin);
+
+      expect(mockedValidateBodyPartId).toHaveBeenCalledWith("1");
+      expect(mockedFetchMuscleTests).toHaveBeenCalledWith(1, origin, undefined);
+      expect(mockedFetchArray).toHaveBeenCalledWith(`${origin}/api/body_parts`, undefined);
+      expect(result).toEqual({ muscleTests: mockMuscleTests, bodyPartName: "Shoulder" });
     });
 
-    it("throws if validateBodyPartId throws", async () => {
-      (validateBodyPartId as ReturnType<typeof vi.fn>).mockImplementation(() => {
-        throw new Error("Invalid id");
-      });
-      await expect(fetchMuscleTestsAndBodyPartName(bodyPartIdString, origin)).rejects.toThrow("Invalid id");
+    it("should pass RequestInit to both underlying fetch calls", async () => {
+      const init: RequestInit = { cache: "no-store" };
+      await fetchMuscleTestsAndBodyPartName("1", origin, init);
+
+      expect(mockedFetchMuscleTests).toHaveBeenCalledWith(1, origin, init);
+      expect(mockedFetchArray).toHaveBeenCalledWith(expect.any(String), init);
+    });
+
+    it("should return an empty string for body part name if not found", async () => {
+      mockedValidateBodyPartsDto.mockReturnValue([]);
+      const result = await fetchMuscleTestsAndBodyPartName("1", origin);
+      expect(result.bodyPartName).toBe("");
+    });
+
+    it("should throw an error if the body part ID is undefined", async () => {
+      await expect(fetchMuscleTestsAndBodyPartName(undefined, origin)).rejects.toThrow("A body part ID is required but was not provided in the URL.");
     });
   });
 });

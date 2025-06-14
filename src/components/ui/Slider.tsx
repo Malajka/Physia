@@ -12,7 +12,6 @@ const Slider = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, R
     const currentValue = props.value?.[0] ?? 0;
     const thumbColor = getThumbColor(currentValue);
 
-    // Convert hex color to RGB values for shadow effects
     const hexToRgb = (hex: string) => {
       const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result

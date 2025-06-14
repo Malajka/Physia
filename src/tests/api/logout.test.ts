@@ -1,75 +1,70 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { POST } from "@/pages/api/auth/logout";
+import { POST } from "./logout";
+import type { APIContext } from "astro";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-// --- Types ---
-interface MockCookies {
-  delete: (name: string, options: { path: string }) => void;
-}
+const mockSignOut = vi.fn();
+const mockSupabaseClient = {
+  auth: {
+    signOut: mockSignOut,
+  },
+} as unknown as SupabaseClient;
 
-interface SupabaseAuth {
-  signOut: () => Promise<{ error: { message: string } | null }>;
-}
+const createMockContext = (): APIContext => ({
+  locals: {
+    supabase: mockSupabaseClient,
+  },
+});
 
-interface Locals {
-  supabase: {
-    auth: SupabaseAuth;
-  };
-}
-
-type PostArgs = Parameters<typeof POST>[0];
-
-function createMockCookies(): MockCookies {
-  return {
-    delete: vi.fn(),
-  };
-}
-
-describe("POST /api/auth/logout", () => {
-  let locals: Locals;
-  let cookies: MockCookies;
-
+describe("POST /api/logout", () => {
   beforeEach(() => {
-    cookies = createMockCookies();
-    locals = {
-      supabase: {
-        auth: {
-          signOut: vi.fn(),
-        },
-      },
-    };
+    vi.clearAllMocks();
   });
 
-  it("returns 200 and deletes cookies on successful logout", async () => {
-    (locals.supabase.auth.signOut as ReturnType<typeof vi.fn>).mockResolvedValue({ error: null });
-    const response = await POST({ locals, cookies } as PostArgs);
+  it("should return 200 on successful logout", async () => {
+    mockSignOut.mockResolvedValue({ error: null });
+
+    const context = createMockContext();
+    const response = await POST(context as APIContext);
+    const body = await response.json();
+
     expect(response.status).toBe(200);
-    const body = await response.json();
-    expect(body.success).toBe(true);
-    expect(cookies.delete).toHaveBeenCalledWith("sb-access-token", { path: "/" });
-    expect(cookies.delete).toHaveBeenCalledWith("sb-refresh-token", { path: "/" });
+    expect(body).toEqual({ success: true });
+    expect(mockSignOut).toHaveBeenCalledTimes(1);
   });
 
-  it("returns 500 and error message if signOut fails", async () => {
-    (locals.supabase.auth.signOut as ReturnType<typeof vi.fn>).mockResolvedValue({ error: { message: "logout failed" } });
-    const response = await POST({ locals, cookies } as PostArgs);
-    expect(response.status).toBe(500);
+  it("should return 500 if supabase.auth.signOut returns an error", async () => {
+    const signOutError = { message: "Failed to invalidate session" };
+    mockSignOut.mockResolvedValue({ error: signOutError });
+
+    const context = createMockContext();
+    const response = await POST(context as APIContext);
     const body = await response.json();
-    expect(body.error).toBe("logout failed");
+
+    expect(response.status).toBe(500);
+    expect(body.error).toBe("Failed to invalidate session");
   });
 
-  it("returns 500 and error message on unexpected error", async () => {
-    (locals.supabase.auth.signOut as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("unexpected"));
-    const response = await POST({ locals, cookies } as PostArgs);
-    expect(response.status).toBe(500);
+  it("should return 500 on an unexpected error during signOut", async () => {
+    const unexpectedError = new Error("Network connection failed");
+    mockSignOut.mockRejectedValue(unexpectedError);
+
+    const context = createMockContext();
+    const response = await POST(context as APIContext);
     const body = await response.json();
-    expect(body.error).toMatch(/unexpected/);
+
+    expect(response.status).toBe(500);
+    expect(body.error).toBe("Network connection failed");
   });
 
-  it("returns 500 and default error message if thrown value is not an Error", async () => {
-    (locals.supabase.auth.signOut as ReturnType<typeof vi.fn>).mockRejectedValue("not-an-error");
-    const response = await POST({ locals, cookies } as PostArgs);
-    expect(response.status).toBe(500);
+  it("should return a generic 500 error if thrown value is not an Error instance", async () => {
+    mockSignOut.mockRejectedValue("a string error");
+
+    const context = createMockContext();
+    const response = await POST(context as APIContext);
     const body = await response.json();
+
+    expect(response.status).toBe(500);
     expect(body.error).toBe("Failed to log out");
   });
 });

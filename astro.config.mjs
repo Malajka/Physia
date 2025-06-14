@@ -1,50 +1,23 @@
-// @ts-check
-import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
-// @ts-expect-error - @tailwindcss/vite lacks TypeScript declarations
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, envField } from "astro/config";
+import sitemap from "@astrojs/sitemap";
+import tailwind from "@astrojs/tailwind";
+import vercel from "@astrojs/vercel/serverless";
+import { defineConfig } from "astro/config";
 import path from "path";
 
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  server: {
-    host: true,
-    port: 4321,
-  },
-  experimental: {
-    session: true,
-  },
-  env: {
-    schema: {
-      SUPABASE_URL: envField.string({ context: "server", access: "secret" }),
-      SUPABASE_PUBLIC_KEY: envField.string({ context: "server", access: "secret" }),
-      OPENROUTER_API_KEY: envField.string({ context: "server", access: "secret" }),
-      OPENROUTER_USE_MOCK: envField.string({ context: "server", access: "secret" }),
-    },
-  },
+  adapter: vercel({}),
+  // Dodaj tailwind() do integracji
+  integrations: [react(), sitemap(), tailwind()],
+  server: { port: 4321 },
+
   vite: {
     resolve: {
       alias: {
         "@": path.resolve("./src"),
       },
     },
-    plugins: [tailwindcss()],
-    ssr: {
-      external: ["ws"],
-      noExternal: ["@supabase/ssr"],
-    },
-    define: {
-      global: "globalThis",
-    },
-    optimizeDeps: {
-      exclude: ["ws"],
-    },
   },
-  devToolbar: {
-    enabled: false,
-  },
-  integrations: [react()],
-  adapter: cloudflare(),
 });

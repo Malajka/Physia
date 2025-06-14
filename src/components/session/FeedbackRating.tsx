@@ -13,7 +13,6 @@ export const FeedbackRating: React.FC<FeedbackRatingProps> = ({ sessionId }) => 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch feedback on mount or when sessionId changes
   useEffect(() => {
     let isMounted = true;
     async function loadFeedback() {
@@ -32,7 +31,6 @@ export const FeedbackRating: React.FC<FeedbackRatingProps> = ({ sessionId }) => 
     };
   }, [sessionId]);
 
-  // Memoized handler to avoid unnecessary re-renders
   const handleRate = useCallback(
     async (rating: 0 | 1) => {
       setSaving(true);
@@ -49,10 +47,8 @@ export const FeedbackRating: React.FC<FeedbackRatingProps> = ({ sessionId }) => 
     [sessionId]
   );
 
-  // Early return for loading state
   if (loading) return <p>Loading feedback...</p>;
 
-  // Early return for error state
   if (error && !feedback) {
     return (
       <p className="text-red-600 mb-2" data-testid="feedback-error">

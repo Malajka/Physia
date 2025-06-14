@@ -17,7 +17,7 @@ export const AuthForm = function AuthForm({ title, onSubmit, children, submitTex
     <div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6">{title}</h2>
 
-      <ErrorAlert errors={errors} />
+      <ErrorAlert errors={errors} data-testid="auth-form-errors" />
 
       <form onSubmit={handleSubmit} data-testid="auth-form" noValidate>
         {children}

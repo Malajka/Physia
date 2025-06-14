@@ -5,11 +5,6 @@ export interface AuthFormSubmitResult {
   error?: string;
 }
 
-/**
- * useAuthForm handles form submission, loading state, and error management.
- * @param onSubmit - async function to process FormData and return a result.
- * @param initialErrors - optional initial errors to display.
- */
 export function useAuthForm(onSubmit: (formData: FormData) => Promise<AuthFormSubmitResult>, initialErrors: string[] | string | null = null) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[] | string | null>(initialErrors);

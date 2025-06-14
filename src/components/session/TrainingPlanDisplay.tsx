@@ -22,7 +22,6 @@ function formatExerciseDescription(description: string | null | undefined): Form
   const cooldown: string[] = [];
   const general: string[] = [];
 
-  // Split by section markers
   const sections = description.split(/###/).filter((section) => section.trim().length > 0);
 
   sections.forEach((section) => {
@@ -35,9 +34,7 @@ function formatExerciseDescription(description: string | null | undefined): Form
     const sectionType = lines[0].toLowerCase().trim();
     const content = lines.slice(1);
 
-    // If first line doesn't match any section type, treat as general content
     if (!["warmup", "workout", "cooldown", "warm-up", "cool-down"].includes(sectionType)) {
-      // This is content without section marker - add it to general by default
       const allLines = [lines[0], ...content];
       allLines.forEach((line) => {
         const cleanLine = line.trim();
@@ -48,12 +45,10 @@ function formatExerciseDescription(description: string | null | undefined): Form
       return;
     }
 
-    // Process content for the identified section
     content.forEach((line) => {
       const cleanLine = line.trim();
       if (cleanLine.length === 0) return;
 
-      // Remove bullet points and numbers if present
       const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
 
       switch (sectionType) {
@@ -72,7 +67,6 @@ function formatExerciseDescription(description: string | null | undefined): Form
     });
   });
 
-  // If no sections found, treat as general content
   if (warmup.length === 0 && workout.length === 0 && cooldown.length === 0) {
     const lines = description.split("\n").filter((line) => line.trim().length > 0);
     lines.forEach((line) => {
@@ -90,7 +84,6 @@ function formatExerciseDescription(description: string | null | undefined): Form
 }
 
 export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: TrainingPlanDisplayProps) {
-  // Extract sections from all exercises
   const allSections = {
     warmup: [] as { exercise: TrainingPlan["exercises"][number]; content: string[] }[],
     workout: [] as { exercise: TrainingPlan["exercises"][number]; content: string[] }[],
@@ -140,14 +133,14 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
             >
               <h4 className="font-semibold text-lg text-gray-800 mb-2">{exercise.name}</h4>
 
-              {/* Exercise Stats */}
+              {}
               <div className="flex flex-wrap gap-4 mb-3 text-sm">
                 <span className="bg-[var(--primary)] text-white px-2 py-1 rounded-md">{exercise.sets} sets</span>
                 <span className="bg-[var(--primary)] text-white px-2 py-1 rounded-md">{exercise.reps} reps</span>
                 <span className="bg-gray-600 text-white px-2 py-1 rounded-md">{exercise.rest_time_seconds}s rest</span>
               </div>
 
-              {/* Section Content */}
+              {}
               <div
                 className={`${
                   accentColor === "orange"
@@ -175,25 +168,26 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
                 </ul>
               </div>
 
-              {/* Exercise Notes */}
+              {}
               {exercise.notes && (
                 <div className="mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r">
                   <p className="text-sm text-amber-800 italic">{exercise.notes}</p>
                 </div>
               )}
-
-              {/* Exercise Images */}
-              {exerciseImagesMap[exercise.id]?.length > 0 && (
+              {}
+              {exerciseImagesMap[exercise.id]?.filter((img) => (img.metadata as any)?.purpose === "exercise").length > 0 && (
                 <div className="mt-3">
-                  <div className="flex flex-wrap gap-2">
-                    {exerciseImagesMap[exercise.id].map((img, imgIndex) => (
-                      <img
-                        key={imgIndex}
-                        src={img.file_path}
-                        alt={exercise.name}
-                        className="w-20 h-20 object-cover rounded-lg border border-gray-200"
-                      />
-                    ))}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {exerciseImagesMap[exercise.id]
+                      .filter((img) => (img.metadata as any)?.purpose === "exercise")
+                      .map((img, imgIndex) => (
+                        <img
+                          key={imgIndex}
+                          src={img.file_path}
+                          alt={exercise.name}
+                          className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                        />
+                      ))}
                   </div>
                 </div>
               )}
@@ -210,7 +204,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
 
   return (
     <div className="space-y-6">
-      {/* Title and Description */}
+      {}
       <div className="text-center mb-8">
         <h2 data-testid="session-title" className="text-3xl font-bold text-gray-800 mb-4">
           {trainingPlan.title}
@@ -220,7 +214,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
         </p>
       </div>
 
-      {/* Warnings */}
+      {}
       {trainingPlan.warnings && trainingPlan.warnings.length > 0 && (
         <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6">
           <div className="flex items-start">
@@ -234,8 +228,8 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
               </svg>
             </div>
             <div className="ml-3">
-              <h4 className="text-sm font-medium text-red-800 uppercase tracking-wide mb-2">Important Safety Information</h4>
-              <ul className="text-sm text-red-700 space-y-1">
+              <h4 className="text-s font-medium text-red-800 uppercase tracking-wide mb-1">Important Safety Information</h4>
+              <ul className="text-s text-red-700 space-y-1">
                 {trainingPlan.warnings.map((warning, index) => (
                   <li key={index} className="flex items-start">
                     <span className="w-2 h-2 bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
@@ -248,7 +242,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
         </div>
       )}
 
-      {/* Three-Section Layout */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <SectionCard title="Warm-Up" sectionData={allSections.warmup} bgColor="bg-gradient-to-br from-orange-50 to-orange-100" accentColor="orange" />
         <SectionCard title="Workout" sectionData={allSections.workout} bgColor="bg-gradient-to-br from-blue-50 to-blue-100" accentColor="blue" />

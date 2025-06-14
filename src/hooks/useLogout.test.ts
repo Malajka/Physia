@@ -3,12 +3,10 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useLogout } from "./useLogout";
 
-// Mock the logout service
 vi.mock("@/lib/services/auth/logout", () => ({
   logoutUser: vi.fn(),
 }));
 
-// Mock window.alert
 global.alert = vi.fn();
 
 describe("useLogout", () => {
@@ -151,25 +149,21 @@ describe("useLogout", () => {
     it("clears previous error before new logout attempt", async () => {
       const logoutService = await getLogoutService();
 
-      // First call fails
       logoutService.mockResolvedValueOnce({
         success: false,
         error: "First error",
       });
 
-      // Second call succeeds
       logoutService.mockResolvedValueOnce({ success: true });
 
       const { result } = renderHook(() => useLogout());
 
-      // First logout (failure)
       await act(async () => {
         await result.current.logout();
       });
 
       expect(result.current.error).toBe("First error");
 
-      // Second logout (success)
       await act(async () => {
         await result.current.logout();
       });
@@ -197,7 +191,6 @@ describe("useLogout", () => {
 
       const { result } = renderHook(() => useLogout());
 
-      // Start multiple logout calls
       act(() => {
         result.current.logout();
         result.current.logout();
@@ -210,7 +203,6 @@ describe("useLogout", () => {
         expect(result.current.isLoggingOut).toBe(false);
       });
 
-      // Service should be called multiple times
       expect(logoutService).toHaveBeenCalledTimes(3);
     });
   });

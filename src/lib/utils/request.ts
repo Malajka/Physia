@@ -2,9 +2,6 @@ import { errorResponse } from "@/lib/utils/api";
 import { ErrorCode } from "@/types";
 import type { ZodSchema } from "zod";
 
-/**
- * Parse the JSON body of the request and validate against a Zod schema.
- */
 export async function parseAndValidate<T>(request: Request, schema: ZodSchema<T>): Promise<T> {
   let body: T;
   try {

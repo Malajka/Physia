@@ -1,1 +1,3 @@
-export const defineMiddleware = (fn: (...args: unknown[]) => unknown) => fn;
+export function defineMiddleware(fn: (c: unknown, n: () => unknown) => unknown) {
+  return fn;
+}

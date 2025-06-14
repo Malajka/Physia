@@ -24,6 +24,7 @@ describe("createSession", () => {
       training_plan: {},
       session_tests: [],
     };
+
     const muscleTestsData = [{ id: 10, body_part_id: 1, name: "Test", description: "desc", created_at: "2024-01-01T00:00:00Z" }];
     const exercisesData = [{ id: 100, muscle_test_id: 10, description: "desc", created_at: "2024-01-01T00:00:00Z", images: [] }];
 
@@ -74,7 +75,6 @@ describe("createSession", () => {
       }),
     } as unknown as SupabaseClient;
 
-    // Mock generateTrainingPlan
     vi.spyOn(trainingPlanService, "generateTrainingPlan").mockResolvedValue({
       trainingPlan: {
         exercises: [],
@@ -85,7 +85,6 @@ describe("createSession", () => {
       error: null,
     });
 
-    // Wywołanie funkcji
     const result = await createSession(supabase, userId, command);
     expect(result.session).not.toBeNull();
     expect(result.error).toBeNull();

@@ -1,7 +1,24 @@
 import type { SupabaseClient } from "@/db/supabase.client";
 
 export async function getMuscleTestsForBodyPart(supabase: SupabaseClient, body_part_id: number) {
-  return await supabase.from("muscle_tests").select("id, name, description").eq("body_part_id", body_part_id);
+  return await supabase
+    .from("muscle_tests")
+    .select(
+      `
+      id, 
+      name, 
+      description,
+      exercises (
+        id,
+        exercise_images (
+          id,
+          file_path,
+          metadata
+        )
+      )
+    `
+    )
+    .eq("body_part_id", body_part_id);
 }
 
 export async function getExercisesForMuscleTests(supabase: SupabaseClient, muscle_test_ids: number[]) {
@@ -23,4 +40,14 @@ export async function getExercisesForMuscleTests(supabase: SupabaseClient, muscl
     `
     )
     .in("muscle_test_id", muscle_test_ids);
+}
+
+export function getMuscleTestImage(exerciseImages: { file_path: string; metadata: any }[] | null) {
+  if (!exerciseImages) return null;
+  return exerciseImages.find((img) => img.metadata?.purpose === "muscle_test")?.file_path || null;
+}
+
+export function getExerciseImages(exerciseImages: { file_path: string; metadata: any }[] | null) {
+  if (!exerciseImages) return [];
+  return exerciseImages.filter((img) => img.metadata?.purpose === "exercise").sort((a, b) => (a.metadata?.order || 0) - (b.metadata?.order || 0));
 }

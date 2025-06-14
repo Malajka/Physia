@@ -16,7 +16,6 @@ export class MuscleTestsPage extends BasePage {
     if (bodyPartId) {
       await this.goto(`/muscle-tests/${bodyPartId}`);
     } else {
-      // For cases where we don't know the body part ID, we'll rely on navigation flow
       throw new Error("Body part ID is required to navigate to muscle tests");
     }
   }
@@ -39,18 +38,14 @@ export class MuscleTestsPage extends BasePage {
     const slider = await this.getSlider(sliderId);
     await expect(slider).toBeVisible();
 
-    // Focus the slider and set value using keyboard events
     await slider.focus();
 
-    // Reset to 0 first by pressing Home key
     await this.page.keyboard.press("Home");
 
-    // Then press ArrowRight the desired number of times
     for (let i = 0; i < value; i++) {
       await this.page.keyboard.press("ArrowRight");
     }
 
-    // Verify the value was set correctly
     await expect(slider).toHaveAttribute("aria-valuenow", value.toString());
   }
 

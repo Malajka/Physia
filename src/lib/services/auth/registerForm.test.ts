@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import { handleRegisterSubmit } from "./registerForm";
 
-// Mock dependencies
 vi.mock("@/lib/services/auth", () => ({
   register: vi.fn(),
 }));
@@ -27,7 +26,6 @@ describe("handleRegisterSubmit", () => {
     vi.clearAllMocks();
   });
 
-  // Helper to create mock FormData
   const createFormData = (email: string, password: string, passwordConfirm: string): FormData => {
     const formData = new FormData();
     formData.set("email", email);

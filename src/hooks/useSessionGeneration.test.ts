@@ -3,7 +3,6 @@ import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useSessionGeneration } from "./useSessionGeneration";
 
-// Mock window.location
 Object.defineProperty(window, "location", {
   value: {
     href: "",
@@ -134,7 +133,6 @@ describe("useSessionGeneration", () => {
       id: 1,
     });
 
-    // Start with invalid params to prevent useEffect trigger
     const { result, rerender } = renderHook(({ bodyPartId, tests }) => useSessionGeneration(bodyPartId, tests), {
       initialProps: {
         bodyPartId: 0,
@@ -142,12 +140,10 @@ describe("useSessionGeneration", () => {
       },
     });
 
-    // Update to valid params
     await act(async () => {
       rerender({ bodyPartId, tests });
     });
 
-    // Call retry explicitly
     await act(async () => {
       await result.current.retry();
     });
@@ -175,9 +171,8 @@ describe("useSessionGeneration", () => {
 
     renderHook(() => useSessionGeneration(bodyPartId, tests));
 
-    // Wait for useEffect to trigger
     await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 600)); // Wait longer than the 500ms delay
+      await new Promise((resolve) => setTimeout(resolve, 600));
     });
 
     expect(mockStart).toHaveBeenCalledWith(bodyPartId, tests);
@@ -188,7 +183,6 @@ describe("useSessionGeneration", () => {
 
     renderHook(() => useSessionGeneration(0, []));
 
-    // Wait for potential useEffect trigger
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 100));
     });

@@ -3,7 +3,6 @@ import type React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { NavigationNextButton } from "./NavigationNextButton";
 
-// Mock Button to avoid dependency on external UI
 vi.mock("@/components/ui/Button", () => ({
   Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { children: React.ReactNode }) => (
     <button {...props}>{children}</button>

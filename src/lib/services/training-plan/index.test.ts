@@ -1,8 +1,6 @@
 import type { ExerciseDto, MuscleTestDto } from "@/types";
 import { describe, expect, it } from "vitest";
 import { TrainingPlanSchema, generateMockTrainingPlan } from "./index";
-// Import the pure functions directly (if not exported, you may need to export them for testability)
-// For this test, we'll assume generateMockTrainingPlan and validatePlan are exported for testing
 
 describe("generateMockTrainingPlan", () => {
   it("generates a valid training plan for given muscle tests and exercises", () => {
@@ -58,7 +56,7 @@ describe("TrainingPlanSchema (validatePlan)", () => {
           id: 1,
           name: "ex",
           description: "desc",
-          sets: 0, // invalid: must be positive
+          sets: 0,
           reps: 10,
           rest_time_seconds: 60,
         },
