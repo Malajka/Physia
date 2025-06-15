@@ -23,16 +23,11 @@ export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) =>
   }
   const bodyPartId = parsed.data.body_part_id;
 
-  try {
-    const { data, error } = await supabase.from("muscle_tests").select(SELECT_COLUMNS).eq("body_part_id", bodyPartId);
+  const { data, error } = await supabase.from("muscle_tests").select(SELECT_COLUMNS).eq("body_part_id", bodyPartId);
 
-    if (error) {
-      return jsonResponse({ error: "Failed to fetch muscle tests", details: error.message }, 502);
-    }
-
-    return jsonResponse({ data: data ?? [] }, 200);
-  } catch (e) {
-    console.error("Internal server error fetching muscle tests:", e);
-    return jsonResponse({ error: "Internal server error" }, 500);
+  if (error) {
+    return jsonResponse({ error: "Failed to fetch muscle tests", details: error.message }, 502);
   }
+
+  return jsonResponse({ data: data ?? [] }, 200);
 });

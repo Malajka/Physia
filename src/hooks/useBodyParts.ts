@@ -24,7 +24,6 @@ export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
       return result.data as BodyPartDto[];
     }
 
-    console.warn("API response for /api/body_parts did not contain a 'data' array.", result);
     return [];
   }, []);
 
