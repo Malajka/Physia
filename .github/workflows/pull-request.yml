@@ -159,3 +159,10 @@ jobs:
 
             ---
             *Last updated: ${{ github.event.pull_request.head.sha }}*
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-output
+          path: .vercel/output/
+          retention-days: 7
