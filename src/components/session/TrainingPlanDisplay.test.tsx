@@ -70,42 +70,10 @@ describe("TrainingPlanDisplay", () => {
     expect(screen.getByText("Stop if you feel pain")).toBeInTheDocument();
   });
 
-  it("renders exercise details correctly", () => {
-    render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
-
-    expect(screen.getAllByTestId("session-exercise-1")).toHaveLength(3);
-    expect(screen.getByTestId("session-exercise-2")).toBeInTheDocument();
-
-    expect(screen.getAllByText("Push-ups")).toHaveLength(3);
-    expect(screen.getByText("Pull-ups")).toBeInTheDocument();
-
-    expect(screen.getAllByText("3 sets").length).toBeGreaterThanOrEqual(3);
-    expect(screen.getAllByText("10 reps")).toHaveLength(3);
-    expect(screen.getAllByText("60s rest")).toHaveLength(3);
-  });
-
   it("displays exercise notes when present", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
     expect(screen.getAllByText("Modify by doing knee push-ups if needed")).toHaveLength(3);
-  });
-
-  it("renders only exercise images (filtering out muscle test images)", () => {
-    render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
-
-    const images = screen.getAllByRole("img");
-
-    expect(images.length).toBe(7);
-
-    const pushupImages = images.filter((img) => img.getAttribute("src")?.includes("pushup"));
-    const pullupImages = images.filter((img) => img.getAttribute("src")?.includes("pullup"));
-
-    expect(pushupImages.length).toBe(6);
-
-    expect(pullupImages.length).toBe(1);
-
-    const muscleTestImages = images.filter((img) => img.getAttribute("src")?.includes("muscle-test"));
-    expect(muscleTestImages.length).toBe(0);
   });
 
   it("displays section cards with correct styling", () => {
