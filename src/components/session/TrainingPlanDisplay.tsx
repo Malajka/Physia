@@ -22,6 +22,9 @@ function formatExerciseDescription(description: string | null | undefined): Form
   const cooldown: string[] = [];
   const general: string[] = [];
 
+  // Define markdown separators
+  const markdownSeparators = ["---", "***", "___"];
+
   const sections = description.split(/###/).filter((section) => section.trim().length > 0);
 
   sections.forEach((section) => {
@@ -45,37 +48,46 @@ function formatExerciseDescription(description: string | null | undefined): Form
       return;
     }
 
+    const processedContent: string[] = [];
     content.forEach((line) => {
       const cleanLine = line.trim();
       if (cleanLine.length === 0) return;
 
-      const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
-
-      switch (sectionType) {
-        case "warmup":
-        case "warm-up":
-          warmup.push(processedLine);
-          break;
-        case "workout":
-          workout.push(processedLine);
-          break;
-        case "cooldown":
-        case "cool-down":
-          cooldown.push(processedLine);
-          break;
+      if (markdownSeparators.includes(cleanLine)) {
+        processedContent.push("SEPARATOR");
+      } else {
+        const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
+        processedContent.push(processedLine);
       }
     });
+
+    switch (sectionType) {
+      case "warmup":
+      case "warm-up":
+        warmup.push(...processedContent);
+        break;
+      case "workout":
+        workout.push(...processedContent);
+        break;
+      case "cooldown":
+      case "cool-down":
+        cooldown.push(...processedContent);
+        break;
+    }
   });
 
+  // Handle general content with separators
   if (warmup.length === 0 && workout.length === 0 && cooldown.length === 0) {
     const lines = description.split("\n").filter((line) => line.trim().length > 0);
     lines.forEach((line) => {
-      const cleanLine = line
-        .trim()
-        .replace(/^[-*•]\s*/, "")
-        .replace(/^\d+\.\s*/, "");
-      if (cleanLine.length > 0) {
-        general.push(cleanLine);
+      const cleanLine = line.trim();
+      if (markdownSeparators.includes(cleanLine)) {
+        general.push("SEPARATOR");
+      } else {
+        const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
+        if (processedLine.length > 0) {
+          general.push(processedLine);
+        }
       }
     });
   }
@@ -85,27 +97,45 @@ function formatExerciseDescription(description: string | null | undefined): Form
 
 export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: TrainingPlanDisplayProps) {
   const allSections = {
-    warmup: [] as { exercise: TrainingPlan["exercises"][number]; content: string[] }[],
-    workout: [] as { exercise: TrainingPlan["exercises"][number]; content: string[] }[],
-    cooldown: [] as { exercise: TrainingPlan["exercises"][number]; content: string[] }[],
+    warmup: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
+    workout: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
+    cooldown: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
   };
 
   trainingPlan.exercises.forEach((exercise) => {
     const formatted = formatExerciseDescription(exercise.description);
 
+    // Add to warmup section if it has warmup content
     if (formatted.warmup.length > 0) {
-      allSections.warmup.push({ exercise, content: formatted.warmup });
-    }
-
-    if (formatted.workout.length > 0 || formatted.general.length > 0) {
-      allSections.workout.push({
-        exercise,
-        content: formatted.workout.length > 0 ? formatted.workout : formatted.general,
+      allSections.warmup.push({
+        exercise: { ...exercise, showImages: false },
+        content: formatted.warmup,
       });
     }
 
+    // Add to workout section if it has workout content
+    if (formatted.workout.length > 0) {
+      allSections.workout.push({
+        exercise: { ...exercise, showImages: true },
+        content: formatted.workout,
+      });
+    }
+
+    // Add to cooldown section if it has cooldown content
     if (formatted.cooldown.length > 0) {
-      allSections.cooldown.push({ exercise, content: formatted.cooldown });
+      allSections.cooldown.push({
+        exercise: { ...exercise, showImages: false },
+        content: formatted.cooldown,
+      });
+    }
+
+    // If exercise has no specific section content but has general content,
+    // add it to the workout section
+    if (formatted.general.length > 0 && formatted.warmup.length === 0 && formatted.workout.length === 0 && formatted.cooldown.length === 0) {
+      allSections.workout.push({
+        exercise: { ...exercise, showImages: true },
+        content: formatted.general,
+      });
     }
   });
 
@@ -116,7 +146,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
     accentColor = "blue",
   }: {
     title: string;
-    sectionData: { exercise: TrainingPlan["exercises"][number]; content: string[] }[];
+    sectionData: { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[];
     bgColor?: string;
     accentColor?: string;
   }) => (
@@ -133,14 +163,6 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
             >
               <h4 className="font-semibold text-lg text-gray-800 mb-2">{exercise.name}</h4>
 
-              {}
-              <div className="flex flex-wrap gap-4 mb-3 text-sm">
-                <span className="bg-[var(--primary)] text-white px-2 py-1 rounded-md">{exercise.sets} sets</span>
-                <span className="bg-[var(--primary)] text-white px-2 py-1 rounded-md">{exercise.reps} reps</span>
-                <span className="bg-gray-600 text-white px-2 py-1 rounded-md">{exercise.rest_time_seconds}s rest</span>
-              </div>
-
-              {}
               <div
                 className={`${
                   accentColor === "orange"
@@ -155,27 +177,42 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
                     accentColor === "orange" ? "text-orange-700" : accentColor === "blue" ? "text-blue-700" : "text-green-700"
                   } space-y-1`}
                 >
-                  {content.map((item, itemIndex) => (
-                    <li key={itemIndex} className="flex items-start">
-                      <span
-                        className={`w-2 h-2 ${
-                          accentColor === "orange" ? "bg-orange-400" : accentColor === "blue" ? "bg-blue-400" : "bg-green-400"
-                        } rounded-full mt-2 mr-2 flex-shrink-0`}
-                      ></span>
-                      {item}
-                    </li>
-                  ))}
+                  {content.map((item, itemIndex) => {
+                    // Handle separator rendering
+                    if (item === "SEPARATOR") {
+                      return (
+                        <li key={itemIndex} className="py-2">
+                          <hr
+                            className={`border-t-2 ${
+                              accentColor === "orange" ? "border-orange-300" : accentColor === "blue" ? "border-blue-300" : "border-green-300"
+                            } my-2`}
+                          />
+                        </li>
+                      );
+                    }
+
+                    return (
+                      <li key={itemIndex} className="flex items-start">
+                        <span
+                          className={`w-2 h-2 ${
+                            accentColor === "orange" ? "bg-orange-400" : accentColor === "blue" ? "bg-blue-400" : "bg-green-400"
+                          } rounded-full mt-2 mr-2 flex-shrink-0`}
+                        ></span>
+                        {item}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
-              {}
+              {/* Rest of your existing code for notes and images */}
               {exercise.notes && (
                 <div className="mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r">
                   <p className="text-sm text-amber-800 italic">{exercise.notes}</p>
                 </div>
               )}
-              {}
-              {exerciseImagesMap[exercise.id]?.filter((img) => (img.metadata as any)?.purpose === "exercise").length > 0 && (
+
+              {exercise.showImages && exerciseImagesMap[exercise.id]?.filter((img) => (img.metadata as any)?.purpose === "exercise").length > 0 && (
                 <div className="mt-3">
                   <div className="flex flex-wrap justify-center gap-2">
                     {exerciseImagesMap[exercise.id]

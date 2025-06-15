@@ -113,6 +113,28 @@ Perform gentle full body stretch
 Breathe calmly for one minute
 ```
 
+### Example: Directly pasting into Supabase text field
+
+You can paste the following format directly into a `text` field (e.g., `description`) in Supabase:
+
+```
+###warmup
+Sit upright on chair
+Perform arm warm-up
+
+###workout
+Perform main exercise
+Hold position for 15 seconds
+
+###cooldown
+Return to starting position
+Take deep breaths
+```
+
+- Markers must be at the start of the line.
+- Each instruction should be on a separate line.
+- You can include only the sections you need (e.g., just `###workout`).
+
 ## Page Layout
 
 ### Structure Layout
@@ -260,7 +282,7 @@ Take deep breaths
 2. **Main workout**: specific therapeutic exercises
 3. **Cool-down**: return to rest state, relaxation
 
-### 🔄 Data Migration
+### �� Data Migration
 
 1. **Test on database copy** before production changes
 2. **Migrate gradually** - not all exercises at once
