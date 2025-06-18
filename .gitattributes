@@ -1,34 +1,15 @@
-# TypeScript
 *.ts linguist-detectable=true
 *.tsx linguist-detectable=true
-
-# JavaScript (np. pliki React)
 *.js linguist-detectable=true
 *.jsx linguist-detectable=true
-
-# Astro files
 *.astro linguist-detectable=true
-
-# CSS i Tailwind (Tailwind to CSS, więc wystarczy CSS)
 *.css linguist-detectable=true
-
-# Vite config (zwykle JavaScript lub TypeScript)
 vite.config.js linguist-detectable=true
 vite.config.ts linguist-detectable=true
-
-# Supabase (pliki SQL, konfiguracje)
 *.sql linguist-detectable=true
-
-# Playwright test files (zwykle TypeScript lub JavaScript)
 playwright.config.ts linguist-detectable=true
 tests/**/*.ts linguist-detectable=true
-
-# Markowanie plików konfiguracyjnych Vercel jako niewykrywalne (opcjonalnie)
 .vercel/* linguist-vendored
-
-# Ignorowanie plików build i node_modules
 dist/* linguist-vendored
 node_modules/* linguist-vendored
-
-# Normalizacja końcówek linii (zalecane)
 * text=auto
