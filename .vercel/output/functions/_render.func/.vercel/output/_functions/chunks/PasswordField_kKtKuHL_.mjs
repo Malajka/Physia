@@ -1,8 +1,7 @@
 import { J as JSON_HEADERS } from './api_CZk8L_u-.mjs';
 import './auth.validator_ZWOtGhyR.mjs';
-import { jsxs, jsx } from 'react/jsx-runtime';
-import { E as ErrorAlert, S as SubmitButton, I as InputField } from './Layout_7eddd-C0.mjs';
-import { useState, useCallback } from 'react';
+import { j as jsxRuntimeExports, E as ErrorAlert, S as SubmitButton, I as InputField } from './Layout_Cw_PJNMd.mjs';
+import { a as reactExports } from './_@astro-renderers_DziWr-Mn.mjs';
 import 'clsx';
 
 async function authRequest(endpoint, data, defaultErrorMessage) {
@@ -38,9 +37,9 @@ async function register(data) {
 }
 
 function useAuthForm(onSubmit, initialErrors = null) {
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState(initialErrors);
-  const handleSubmit = useCallback(
+  const [loading, setLoading] = reactExports.useState(false);
+  const [errors, setErrors] = reactExports.useState(initialErrors);
+  const handleSubmit = reactExports.useCallback(
     async (e) => {
       e.preventDefault();
       setLoading(true);
@@ -68,24 +67,24 @@ function useAuthForm(onSubmit, initialErrors = null) {
 
 const AuthForm = function AuthForm2({ title, onSubmit, children, submitText, errors: initialErrors = null, submitTestId }) {
   const { loading, errors, handleSubmit } = useAuthForm(onSubmit, initialErrors);
-  return /* @__PURE__ */ jsxs("div", { children: [
-    /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-6", children: title }),
-    /* @__PURE__ */ jsx(ErrorAlert, { errors, "data-testid": "auth-form-errors" }),
-    /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, "data-testid": "auth-form", noValidate: true, children: [
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-6", children: title }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(ErrorAlert, { errors, "data-testid": "auth-form-errors" }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, "data-testid": "auth-form", noValidate: true, children: [
       children,
-      /* @__PURE__ */ jsx("div", { className: "mt-6 flex justify-center", children: /* @__PURE__ */ jsx(SubmitButton, { loading, "data-testid": submitTestId, children: submitText }) })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-6 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(SubmitButton, { loading, "data-testid": submitTestId, children: submitText }) })
     ] })
   ] });
 };
 
 function PasswordField(props) {
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = reactExports.useState(false);
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
-  return /* @__PURE__ */ jsxs("div", { className: "relative", children: [
-    /* @__PURE__ */ jsx(InputField, { ...props, type: showPassword ? "text" : "password", forceShowError: props.forceShowError, "data-testid": props["data-testid"] }),
-    /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { ...props, type: showPassword ? "text" : "password", forceShowError: props.forceShowError, "data-testid": props["data-testid"] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
       "button",
       {
         type: "button",

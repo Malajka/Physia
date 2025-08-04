@@ -1,12 +1,11 @@
 /* empty css                                         */
-import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead, d as addAttribute } from '../../chunks/astro/server_B181Abhk.mjs';
+import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead, d as addAttribute } from '../../chunks/astro/server_DDqvxhIU.mjs';
 import 'kleur/colors';
-import { jsx, jsxs } from 'react/jsx-runtime';
-import { B as Button, $ as $$Layout } from '../../chunks/Layout_7eddd-C0.mjs';
-import { useState, useEffect, useCallback } from 'react';
+import { j as jsxRuntimeExports, B as Button, $ as $$Layout } from '../../chunks/Layout_Cw_PJNMd.mjs';
+import { a as reactExports } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { r as renderers } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 import 'clsx';
 import { J as JSON_HEADERS } from '../../chunks/api_CZk8L_u-.mjs';
-export { renderers } from '../../renderers.mjs';
 
 async function fetchFeedback(sessionId) {
   const response = await fetch(`/api/sessions/${sessionId}/feedback`);
@@ -26,11 +25,11 @@ async function submitFeedback(sessionId, rating) {
 }
 
 const FeedbackRating = ({ sessionId }) => {
-  const [feedback, setFeedback] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  useEffect(() => {
+  const [feedback, setFeedback] = reactExports.useState(null);
+  const [loading, setLoading] = reactExports.useState(true);
+  const [saving, setSaving] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  reactExports.useEffect(() => {
     let isMounted = true;
     async function loadFeedback() {
       try {
@@ -47,7 +46,7 @@ const FeedbackRating = ({ sessionId }) => {
       isMounted = false;
     };
   }, [sessionId]);
-  const handleRate = useCallback(
+  const handleRate = reactExports.useCallback(
     async (rating) => {
       setSaving(true);
       setError(null);
@@ -62,15 +61,15 @@ const FeedbackRating = ({ sessionId }) => {
     },
     [sessionId]
   );
-  if (loading) return /* @__PURE__ */ jsx("p", { children: "Loading feedback..." });
+  if (loading) return /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Loading feedback..." });
   if (error && !feedback) {
-    return /* @__PURE__ */ jsx("p", { className: "text-red-600 mb-2", "data-testid": "feedback-error", children: error });
+    return /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-red-600 mb-2", "data-testid": "feedback-error", children: error });
   }
-  return /* @__PURE__ */ jsxs("div", { className: "mt-6 text-center", "data-testid": "feedback-rating", children: [
-    /* @__PURE__ */ jsx("p", { className: "mb-2 font-medium", children: "Rate this session:" }),
-    error && /* @__PURE__ */ jsx("p", { className: "text-red-600 mb-2", "data-testid": "feedback-error", children: error }),
-    /* @__PURE__ */ jsxs("div", { className: "flex justify-center space-x-4", children: [
-      /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-6 text-center", "data-testid": "feedback-rating", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-2 font-medium", children: "Rate this session:" }),
+    error && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-red-600 mb-2", "data-testid": "feedback-error", children: error }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-center space-x-4", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         Button,
         {
           "aria-label": "Rate session as positive",
@@ -81,7 +80,7 @@ const FeedbackRating = ({ sessionId }) => {
           children: saving && feedback?.rating !== 0 ? "..." : "👍"
         }
       ),
-      /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         Button,
         {
           "aria-label": "Rate session as negative",
@@ -93,7 +92,7 @@ const FeedbackRating = ({ sessionId }) => {
         }
       )
     ] }),
-    feedback?.rated_at && /* @__PURE__ */ jsxs("p", { className: "mt-2 text-sm text-gray-500", "data-testid": "feedback-rated-at", children: [
+    feedback?.rated_at && /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-2 text-sm text-gray-500", "data-testid": "feedback-rated-at", children: [
       "Rated at: ",
       new Date(feedback.rated_at).toLocaleString()
     ] })
@@ -204,34 +203,34 @@ function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }) {
     sectionData,
     bgColor = "bg-white",
     accentColor = "blue"
-  }) => /* @__PURE__ */ jsxs("div", { className: `${bgColor} rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] min-h-[400px]`, children: [
-    /* @__PURE__ */ jsx("h3", { className: "text-2xl font-bold text-gray-800 mb-6 text-center pb-3 border-b border-gray-200", children: title }),
-    sectionData.length > 0 ? /* @__PURE__ */ jsx("div", { className: "space-y-4", children: sectionData.map(({ exercise, content }, index) => /* @__PURE__ */ jsxs(
+  }) => /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `${bgColor} rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] min-h-[400px]`, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-2xl font-bold text-gray-800 mb-6 text-center pb-3 border-b border-gray-200", children: title }),
+    sectionData.length > 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-4", children: sectionData.map(({ exercise, content }, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
         "data-testid": `session-exercise-${exercise.id}`,
         className: "border border-gray-200 rounded-lg p-4 bg-gray-50",
         children: [
-          /* @__PURE__ */ jsx("h4", { className: "font-semibold text-lg text-gray-800 mb-2", children: exercise.name }),
-          /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "font-semibold text-lg text-gray-800 mb-2", children: exercise.name }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
             "div",
             {
               className: `${accentColor === "orange" ? "bg-orange-50 border-l-4 border-orange-400" : accentColor === "blue" ? "bg-blue-50 border-l-4 border-blue-400" : "bg-green-50 border-l-4 border-green-400"} p-3 rounded-r`,
-              children: /* @__PURE__ */ jsx(
+              children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "ul",
                 {
                   className: `text-sm ${accentColor === "orange" ? "text-orange-700" : accentColor === "blue" ? "text-blue-700" : "text-green-700"} space-y-1`,
                   children: content.map((item, itemIndex) => {
                     if (item === "SEPARATOR") {
-                      return /* @__PURE__ */ jsx("li", { className: "py-2", children: /* @__PURE__ */ jsx(
+                      return /* @__PURE__ */ jsxRuntimeExports.jsx("li", { className: "py-2", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
                         "hr",
                         {
                           className: `border-t-2 ${accentColor === "orange" ? "border-orange-300" : accentColor === "blue" ? "border-blue-300" : "border-green-300"} my-2`
                         }
                       ) }, itemIndex);
                     }
-                    return /* @__PURE__ */ jsxs("li", { className: "flex items-start", children: [
-                      /* @__PURE__ */ jsx(
+                    return /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex items-start", children: [
+                      /* @__PURE__ */ jsxRuntimeExports.jsx(
                         "span",
                         {
                           className: `w-2 h-2 ${accentColor === "orange" ? "bg-orange-400" : accentColor === "blue" ? "bg-blue-400" : "bg-green-400"} rounded-full mt-2 mr-2 flex-shrink-0`
@@ -244,8 +243,8 @@ function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }) {
               )
             }
           ),
-          exercise.notes && /* @__PURE__ */ jsx("div", { className: "mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r", children: /* @__PURE__ */ jsx("p", { className: "text-sm text-amber-800 italic", children: exercise.notes }) }),
-          exercise.showImages && exerciseImagesMap[exercise.id]?.filter((img) => img.metadata?.purpose === "exercise").length > 0 && /* @__PURE__ */ jsx("div", { className: "mt-3", children: /* @__PURE__ */ jsx("div", { className: "flex flex-wrap justify-center gap-2", children: exerciseImagesMap[exercise.id].filter((img) => img.metadata?.purpose === "exercise").map((img, imgIndex) => /* @__PURE__ */ jsx(
+          exercise.notes && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-amber-800 italic", children: exercise.notes }) }),
+          exercise.showImages && exerciseImagesMap[exercise.id]?.filter((img) => img.metadata?.purpose === "exercise").length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-3", children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-2", children: exerciseImagesMap[exercise.id].filter((img) => img.metadata?.purpose === "exercise").map((img, imgIndex) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             "img",
             {
               src: img.file_path,
@@ -257,15 +256,15 @@ function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }) {
         ]
       },
       `${exercise.id}-${index}`
-    )) }) : /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center h-32 text-gray-500", children: /* @__PURE__ */ jsx("p", { children: "No exercises for this section" }) })
+    )) }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center h-32 text-gray-500", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "No exercises for this section" }) })
   ] });
-  return /* @__PURE__ */ jsxs("div", { className: "space-y-6", children: [
-    /* @__PURE__ */ jsxs("div", { className: "text-center mb-8", children: [
-      /* @__PURE__ */ jsx("h2", { "data-testid": "session-title", className: "text-3xl font-bold text-gray-800 mb-4", children: trainingPlan.title }),
-      /* @__PURE__ */ jsx("p", { "data-testid": "session-description", className: "text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed", children: trainingPlan.description })
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-6", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center mb-8", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { "data-testid": "session-title", className: "text-3xl font-bold text-gray-800 mb-4", children: trainingPlan.title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { "data-testid": "session-description", className: "text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed", children: trainingPlan.description })
     ] }),
-    trainingPlan.warnings && trainingPlan.warnings.length > 0 && /* @__PURE__ */ jsx("div", { className: "bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("svg", { className: "h-5 w-5 text-red-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+    trainingPlan.warnings && trainingPlan.warnings.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-red-50 border-l-4 border-red-400 p-4 rounded-r mb-6", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className: "h-5 w-5 text-red-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         "path",
         {
           fillRule: "evenodd",
@@ -273,18 +272,18 @@ function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }) {
           clipRule: "evenodd"
         }
       ) }) }),
-      /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
-        /* @__PURE__ */ jsx("h4", { className: "text-s font-medium text-red-800 uppercase tracking-wide mb-1", children: "Important Safety Information" }),
-        /* @__PURE__ */ jsx("ul", { className: "text-s text-red-700 space-y-1", children: trainingPlan.warnings.map((warning, index) => /* @__PURE__ */ jsxs("li", { className: "flex items-start", children: [
-          /* @__PURE__ */ jsx("span", { className: "w-2 h-2 bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ml-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-s font-medium text-red-800 uppercase tracking-wide mb-1", children: "Important Safety Information" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "text-s text-red-700 space-y-1", children: trainingPlan.warnings.map((warning, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex items-start", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "w-2 h-2 bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0" }),
           warning
         ] }, index)) })
       ] })
     ] }) }),
-    /* @__PURE__ */ jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6", children: [
-      /* @__PURE__ */ jsx(SectionCard, { title: "Warm-Up", sectionData: allSections.warmup, bgColor: "bg-gradient-to-br from-orange-50 to-orange-100", accentColor: "orange" }),
-      /* @__PURE__ */ jsx(SectionCard, { title: "Workout", sectionData: allSections.workout, bgColor: "bg-gradient-to-br from-blue-50 to-blue-100", accentColor: "blue" }),
-      /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "grid grid-cols-1 lg:grid-cols-3 gap-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(SectionCard, { title: "Warm-Up", sectionData: allSections.warmup, bgColor: "bg-gradient-to-br from-orange-50 to-orange-100", accentColor: "orange" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(SectionCard, { title: "Workout", sectionData: allSections.workout, bgColor: "bg-gradient-to-br from-blue-50 to-blue-100", accentColor: "blue" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         SectionCard,
         {
           title: "Cool-Down",

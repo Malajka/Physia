@@ -12,6 +12,9 @@ export default defineConfig({
   server: { port: 4321 },
 
   vite: {
+    ssr: {
+      noExternal: ["react", "react-dom", "react-router-dom"],
+    },
     resolve: {
       alias: {
         "@": path.resolve("./src"),

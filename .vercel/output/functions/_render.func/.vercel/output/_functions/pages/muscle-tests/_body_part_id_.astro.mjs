@@ -1,15 +1,14 @@
 /* empty css                                         */
-import { c as createComponent, a as createAstro, m as maybeRenderHead, d as addAttribute, r as renderTemplate, b as renderComponent } from '../../chunks/astro/server_B181Abhk.mjs';
+import { c as createComponent, a as createAstro, m as maybeRenderHead, d as addAttribute, r as renderTemplate, b as renderComponent } from '../../chunks/astro/server_DDqvxhIU.mjs';
 import 'kleur/colors';
-import { $ as $$PageHeader } from '../../chunks/PageHeader_DrLM3d2E.mjs';
-import { jsxs, jsx } from 'react/jsx-runtime';
-import { b as Slider, B as Button, $ as $$Layout, E as ErrorAlert } from '../../chunks/Layout_7eddd-C0.mjs';
-import { useState, useCallback } from 'react';
+import { $ as $$PageHeader } from '../../chunks/PageHeader_DWt27lof.mjs';
+import { j as jsxRuntimeExports, b as Slider, B as Button, $ as $$Layout, E as ErrorAlert } from '../../chunks/Layout_Cw_PJNMd.mjs';
+import { a as reactExports } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { r as renderers } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 import 'clsx';
 import { ChevronLeft } from 'lucide-react';
 import { b as getMuscleTestImage } from '../../chunks/helpers_B9a52DH4.mjs';
 import { createClient } from '@supabase/supabase-js';
-export { renderers } from '../../renderers.mjs';
 
 function formatDescriptionText(description) {
   if (!description) {
@@ -78,20 +77,20 @@ function MuscleTestItem({ test, value, onChange, animating }) {
     return "#ef4444";
   };
   const { steps, info, warnings, notes } = formatDescriptionText(test.description);
-  return /* @__PURE__ */ jsxs("div", { className: "p-6 border drop-shadow-md rounded-lg bg-white", children: [
-    /* @__PURE__ */ jsx("div", { children: /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-3", "data-testid": `muscle-test-heading-${test.id}`, children: test.name }) }),
-    /* @__PURE__ */ jsxs("div", { className: "mb-6 flex flex-col md:grid md:grid-cols-2 md:items-center md:gap-4 space-y-4 md:space-y-0", children: [
-      steps.length > 0 && /* @__PURE__ */ jsxs("div", { children: [
-        /* @__PURE__ */ jsx("h3", { className: "text-sm font-medium text-gray-600 mb-3 uppercase tracking-wide", children: "Instructions" }),
-        /* @__PURE__ */ jsx("ol", { className: "space-y-3", children: steps.map((step, index) => /* @__PURE__ */ jsxs("li", { className: "flex items-start space-x-3", children: [
-          /* @__PURE__ */ jsx("span", { className: "flex-shrink-0 w-7 h-7 bg-gradient-to-br from-[var(--primary)] to-[#16857f] text-white text-sm font-bold rounded-full flex items-center justify-center mt-0.5", children: index + 1 }),
-          /* @__PURE__ */ jsx("span", { className: "text-gray-700 text-sm leading-relaxed pt-1", children: step })
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "p-6 border drop-shadow-md rounded-lg bg-white", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-semibold mb-3", "data-testid": `muscle-test-heading-${test.id}`, children: test.name }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-6 flex flex-col md:grid md:grid-cols-2 md:items-center md:gap-4 space-y-4 md:space-y-0", children: [
+      steps.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "text-sm font-medium text-gray-600 mb-3 uppercase tracking-wide", children: "Instructions" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "space-y-3", children: steps.map((step, index) => /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex items-start space-x-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex-shrink-0 w-7 h-7 bg-gradient-to-br from-[var(--primary)] to-[#16857f] text-white text-sm font-bold rounded-full flex items-center justify-center mt-0.5", children: index + 1 }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-gray-700 text-sm leading-relaxed pt-1", children: step })
         ] }, index)) })
       ] }),
-      muscleTestImage && /* @__PURE__ */ jsx("div", { className: "flex items-center justify-center md:justify-start w-full", children: /* @__PURE__ */ jsx("img", { src: muscleTestImage, alt: test.name, className: "w-56 h-56 object-contain rounded-md" }) })
+      muscleTestImage && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex items-center justify-center md:justify-start w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx("img", { src: muscleTestImage, alt: test.name, className: "w-56 h-56 object-contain rounded-md" }) })
     ] }),
-    warnings.length > 0 && /* @__PURE__ */ jsx("div", { className: "bg-red-50 border-l-4 border-red-400 p-4 rounded-r", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("svg", { className: "h-5 w-5 text-red-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+    warnings.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-red-50 border-l-4 border-red-400 p-4 rounded-r", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className: "h-5 w-5 text-red-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         "path",
         {
           fillRule: "evenodd",
@@ -99,13 +98,13 @@ function MuscleTestItem({ test, value, onChange, animating }) {
           clipRule: "evenodd"
         }
       ) }) }),
-      /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
-        /* @__PURE__ */ jsx("h4", { className: "text-s font-medium text-red-800 uppercase tracking-wide mb-1", children: "Important" }),
-        /* @__PURE__ */ jsx("div", { className: "text-s text-red-700 ", children: warnings.map((warning, index) => /* @__PURE__ */ jsx("p", { children: warning }, index)) })
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ml-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-s font-medium text-red-800 uppercase tracking-wide mb-1", children: "Important" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-s text-red-700 ", children: warnings.map((warning, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: warning }, index)) })
       ] })
     ] }) }),
-    info.length > 0 && /* @__PURE__ */ jsx("div", { className: "bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("svg", { className: "h-5 w-5 text-blue-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+    info.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className: "h-5 w-5 text-blue-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         "path",
         {
           fillRule: "evenodd",
@@ -113,13 +112,13 @@ function MuscleTestItem({ test, value, onChange, animating }) {
           clipRule: "evenodd"
         }
       ) }) }),
-      /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
-        /* @__PURE__ */ jsx("h4", { className: "text-s font-medium text-blue-800 uppercase tracking-wide mb-1", children: "What to expect" }),
-        /* @__PURE__ */ jsx("div", { className: "text-s text-blue-700 ", children: info.map((infoItem, index) => /* @__PURE__ */ jsx("p", { children: infoItem }, index)) })
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ml-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-s font-medium text-blue-800 uppercase tracking-wide mb-1", children: "What to expect" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-s text-blue-700 ", children: info.map((infoItem, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: infoItem }, index)) })
       ] })
     ] }) }),
-    notes.length > 0 && /* @__PURE__ */ jsx("div", { className: "bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r", children: /* @__PURE__ */ jsxs("div", { className: "flex items-start", children: [
-      /* @__PURE__ */ jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsx("svg", { className: "h-5 w-5 text-amber-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsx(
+    notes.length > 0 && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex-shrink-0", children: /* @__PURE__ */ jsxRuntimeExports.jsx("svg", { className: "h-5 w-5 text-amber-400", fill: "currentColor", viewBox: "0 0 20 20", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
         "path",
         {
           fillRule: "evenodd",
@@ -127,17 +126,17 @@ function MuscleTestItem({ test, value, onChange, animating }) {
           clipRule: "evenodd"
         }
       ) }) }),
-      /* @__PURE__ */ jsxs("div", { className: "ml-3", children: [
-        /* @__PURE__ */ jsx("h4", { className: "text-s font-medium text-amber-800 uppercase tracking-wide mb-1", children: "Remember" }),
-        /* @__PURE__ */ jsx("div", { className: "text-s text-amber-700 ", children: notes.map((note, index) => /* @__PURE__ */ jsx("p", { children: note }, index)) })
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "ml-3", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("h4", { className: "text-s font-medium text-amber-800 uppercase tracking-wide mb-1", children: "Remember" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-s text-amber-700 ", children: notes.map((note, index) => /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: note }, index)) })
       ] })
     ] }) }),
-    steps.length === 0 && info.length === 0 && warnings.length === 0 && notes.length === 0 && test.description && /* @__PURE__ */ jsx("div", { className: "bg-gray-50 p-4 rounded-lg", children: /* @__PURE__ */ jsx("p", { className: "text-gray-700 text-sm leading-relaxed", children: test.description }) }),
-    /* @__PURE__ */ jsxs("div", { className: "flex flex-col space-y-6 mt-6", children: [
-      /* @__PURE__ */ jsxs("label", { htmlFor: `pain-${test.id}`, className: "font-bold text-xl", children: [
+    steps.length === 0 && info.length === 0 && warnings.length === 0 && notes.length === 0 && test.description && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "bg-gray-50 p-4 rounded-lg", children: /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-gray-700 text-sm leading-relaxed", children: test.description }) }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col space-y-6 mt-6", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("label", { htmlFor: `pain-${test.id}`, className: "font-bold text-xl", children: [
         "Pain level:",
         " ",
-        /* @__PURE__ */ jsx(
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
           {
             style: {
@@ -151,7 +150,7 @@ function MuscleTestItem({ test, value, onChange, animating }) {
           }
         )
       ] }),
-      /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         Slider,
         {
           id: `pain-${test.id}`,
@@ -169,16 +168,16 @@ function MuscleTestItem({ test, value, onChange, animating }) {
 }
 
 function MuscleTestForm({ bodyPartId, muscleTests }) {
-  const [selections, setSelections] = useState(
+  const [selections, setSelections] = reactExports.useState(
     muscleTests.map((test) => ({
       muscleTestId: test.id,
       painIntensity: 0
     }))
   );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [animatingId, setAnimatingId] = useState(null);
-  const handlePainChange = useCallback(
+  const [isSubmitting, setIsSubmitting] = reactExports.useState(false);
+  const [error, setError] = reactExports.useState(null);
+  const [animatingId, setAnimatingId] = reactExports.useState(null);
+  const handlePainChange = reactExports.useCallback(
     (index, value) => {
       setSelections((prev) => {
         const newSelections = [...prev];
@@ -190,7 +189,7 @@ function MuscleTestForm({ bodyPartId, muscleTests }) {
     },
     [muscleTests]
   );
-  const isFormValid = useCallback(() => {
+  const isFormValid = reactExports.useCallback(() => {
     return selections.some((selection) => selection.painIntensity > 0);
   }, [selections]);
   const handleSubmit = async (e) => {
@@ -213,25 +212,25 @@ function MuscleTestForm({ bodyPartId, muscleTests }) {
       setIsSubmitting(false);
     }
   };
-  return /* @__PURE__ */ jsxs("form", { onSubmit: handleSubmit, className: "space-y-8", children: [
-    error && /* @__PURE__ */ jsx("div", { "aria-live": "assertive", className: "p-4 bg-red-100 border border-red-400 text-red-700 rounded", children: error }),
-    /* @__PURE__ */ jsxs("div", { className: "p-4 border drop-shadow-md border-gray-200 rounded-lg bg-gray-50", children: [
-      /* @__PURE__ */ jsx("h3", { className: "font-bold mb-2 text-base mb-4", children: "Pain Scale" }),
-      /* @__PURE__ */ jsxs("div", { className: "flex justify-between mb-4", children: [
-        /* @__PURE__ */ jsx("span", { className: "text-sm text-emerald-500 font-bold", children: "No pain" }),
-        /* @__PURE__ */ jsx("span", { className: "text-sm text-yellow-400 font-bold", children: "Moderate" }),
-        /* @__PURE__ */ jsx("span", { className: "text-sm text-red-500 font-bold", children: "Severe pain" })
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSubmit, className: "space-y-8", children: [
+    error && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { "aria-live": "assertive", className: "p-4 bg-red-100 border border-red-400 text-red-700 rounded", children: error }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "p-4 border drop-shadow-md border-gray-200 rounded-lg bg-gray-50", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-bold mb-2 text-base mb-4", children: "Pain Scale" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between mb-4", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-emerald-500 font-bold", children: "No pain" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-yellow-400 font-bold", children: "Moderate" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm text-red-500 font-bold", children: "Severe pain" })
       ] }),
-      /* @__PURE__ */ jsxs("div", { className: "p-2 bg-white border border-dashed border-gray-300 rounded", children: [
-        /* @__PURE__ */ jsx("p", { className: "mb-1 font-bold", children: "How to use the slider:" }),
-        /* @__PURE__ */ jsxs("ol", { className: "pl-5 text-sm list-decimal", children: [
-          /* @__PURE__ */ jsx("li", { children: "Click and drag the white circle left or right" }),
-          /* @__PURE__ */ jsx("li", { children: "Select a value from 0 (no pain) to 10 (unbearable pain)" }),
-          /* @__PURE__ */ jsx("li", { children: "Rate each muscle test according to your pain level" })
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "p-2 bg-white border border-dashed border-gray-300 rounded", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mb-1 font-bold", children: "How to use the slider:" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "pl-5 text-sm list-decimal", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Click and drag the white circle left or right" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Select a value from 0 (no pain) to 10 (unbearable pain)" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Rate each muscle test according to your pain level" })
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ jsx("div", { className: "space-y-6", children: muscleTests.map((test, index) => /* @__PURE__ */ jsx(
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-6", children: muscleTests.map((test, index) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       MuscleTestItem,
       {
         test,
@@ -241,12 +240,12 @@ function MuscleTestForm({ bodyPartId, muscleTests }) {
       },
       test.id
     )) }),
-    /* @__PURE__ */ jsxs("div", { className: "flex justify-between", children: [
-      /* @__PURE__ */ jsxs(Button, { type: "button", variant: "link", onClick: () => window.history.back(), disabled: isSubmitting, size: "lg", children: [
-        /* @__PURE__ */ jsx(ChevronLeft, {}),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex justify-between", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "button", variant: "link", onClick: () => window.history.back(), disabled: isSubmitting, size: "lg", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(ChevronLeft, {}),
         "Back"
       ] }),
-      /* @__PURE__ */ jsx(
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
         Button,
         {
           type: "submit",

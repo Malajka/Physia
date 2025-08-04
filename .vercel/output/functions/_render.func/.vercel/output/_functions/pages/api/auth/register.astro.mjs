@@ -1,5 +1,5 @@
 import { _ as _page } from '../../../chunks/register_BGjxXnZA.mjs';
-export { renderers } from '../../../renderers.mjs';
+export { r as renderers } from '../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 
 const page = () => _page;
 

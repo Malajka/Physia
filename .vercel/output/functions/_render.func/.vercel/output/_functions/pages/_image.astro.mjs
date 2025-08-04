@@ -1,8 +1,8 @@
 import { A as AstroError, z as NoImageMetadata, F as FailedToFetchRemoteImageDimensions, B as ExpectedImageOptions, D as ExpectedImage, H as ExpectedNotESMImage, J as resolveSrc, K as isRemoteImage, Q as isRemotePath, T as isESMImportedImage, U as isLocalService, V as DEFAULT_HASH_PROPS, W as InvalidImageService, X as ImageMissingAlt, Y as isRemoteAllowed } from '../chunks/astro/assets-service_BsATJkoF.mjs';
-import { c as createComponent, a as createAstro, m as maybeRenderHead, d as addAttribute, z as spreadAttributes, r as renderTemplate } from '../chunks/astro/server_B181Abhk.mjs';
+import { c as createComponent, a as createAstro, m as maybeRenderHead, d as addAttribute, z as spreadAttributes, r as renderTemplate } from '../chunks/astro/server_DDqvxhIU.mjs';
 import 'clsx';
 import * as mime from 'mrmime';
-export { renderers } from '../renderers.mjs';
+export { r as renderers } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
 
 function isImageMetadata(src) {
   return src.fsPath && !("fsPath" in src);

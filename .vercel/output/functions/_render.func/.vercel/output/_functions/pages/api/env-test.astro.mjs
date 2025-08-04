@@ -1,4 +1,4 @@
-export { renderers } from '../../renderers.mjs';
+export { r as renderers } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 
 const prerender = false;
 async function GET() {

@@ -1,7 +1,7 @@
 import { g as getFeedbackForSession, u as upsertFeedback, F as FeedbackParamsSchema, a as FeedbackBodySchema, G as GET, P as POST } from '../../../../chunks/feedback_e6ZcuSad.mjs';
 import { j as jsonResponse } from '../../../../chunks/response_BJucfPdF.mjs';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-export { renderers } from '../../../../renderers.mjs';
+export { r as renderers } from '../../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 
 vi.mock("@/lib/middleware/withAuth", () => ({
   withAuth: vi.fn((handler) => (context) => handler(context, "user-123"))

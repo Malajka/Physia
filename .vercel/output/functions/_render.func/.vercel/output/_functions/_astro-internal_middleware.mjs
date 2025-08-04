@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
-import { d as defineMiddleware, s as sequence } from './chunks/index_D4P6B8K9.mjs';
+import { d as defineMiddleware, s as sequence } from './chunks/index_B09A_V11.mjs';
 import 'es-module-lexer';
-import './chunks/astro-designed-error-pages_CmM7EmGc.mjs';
+import './chunks/astro-designed-error-pages_BB23DcIn.mjs';
 import 'cookie';
 
 const LOGIN_PATH = "/login";

@@ -2,7 +2,7 @@ import { l as loginSchema } from '../../../chunks/auth.validator_ZWOtGhyR.mjs';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { ZodError } from 'zod';
 import { P as POST } from '../../../chunks/login_BdxDrYKl.mjs';
-export { renderers } from '../../../renderers.mjs';
+export { r as renderers } from '../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
 
 vi.mock("@/lib/validators/auth.validator", () => ({
   loginSchema: {

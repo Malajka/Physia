@@ -1,20 +1,18 @@
 /* empty css                                      */
-import { c as createComponent, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_B181Abhk.mjs';
+import { c as createComponent, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_DDqvxhIU.mjs';
 import 'kleur/colors';
-import { jsx, jsxs } from 'react/jsx-runtime';
-import { c as cn, B as Button, $ as $$Layout } from '../chunks/Layout_7eddd-C0.mjs';
-import * as React from 'react';
-import { useRef, useReducer, useCallback, useEffect, useState, memo } from 'react';
+import { j as jsxRuntimeExports, c as cn, B as Button, $ as $$Layout } from '../chunks/Layout_Cw_PJNMd.mjs';
+import { a as reactExports } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { r as renderers } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
 import 'clsx';
-import { $ as $$PageHeader } from '../chunks/PageHeader_DrLM3d2E.mjs';
-export { renderers } from '../renderers.mjs';
+import { $ as $$PageHeader } from '../chunks/PageHeader_DWt27lof.mjs';
 
 function InfoBar({ children, className = "" }) {
-  return /* @__PURE__ */ jsx("div", { className: `p-4 bg-blue-50 border border-blue-200 text-blue-700 rounded mb-4 ${className}`, children });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: `p-4 bg-blue-50 border border-blue-200 text-blue-700 rounded mb-4 ${className}`, children });
 }
 
 const Modal = ({ open, onClose, title, children, footer }) => {
-  React.useEffect(() => {
+  reactExports.useEffect(() => {
     function handleKey(e) {
       if (e.key === "Escape") onClose();
     }
@@ -22,8 +20,8 @@ const Modal = ({ open, onClose, title, children, footer }) => {
     return () => document.removeEventListener("keydown", handleKey);
   }, [open, onClose]);
   if (!open) return null;
-  return /* @__PURE__ */ jsxs("div", { className: "fixed inset-0 z-50 flex items-center justify-center", children: [
-    /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "fixed inset-0 z-50 flex items-center justify-center", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
         className: "absolute inset-0 bg-black/50",
@@ -39,23 +37,23 @@ const Modal = ({ open, onClose, title, children, footer }) => {
         "aria-label": "Close modal"
       }
     ),
-    /* @__PURE__ */ jsxs("div", { role: "dialog", "aria-modal": "true", className: cn("relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md mx-4"), children: [
-      title && /* @__PURE__ */ jsx("h2", { className: "text-lg font-semibold mb-4", children: title }),
-      /* @__PURE__ */ jsx("div", { className: "mb-4", children }),
-      footer && /* @__PURE__ */ jsx("div", { className: "flex justify-end gap-2", children: footer })
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { role: "dialog", "aria-modal": "true", className: cn("relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-md mx-4"), children: [
+      title && /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-lg font-semibold mb-4", children: title }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mb-4", children }),
+      footer && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-end gap-2", children: footer })
     ] })
   ] });
 };
 
-const DisclaimerModal = ({ open, onAccept, text }) => /* @__PURE__ */ jsx(
+const DisclaimerModal = ({ open, onAccept, text }) => /* @__PURE__ */ jsxRuntimeExports.jsx(
   Modal,
   {
     open,
     onClose: () => {
     },
     title: "Medical Disclaimer",
-    footer: /* @__PURE__ */ jsx("div", { className: "flex justify-between items-center w-full", children: /* @__PURE__ */ jsx(Button, { onClick: onAccept, "data-testid": "accept-disclaimer", className: "flex justify-center mx-auto", children: "I Accept" }) }),
-    children: /* @__PURE__ */ jsx("div", { className: "whitespace-pre-line text-sm mb-4", children: text })
+    footer: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex justify-between items-center w-full", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { onClick: onAccept, "data-testid": "accept-disclaimer", className: "flex justify-center mx-auto", children: "I Accept" }) }),
+    children: /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "whitespace-pre-line text-sm mb-4", children: text })
   }
 );
 
@@ -72,10 +70,10 @@ function fetchReducer(state, action) {
   }
 }
 function useFetch(fetcher, skipInitialFetch = false) {
-  const controllerRef = useRef(null);
+  const controllerRef = reactExports.useRef(null);
   const initialState = { data: null, loading: !skipInitialFetch, error: null };
-  const [state, dispatch] = useReducer(fetchReducer, initialState);
-  const execute = useCallback(async () => {
+  const [state, dispatch] = reactExports.useReducer(fetchReducer, initialState);
+  const execute = reactExports.useCallback(async () => {
     controllerRef.current?.abort();
     const controller = new AbortController();
     controllerRef.current = controller;
@@ -91,7 +89,7 @@ function useFetch(fetcher, skipInitialFetch = false) {
       dispatch({ type: "FAILURE", error: message });
     }
   }, [fetcher]);
-  useEffect(() => {
+  reactExports.useEffect(() => {
     if (!skipInitialFetch) {
       execute();
     }
@@ -103,7 +101,7 @@ function useFetch(fetcher, skipInitialFetch = false) {
 }
 
 function useBodyParts({ disclaimerAccepted }) {
-  const fetcher = useCallback(async (signal) => {
+  const fetcher = reactExports.useCallback(async (signal) => {
     const response = await fetch("/api/body_parts", {
       credentials: "include",
       signal
@@ -122,11 +120,11 @@ function useBodyParts({ disclaimerAccepted }) {
 }
 
 function useDisclaimer() {
-  const [disclaimerText, setDisclaimerText] = useState("");
-  const [acceptedAt, setAcceptedAt] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const loadDisclaimer = useCallback(async () => {
+  const [disclaimerText, setDisclaimerText] = reactExports.useState("");
+  const [acceptedAt, setAcceptedAt] = reactExports.useState(null);
+  const [loading, setLoading] = reactExports.useState(true);
+  const [error, setError] = reactExports.useState(null);
+  const loadDisclaimer = reactExports.useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -144,10 +142,10 @@ function useDisclaimer() {
       setLoading(false);
     }
   }, []);
-  useEffect(() => {
+  reactExports.useEffect(() => {
     loadDisclaimer();
   }, [loadDisclaimer]);
-  const accept = useCallback(async () => {
+  const accept = reactExports.useCallback(async () => {
     try {
       const res = await fetch("/api/disclaimers", { method: "POST", credentials: "include" });
       if (!res.ok) {
@@ -164,8 +162,8 @@ function useDisclaimer() {
 }
 
 function useSingleSelection() {
-  const [selected, setSelected] = useState(null);
-  const toggle = useCallback((value) => {
+  const [selected, setSelected] = reactExports.useState(null);
+  const toggle = reactExports.useCallback((value) => {
     setSelected((prev) => prev === value ? null : value);
   }, []);
   return { selected, toggle };
@@ -185,7 +183,7 @@ function BodyPartButtonComponent({ id, name, selected, onSelect }) {
   const style = {
     backgroundImage: `url(${imageSrc})`
   };
-  return /* @__PURE__ */ jsxs(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "button",
     {
       type: "button",
@@ -196,17 +194,17 @@ function BodyPartButtonComponent({ id, name, selected, onSelect }) {
       className: `${baseClass} ${selected ? selectedClass : unselectedClass} bg-cover sm:bg-contain bg-center bg-no-repeat`,
       "data-testid": `body-part-${slug}`,
       children: [
-        !selected && /* @__PURE__ */ jsx("div", { className: "absolute inset-0 bg-[var(--background)] opacity-35", "aria-hidden": "true" }),
-        /* @__PURE__ */ jsx("span", { className: `relative z-10 px-2 py-1 rounded ${selected ? "bg-[var(--background)] text-primary" : "bg-[var(--primary)] text-white"}`, children: name })
+        !selected && /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "absolute inset-0 bg-[var(--background)] opacity-35", "aria-hidden": "true" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: `relative z-10 px-2 py-1 rounded ${selected ? "bg-[var(--background)] text-primary" : "bg-[var(--primary)] text-white"}`, children: name })
       ]
     }
   );
 }
-const BodyPartButton = memo(BodyPartButtonComponent);
+const BodyPartButton = reactExports.memo(BodyPartButtonComponent);
 
 function NavigationNextButton({ selectedBodyPartId, className = "", onNavigate }) {
   const isDisabled = selectedBodyPartId == null;
-  const handleNext = useCallback(() => {
+  const handleNext = reactExports.useCallback(() => {
     if (selectedBodyPartId != null) {
       if (onNavigate) {
         onNavigate(selectedBodyPartId);
@@ -215,7 +213,7 @@ function NavigationNextButton({ selectedBodyPartId, className = "", onNavigate }
       }
     }
   }, [selectedBodyPartId, onNavigate]);
-  return /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
     Button,
     {
       type: "button",
@@ -232,8 +230,8 @@ function NavigationNextButton({ selectedBodyPartId, className = "", onNavigate }
 }
 
 function StatusMessage({ text, error = false, children }) {
-  return /* @__PURE__ */ jsxs("div", { className: `text-center py-8 ${error ? "text-red-600" : ""}`, children: [
-    /* @__PURE__ */ jsx("p", { children: text }),
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: `text-center py-8 ${error ? "text-red-600" : ""}`, children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: text }),
     children
   ] });
 }
@@ -241,22 +239,22 @@ function BodyPartSelector() {
   const { disclaimerText, acceptedAt, loading: discLoading, error: discError, accept } = useDisclaimer();
   const { data: bodyParts, loading: bpLoading, error: bpError, refetch } = useBodyParts({ disclaimerAccepted: acceptedAt });
   const { selected: selectedBodyPartId, toggle } = useSingleSelection();
-  const handleSelect = useCallback((id) => toggle(id), [toggle]);
-  if (discLoading) return /* @__PURE__ */ jsx(StatusMessage, { text: "Loading disclaimer..." });
-  if (discError) return /* @__PURE__ */ jsx(StatusMessage, { text: `Disclaimer Error: ${discError}`, error: true });
+  const handleSelect = reactExports.useCallback((id) => toggle(id), [toggle]);
+  if (discLoading) return /* @__PURE__ */ jsxRuntimeExports.jsx(StatusMessage, { text: "Loading disclaimer..." });
+  if (discError) return /* @__PURE__ */ jsxRuntimeExports.jsx(StatusMessage, { text: `Disclaimer Error: ${discError}`, error: true });
   if (!acceptedAt) {
-    return /* @__PURE__ */ jsx(DisclaimerModal, { open: true, onAccept: accept, text: disclaimerText || "Loading disclaimer text..." });
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(DisclaimerModal, { open: true, onAccept: accept, text: disclaimerText || "Loading disclaimer text..." });
   }
-  if (bpLoading) return /* @__PURE__ */ jsx(StatusMessage, { text: "Loading body areas..." });
+  if (bpLoading) return /* @__PURE__ */ jsxRuntimeExports.jsx(StatusMessage, { text: "Loading body areas..." });
   if (bpError) {
-    return /* @__PURE__ */ jsx(StatusMessage, { text: `Error loading body parts: ${bpError}`, error: true, children: /* @__PURE__ */ jsx("button", { onClick: refetch, className: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600", children: "Retry" }) });
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(StatusMessage, { text: `Error loading body parts: ${bpError}`, error: true, children: /* @__PURE__ */ jsxRuntimeExports.jsx("button", { onClick: refetch, className: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600", children: "Retry" }) });
   }
   if (!Array.isArray(bodyParts) || bodyParts.length === 0) {
-    return /* @__PURE__ */ jsx(StatusMessage, { text: "No body areas available." });
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(StatusMessage, { text: "No body areas available." });
   }
-  return /* @__PURE__ */ jsxs("div", { className: "space-y-8", children: [
-    /* @__PURE__ */ jsx(InfoBar, { children: "Select max 1 area. Click a selected area again to deselect." }),
-    /* @__PURE__ */ jsx("div", { className: "grid grid-cols-2 gap-[15px] justify-items-center", children: bodyParts.map((bodyPart) => /* @__PURE__ */ jsx(
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(InfoBar, { children: "Select max 1 area. Click a selected area again to deselect." }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-2 gap-[15px] justify-items-center", children: bodyParts.map((bodyPart) => /* @__PURE__ */ jsxRuntimeExports.jsx(
       BodyPartButton,
       {
         id: bodyPart.id,
@@ -266,7 +264,7 @@ function BodyPartSelector() {
       },
       bodyPart.id
     )) }),
-    /* @__PURE__ */ jsx("div", { className: "mt-8 flex justify-end", children: /* @__PURE__ */ jsx(NavigationNextButton, { selectedBodyPartId }) })
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-8 flex justify-end", children: /* @__PURE__ */ jsxRuntimeExports.jsx(NavigationNextButton, { selectedBodyPartId }) })
   ] });
 }
 

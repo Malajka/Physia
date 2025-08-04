@@ -1,11 +1,11 @@
 import { Http2ServerResponse } from 'node:http2';
-import { R as ROUTE_TYPE_HEADER, h as REROUTE_DIRECTIVE_HEADER, i as decryptString, j as createSlotValueFromString, b as renderComponent, r as renderTemplate, D as DEFAULT_404_COMPONENT, k as clientLocalsSymbol, l as clientAddressSymbol, n as REROUTABLE_STATUS_CODES, o as responseSentSymbol } from './astro/server_B181Abhk.mjs';
-import { r as requestIs404Or500, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, e as normalizeTheLocale, d as defineMiddleware, R as RouteCache, s as sequence, f as findRouteToRewrite, m as matchRoute, g as RenderContext, h as getSetCookiesFromResponse } from './index_D4P6B8K9.mjs';
+import { R as ROUTE_TYPE_HEADER, f as REROUTE_DIRECTIVE_HEADER, g as decryptString, h as createSlotValueFromString, b as renderComponent, r as renderTemplate, D as DEFAULT_404_COMPONENT, i as clientLocalsSymbol, j as clientAddressSymbol, k as REROUTABLE_STATUS_CODES, l as responseSentSymbol } from './astro/server_DDqvxhIU.mjs';
+import { r as requestIs404Or500, n as notFound, a as redirectToFallback, b as redirectToDefaultLocale, c as requestHasLocale, e as normalizeTheLocale, d as defineMiddleware, R as RouteCache, s as sequence, f as findRouteToRewrite, m as matchRoute, g as RenderContext, h as getSetCookiesFromResponse } from './index_B09A_V11.mjs';
 import 'cookie';
 import { f as fileExtension, j as joinPaths, s as slash, p as prependForwardSlash, r as removeTrailingForwardSlash, g as appendForwardSlash, A as AstroError, L as LocalsNotAnObject } from './astro/assets-service_BsATJkoF.mjs';
 import { bold, red, yellow, dim, blue } from 'kleur/colors';
-import { N as NOOP_MIDDLEWARE_FN } from './noop-middleware_YH1Z8rbt.mjs';
-import { e as ensure404Route, D as DEFAULT_404_ROUTE, d as default404Instance } from './astro-designed-error-pages_CmM7EmGc.mjs';
+import { N as NOOP_MIDDLEWARE_FN } from './noop-middleware_Y8xoyaRp.mjs';
+import { e as ensure404Route, D as DEFAULT_404_ROUTE, d as default404Instance } from './astro-designed-error-pages_BB23DcIn.mjs';
 import 'es-module-lexer';
 import 'fast-glob';
 import nodePath from 'node:path';
