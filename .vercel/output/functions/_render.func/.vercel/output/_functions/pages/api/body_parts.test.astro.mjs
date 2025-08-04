@@ -1,7 +1,7 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { G as GET } from '../../chunks/index_CLgpSJUb.mjs';
 import { j as jsonResponse } from '../../chunks/response_BJucfPdF.mjs';
-export { r as renderers } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { renderers } from '../../renderers.mjs';
 
 vi.mock("@/lib/middleware/withAuth", () => ({
   withAuth: vi.fn((handler) => handler)

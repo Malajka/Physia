@@ -1,6 +1,6 @@
 import { describe, beforeEach, vi, it, expect } from 'vitest';
 import { P as POST } from '../../../chunks/register_BGjxXnZA.mjs';
-export { r as renderers } from '../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { renderers } from '../../../renderers.mjs';
 
 const validCredentials = { email: "test@example.com", password: "password1234" };
 const validUser = { id: "user-id", email: validCredentials.email };

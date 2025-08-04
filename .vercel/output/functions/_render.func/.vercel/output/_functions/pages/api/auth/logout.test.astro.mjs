@@ -1,6 +1,6 @@
 import { vi, describe, beforeEach, it, expect } from 'vitest';
 import { P as POST } from '../../../chunks/logout_CSnxwm-m.mjs';
-export { r as renderers } from '../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { renderers } from '../../../renderers.mjs';
 
 const mockSignOut = vi.fn();
 const mockSupabaseClient = {

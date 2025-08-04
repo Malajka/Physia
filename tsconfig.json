@@ -9,6 +9,8 @@
     "types": ["vitest/globals", "astro/client"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   }
 }

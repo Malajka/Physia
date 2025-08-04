@@ -1,7 +1,7 @@
 import type { ExerciseDto, MuscleTestDto } from "@/types";
 
 function formatMuscleTestList(muscleTests: (MuscleTestDto & { pain_intensity: number })[]): string {
-  return muscleTests.map((test) => `- ${test.name}: Pain Intensity ${test.pain_intensity}/10 - ${test.description}`).join("\n");
+  return muscleTests.map((test) => `- ${test.name}: Pain Intensity ${test.pain_intensity}/10`).join("\n");
 }
 
 function formatExercisesForMuscleTests(muscleTests: (MuscleTestDto & { pain_intensity: number })[], exercises: ExerciseDto[]): string {
@@ -11,7 +11,7 @@ function formatExercisesForMuscleTests(muscleTests: (MuscleTestDto & { pain_inte
       if (relatedExercises.length === 0) {
         return "";
       }
-      const exerciseLines = relatedExercises.map((ex) => `- Exercise ID ${ex.id}: ${ex.description}`).join("\n");
+      const exerciseLines = relatedExercises.map((ex) => `- Exercise ID ${ex.id}: ${ex.description.substring(0, 200)}...`).join("\n");
       return `Exercises for ${test.name}:\n${exerciseLines}`;
     })
     .filter((section) => section)
@@ -57,7 +57,7 @@ Please return a JSON object with the following structure:
       "name": "Exercise Name",
       "description": "Brief instructions on how to perform the exercise",
       "sets": 3,
-      "rep": 15,
+      "reps": 15,
       "rest_time_seconds": 60,
       "notes": "Any specific notes for this exercise"
     }

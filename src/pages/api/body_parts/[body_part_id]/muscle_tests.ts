@@ -14,7 +14,24 @@ const ParamsSchema = z.object({
     .positive(),
 });
 
-const SELECT_COLUMNS = "id, body_part_id, name, description, created_at";
+const SELECT_COLUMNS = `
+  id, 
+  body_part_id, 
+  name, 
+  description, 
+  created_at,
+  exercises (
+    id,
+    description,
+    created_at,
+    exercise_images (
+      id,
+      file_path,
+      metadata,
+      created_at
+    )
+  )
+`;
 
 export const GET = withAuth(async ({ locals: { supabase }, params }, _userId) => {
   const parsed = ParamsSchema.safeParse(params);

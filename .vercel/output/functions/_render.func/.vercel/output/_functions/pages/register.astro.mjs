@@ -1,12 +1,13 @@
 /* empty css                                      */
-import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_DDqvxhIU.mjs';
+import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_B181Abhk.mjs';
 import 'kleur/colors';
-import { j as jsxRuntimeExports, L as LinkButton, I as InputField, $ as $$Layout } from '../chunks/Layout_Cw_PJNMd.mjs';
-import { r as register, A as AuthForm, P as PasswordField } from '../chunks/PasswordField_kKtKuHL_.mjs';
-import { a as reactExports } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
-export { r as renderers } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
+import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
+import { r as register, A as AuthForm, P as PasswordField } from '../chunks/PasswordField_D1VKJAaL.mjs';
+import { L as LinkButton, I as InputField, $ as $$Layout } from '../chunks/Layout_7eddd-C0.mjs';
+import { useState, useCallback } from 'react';
 import 'clsx';
 import { a as registerWithConfirmSchema } from '../chunks/auth.validator_ZWOtGhyR.mjs';
+export { renderers } from '../renderers.mjs';
 
 const handleRegisterSubmit = async (formData) => {
   const formValues = {
@@ -52,10 +53,10 @@ const handleRegisterSubmit = async (formData) => {
 };
 
 const useRegister = () => {
-  const [registrationSuccess, setRegistrationSuccess] = reactExports.useState(false);
-  const [error, setError] = reactExports.useState(null);
-  const [isLoading, setIsLoading] = reactExports.useState(false);
-  const submitRegistration = reactExports.useCallback(async (formData) => {
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const submitRegistration = useCallback(async (formData) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -77,7 +78,7 @@ const useRegister = () => {
       setIsLoading(false);
     }
   }, []);
-  const resetForm = reactExports.useCallback(() => {
+  const resetForm = useCallback(() => {
     setRegistrationSuccess(false);
     setError(null);
     setIsLoading(false);
@@ -94,17 +95,17 @@ const useRegister = () => {
 const RegisterForm = function RegisterForm2({ initialError = null }) {
   const { registrationSuccess, error, submitRegistration } = useRegister();
   if (registrationSuccess) {
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "text-center py-8", children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Registration Successful!" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "bg-green-50 border border-green-200 rounded-lg p-6 mb-6", children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-green-800 mb-4 text-xl", children: /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Thank you for registering!" }) }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-green-700 mb-4 text-lg", children: "Now you can start creating your own sessions and muscle tests!" }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx(LinkButton, { href: "/body-parts", variant: "nav-primary", className: "text-lg block w-full", "data-testid": "create-new-session-link", children: "Create First Session" })
+    return /* @__PURE__ */ jsxs("div", { className: "text-center py-8", children: [
+      /* @__PURE__ */ jsx("h2", { className: "text-2xl font-bold text-gray-800 mb-4", children: "Registration Successful!" }),
+      /* @__PURE__ */ jsxs("div", { className: "bg-green-50 border border-green-200 rounded-lg p-6 mb-6", children: [
+        /* @__PURE__ */ jsx("p", { className: "text-green-800 mb-4 text-xl", children: /* @__PURE__ */ jsx("strong", { children: "Thank you for registering!" }) }),
+        /* @__PURE__ */ jsx("p", { className: "text-green-700 mb-4 text-lg", children: "Now you can start creating your own sessions and muscle tests!" }),
+        /* @__PURE__ */ jsx(LinkButton, { href: "/body-parts", variant: "nav-primary", className: "text-lg block w-full", "data-testid": "create-new-session-link", children: "Create First Session" })
       ] })
     ] });
   }
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+  return /* @__PURE__ */ jsxs(Fragment, { children: [
+    /* @__PURE__ */ jsxs(
       AuthForm,
       {
         title: "Create Account",
@@ -113,9 +114,9 @@ const RegisterForm = function RegisterForm2({ initialError = null }) {
         errors: error || initialError,
         submitTestId: "register-submit",
         children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { id: "email", name: "email", label: "Email", type: "email", placeholder: "your@email.com", required: true, "data-testid": "register-email" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(PasswordField, { id: "password", name: "password", label: "Password", placeholder: "Min. 8 characters", required: true, "data-testid": "register-password" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsx(InputField, { id: "email", name: "email", label: "Email", type: "email", placeholder: "your@email.com", required: true, "data-testid": "register-email" }),
+          /* @__PURE__ */ jsx(PasswordField, { id: "password", name: "password", label: "Password", placeholder: "Min. 8 characters", required: true, "data-testid": "register-password" }),
+          /* @__PURE__ */ jsx(
             PasswordField,
             {
               id: "passwordConfirm",
@@ -126,14 +127,14 @@ const RegisterForm = function RegisterForm2({ initialError = null }) {
               "data-testid": "register-passwordConfirm"
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-gray-600 mt-2", children: "Password must be at least 8 characters long." })
+          /* @__PURE__ */ jsx("p", { className: "text-sm text-gray-600 mt-2", children: "Password must be at least 8 characters long." })
         ]
       }
     ),
-    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-center mt-4", children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-gray-600", children: [
+    /* @__PURE__ */ jsx("div", { className: "text-center mt-4", children: /* @__PURE__ */ jsxs("p", { className: "text-sm text-gray-600", children: [
       "Already have an account?",
       " ",
-      /* @__PURE__ */ jsxRuntimeExports.jsx(LinkButton, { href: "/login", variant: "text", className: "text-gray-600 underline", children: "Log in here" })
+      /* @__PURE__ */ jsx(LinkButton, { href: "/login", variant: "text", className: "text-gray-600 underline", children: "Log in here" })
     ] }) })
   ] });
 };

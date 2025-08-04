@@ -1,7 +1,7 @@
 import { g as getExercisesForSession, G as GET } from '../../../../chunks/exercises_iNhCDBhJ.mjs';
 import { j as jsonResponse } from '../../../../chunks/response_BJucfPdF.mjs';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-export { r as renderers } from '../../../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { renderers } from '../../../../renderers.mjs';
 
 vi.mock("@/lib/middleware/withAuth", () => ({
   withAuth: vi.fn((handler) => (context) => handler(context, "user-123"))

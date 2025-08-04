@@ -2,7 +2,7 @@ import { c as createSession, p as parseAndValidate, P as POST } from '../../chun
 import { e as errorResponse, s as successResponse } from '../../chunks/api_CZk8L_u-.mjs';
 import { E as ErrorCode } from '../../chunks/withAuth_B5AzTmJJ.mjs';
 import { vi, describe, beforeEach, it, expect } from 'vitest';
-export { r as renderers } from '../../chunks/_@astro-renderers_DziWr-Mn.mjs';
+export { renderers } from '../../renderers.mjs';
 
 vi.mock("@/lib/middleware/withAuth", () => ({
   withAuth: vi.fn((handler) => (context) => handler(context, "user-123"))

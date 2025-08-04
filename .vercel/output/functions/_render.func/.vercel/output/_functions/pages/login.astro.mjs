@@ -1,11 +1,13 @@
 /* empty css                                      */
-import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_DDqvxhIU.mjs';
+import { c as createComponent, a as createAstro, b as renderComponent, r as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_B181Abhk.mjs';
 import 'kleur/colors';
-import { j as jsxRuntimeExports, I as InputField, $ as $$Layout, L as LinkButton } from '../chunks/Layout_Cw_PJNMd.mjs';
-export { r as renderers } from '../chunks/_@astro-renderers_DziWr-Mn.mjs';
+import { jsxs, jsx } from 'react/jsx-runtime';
+import { I as InputField, $ as $$Layout, L as LinkButton } from '../chunks/Layout_7eddd-C0.mjs';
+import 'react';
 import 'clsx';
 import { l as loginSchema } from '../chunks/auth.validator_ZWOtGhyR.mjs';
-import { l as login, A as AuthForm, P as PasswordField } from '../chunks/PasswordField_kKtKuHL_.mjs';
+import { l as login, A as AuthForm, P as PasswordField } from '../chunks/PasswordField_D1VKJAaL.mjs';
+export { renderers } from '../renderers.mjs';
 
 const handleLoginSubmit = async (formData) => {
   const credentials = {
@@ -27,9 +29,9 @@ const handleLoginSubmit = async (formData) => {
 };
 
 const LoginForm = function LoginForm2({ initialError = null }) {
-  return /* @__PURE__ */ jsxRuntimeExports.jsxs(AuthForm, { title: "Log In", onSubmit: handleLoginSubmit, submitText: "Log In", submitTestId: "login-submit", errors: initialError, children: [
-    /* @__PURE__ */ jsxRuntimeExports.jsx(InputField, { id: "email", name: "email", label: "Email", type: "email", placeholder: "your@email.com", required: true, "data-testid": "email" }),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(PasswordField, { id: "password", name: "password", label: "Password", placeholder: "Your password", required: true, "data-testid": "password" })
+  return /* @__PURE__ */ jsxs(AuthForm, { title: "Log In", onSubmit: handleLoginSubmit, submitText: "Log In", submitTestId: "login-submit", errors: initialError, children: [
+    /* @__PURE__ */ jsx(InputField, { id: "email", name: "email", label: "Email", type: "email", placeholder: "your@email.com", required: true, "data-testid": "email" }),
+    /* @__PURE__ */ jsx(PasswordField, { id: "password", name: "password", label: "Password", placeholder: "Your password", required: true, "data-testid": "password" })
   ] });
 };
 
