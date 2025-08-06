@@ -39,7 +39,11 @@ export const TrainingPlanSchema = z.object({
       sets: z.number().int().positive(),
       reps: z.number().int().positive(),
       rest_time_seconds: z.number().int().nonnegative(),
-      notes: z.string().optional(),
+      section_notes: z.object({
+        warmup: z.string().optional(),
+        workout: z.string().optional(),
+        cooldown: z.string().optional(),
+      }).optional(),
     })
   ),
 });
@@ -106,14 +110,37 @@ function generateMockTrainingPlan(
       const test = muscleTests.find((t) => t.id === ex.muscle_test_id);
       const pain = test?.pain_intensity ?? 5;
       const { sets, reps } = calculateSetsReps(pain);
+      
+      // Create structured description with section markers
+      const structuredDescription = `###warmup
+Sit comfortably in a stable position
+Take 3 deep breaths to relax
+Gently rotate your ${bodyPartName} in small circles
+
+###workout
+${ex.description || `Perform the recommended exercise for ${test?.name || "muscle strengthening"}`}
+Hold each position for 10-15 seconds
+Repeat the movement slowly and controlled
+
+###cooldown
+Return to the starting position
+Take 2 deep breaths
+Gently stretch the opposite direction`;
+
       return {
         id: ex.id,
         name: `Exercise for ${test?.name || "Muscle"}`,
-        description: ex.description,
+        description: structuredDescription,
         sets,
         reps,
         rest_time_seconds: DEFAULT_REST_TIME_SECONDS,
-        notes: pain >= HIGH_PAIN_THRESHOLD ? "Perform with caution due to high pain level" : undefined,
+        section_notes: {
+          warmup: "Take your time with warm-up movements. Focus on gentle, controlled motions.",
+          workout: pain >= HIGH_PAIN_THRESHOLD 
+            ? "Perform with extra caution. Stop immediately if you feel sharp pain." 
+            : "Maintain proper form throughout the exercise. Breathe steadily.",
+          cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase."
+        }
       };
     }),
   };
@@ -144,9 +171,9 @@ export async function generateTrainingPlan(
   // Build prompt
   const aiPrompt = buildTrainingPlanPrompt(bodyPartName, muscleTests, exercises);
   const payload: OpenRouterRequest = {
-    model: "openai/gpt-3.5-turbo",
+    model: "openai/gpt-4o",
     messages: [
-      { role: "system", content: "You are an AI physiotherapy assistant specialized in creating personalized training plans." },
+      { role: "system", content: "You are an AI physiotherapy assistant specialized in creating personalized training plans for patients with overloaded muscles pain." },
       { role: "user", content: aiPrompt },
     ],
     max_tokens: 2000,

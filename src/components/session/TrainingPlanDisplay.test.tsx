@@ -28,7 +28,11 @@ Stretch chest muscles
       sets: 3,
       reps: 10,
       rest_time_seconds: 60,
-      notes: "Modify by doing knee push-ups if needed",
+      section_notes: {
+        warmup: "Take your time with warm-up movements. Focus on gentle, controlled motions.",
+        workout: "Maintain proper form throughout the exercise. Breathe steadily.",
+        cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase."
+      }
     },
     {
       id: 2,
@@ -37,7 +41,9 @@ Stretch chest muscles
       sets: 3,
       reps: 8,
       rest_time_seconds: 90,
-      notes: undefined,
+      section_notes: {
+        workout: "Focus on controlled movement. Don't swing your body."
+      }
     },
   ],
 };
@@ -70,10 +76,20 @@ describe("TrainingPlanDisplay", () => {
     expect(screen.getByText("Stop if you feel pain")).toBeInTheDocument();
   });
 
-  it("displays exercise notes when present", () => {
+  it("displays section-specific notes when present", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
-    expect(screen.getAllByText("Modify by doing knee push-ups if needed")).toHaveLength(3);
+    // Check for warm-up section note
+    expect(screen.getByText("💡 Take your time with warm-up movements. Focus on gentle, controlled motions.")).toBeInTheDocument();
+    
+    // Check for workout section note
+    expect(screen.getByText("💡 Maintain proper form throughout the exercise. Breathe steadily.")).toBeInTheDocument();
+    
+    // Check for cool-down section note
+    expect(screen.getByText("💡 Allow your muscles to relax completely. Don't rush the cool-down phase.")).toBeInTheDocument();
+    
+    // Check for pull-up workout note
+    expect(screen.getByText("💡 Focus on controlled movement. Don't swing your body.")).toBeInTheDocument();
   });
 
   it("displays section cards with correct styling", () => {

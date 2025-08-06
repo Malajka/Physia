@@ -22,9 +22,7 @@ function formatExerciseDescription(description: string | null | undefined): Form
   const cooldown: string[] = [];
   const general: string[] = [];
 
-  // Define markdown separators
-  const markdownSeparators = ["---", "***", "___"];
-
+  // Split by section markers and process each section
   const sections = description.split(/###/).filter((section) => section.trim().length > 0);
 
   sections.forEach((section) => {
@@ -32,35 +30,30 @@ function formatExerciseDescription(description: string | null | undefined): Form
       .trim()
       .split("\n")
       .filter((line) => line.trim().length > 0);
+    
     if (lines.length === 0) return;
 
     const sectionType = lines[0].toLowerCase().trim();
     const content = lines.slice(1);
 
-    if (!["warmup", "workout", "cooldown", "warm-up", "cool-down"].includes(sectionType)) {
-      const allLines = [lines[0], ...content];
-      allLines.forEach((line) => {
-        const cleanLine = line.trim();
-        if (cleanLine.length > 0) {
-          general.push(cleanLine);
-        }
-      });
-      return;
-    }
-
+    // Process content for the section
     const processedContent: string[] = [];
     content.forEach((line) => {
       const cleanLine = line.trim();
       if (cleanLine.length === 0) return;
 
-      if (markdownSeparators.includes(cleanLine)) {
-        processedContent.push("SEPARATOR");
-      } else {
-        const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
+      // Remove bullet points and numbering
+      const processedLine = cleanLine
+        .replace(/^[-*•]\s*/, "")
+        .replace(/^\d+\.\s*/, "")
+        .trim();
+      
+      if (processedLine.length > 0) {
         processedContent.push(processedLine);
       }
     });
 
+    // Assign content to appropriate section
     switch (sectionType) {
       case "warmup":
       case "warm-up":
@@ -73,18 +66,26 @@ function formatExerciseDescription(description: string | null | undefined): Form
       case "cool-down":
         cooldown.push(...processedContent);
         break;
+      default:
+        // If no recognized section marker, treat as general content
+        if (processedContent.length > 0) {
+          general.push(...processedContent);
+        }
+        break;
     }
   });
 
-  // Handle general content with separators
-  if (warmup.length === 0 && workout.length === 0 && cooldown.length === 0) {
+  // If no sections were found, treat entire description as general content
+  if (warmup.length === 0 && workout.length === 0 && cooldown.length === 0 && general.length === 0) {
     const lines = description.split("\n").filter((line) => line.trim().length > 0);
     lines.forEach((line) => {
       const cleanLine = line.trim();
-      if (markdownSeparators.includes(cleanLine)) {
-        general.push("SEPARATOR");
-      } else {
-        const processedLine = cleanLine.replace(/^[-*•]\s*/, "").replace(/^\d+\.\s*/, "");
+      if (cleanLine.length > 0) {
+        const processedLine = cleanLine
+          .replace(/^[-*•]\s*/, "")
+          .replace(/^\d+\.\s*/, "")
+          .trim();
+        
         if (processedLine.length > 0) {
           general.push(processedLine);
         }
@@ -97,9 +98,9 @@ function formatExerciseDescription(description: string | null | undefined): Form
 
 export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: TrainingPlanDisplayProps) {
   const allSections = {
-    warmup: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
-    workout: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
-    cooldown: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[],
+    warmup: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[]; sectionNote?: string }[],
+    workout: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[]; sectionNote?: string }[],
+    cooldown: [] as { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[]; sectionNote?: string }[],
   };
 
   trainingPlan.exercises.forEach((exercise) => {
@@ -110,6 +111,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
       allSections.warmup.push({
         exercise: { ...exercise, showImages: false },
         content: formatted.warmup,
+        sectionNote: exercise.section_notes?.warmup,
       });
     }
 
@@ -118,6 +120,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
       allSections.workout.push({
         exercise: { ...exercise, showImages: true },
         content: formatted.workout,
+        sectionNote: exercise.section_notes?.workout,
       });
     }
 
@@ -126,6 +129,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
       allSections.cooldown.push({
         exercise: { ...exercise, showImages: false },
         content: formatted.cooldown,
+        sectionNote: exercise.section_notes?.cooldown,
       });
     }
 
@@ -135,6 +139,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
       allSections.workout.push({
         exercise: { ...exercise, showImages: true },
         content: formatted.general,
+        sectionNote: exercise.section_notes?.workout,
       });
     }
   });
@@ -146,7 +151,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
     accentColor = "blue",
   }: {
     title: string;
-    sectionData: { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[] }[];
+    sectionData: { exercise: TrainingPlan["exercises"][number] & { showImages?: boolean }; content: string[]; sectionNote?: string }[];
     bgColor?: string;
     accentColor?: string;
   }) => (
@@ -155,7 +160,7 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
 
       {sectionData.length > 0 ? (
         <div className="space-y-4">
-          {sectionData.map(({ exercise, content }, index) => (
+          {sectionData.map(({ exercise, content, sectionNote }, index) => (
             <div
               key={`${exercise.id}-${index}`}
               data-testid={`session-exercise-${exercise.id}`}
@@ -177,38 +182,33 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
                     accentColor === "orange" ? "text-orange-700" : accentColor === "blue" ? "text-blue-700" : "text-green-700"
                   } space-y-1`}
                 >
-                  {content.map((item, itemIndex) => {
-                    // Handle separator rendering
-                    if (item === "SEPARATOR") {
-                      return (
-                        <li key={itemIndex} className="py-2">
-                          <hr
-                            className={`border-t-2 ${
-                              accentColor === "orange" ? "border-orange-300" : accentColor === "blue" ? "border-blue-300" : "border-green-300"
-                            } my-2`}
-                          />
-                        </li>
-                      );
-                    }
-
-                    return (
-                      <li key={itemIndex} className="flex items-start">
-                        <span
-                          className={`w-2 h-2 ${
-                            accentColor === "orange" ? "bg-orange-400" : accentColor === "blue" ? "bg-blue-400" : "bg-green-400"
-                          } rounded-full mt-2 mr-2 flex-shrink-0`}
-                        ></span>
-                        {item}
-                      </li>
-                    );
-                  })}
+                  {content.map((item, itemIndex) => (
+                    <li key={itemIndex} className="flex items-start">
+                      <span
+                        className={`w-2 h-2 ${
+                          accentColor === "orange" ? "bg-orange-400" : accentColor === "blue" ? "bg-blue-400" : "bg-green-400"
+                        } rounded-full mt-2 mr-2 flex-shrink-0`}
+                      ></span>
+                      {item}
+                    </li>
+                  ))}
                 </ul>
               </div>
 
-              {/* Rest of your existing code for notes and images */}
-              {exercise.notes && (
-                <div className="mt-3 bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r">
-                  <p className="text-sm text-amber-800 italic">{exercise.notes}</p>
+              {/* Section-specific notes */}
+              {sectionNote && (
+                <div className={`mt-3 ${
+                  accentColor === "orange" ? "bg-orange-100 border-l-4 border-orange-500" 
+                  : accentColor === "blue" ? "bg-blue-100 border-l-4 border-blue-500" 
+                  : "bg-green-100 border-l-4 border-green-500"
+                } p-3 rounded-r`}>
+                  <p className={`text-sm ${
+                    accentColor === "orange" ? "text-orange-800" 
+                    : accentColor === "blue" ? "text-blue-800" 
+                    : "text-green-800"
+                  } italic font-medium`}>
+                    💡 {sectionNote}
+                  </p>
                 </div>
               )}
 
