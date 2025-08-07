@@ -230,12 +230,10 @@ The formatting function (`formatDescriptionText`) processes the input as follows
 ### Common Issues
 
 1. **Content appears in wrong section**
-
    - Check section marker spelling
    - Ensure `###` starts the line exactly
 
 2. **Sections don't appear**
-
    - Verify section markers are recognized
    - Check for typos in section names
 

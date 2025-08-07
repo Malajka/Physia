@@ -4,6 +4,7 @@ import { useSessionGeneration } from "@/hooks/useSessionGeneration";
 interface SessionGenerationLoadingProps {
   bodyPartId: number;
   tests: { muscle_test_id: number; pain_intensity: number }[];
+  userNote?: string;
 }
 
 interface ErrorDisplayProps {
@@ -75,8 +76,8 @@ function InvalidRequestDisplay() {
   );
 }
 
-export function SessionGenerationLoading({ bodyPartId, tests }: SessionGenerationLoadingProps) {
-  const { statusMessage, error, retry, isLoading } = useSessionGeneration(bodyPartId, tests);
+export function SessionGenerationLoading({ bodyPartId, tests, userNote }: SessionGenerationLoadingProps) {
+  const { statusMessage, error, retry, isLoading } = useSessionGeneration(bodyPartId, tests, userNote);
 
   if (!bodyPartId || !tests || tests.length === 0) {
     return <InvalidRequestDisplay />;

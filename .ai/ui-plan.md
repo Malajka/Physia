@@ -183,19 +183,16 @@ The application follows a hierarchical structure:
 ### Primary Journey: Creating an Exercise Plan
 
 1. **Authentication**
-
    - User navigates to the application
    - User logs in or registers for an account
    - System checks if user has accepted the disclaimer
 
 2. **Medical Disclaimer** (if not previously accepted)
-
    - System displays medical disclaimer popup
    - User reads and accepts the disclaimer
    - System records acceptance
 
 3. **Plan Creation**
-
    - User lands on home page and clicks "Start" button
    - User selects a body area from four options
    - User is presented with muscle tests for the selected area
@@ -212,7 +209,6 @@ The application follows a hierarchical structure:
 ### Secondary Journey: Managing Session History
 
 1. **Accessing History**
-
    - User clicks "My Sessions" in the navigation bar
    - System displays chronological list of past sessions
 
@@ -224,7 +220,6 @@ The application follows a hierarchical structure:
 ### Tertiary Journey: Account Management
 
 1. **Accessing Account Settings**
-
    - User clicks account icon in navigation bar
    - User selects "Account Settings" from dropdown
 
@@ -256,7 +251,6 @@ The application follows a hierarchical structure:
 ### Contextual Navigation
 
 - **Exercise Plan View**
-
   - Section tabs or Jump-to links
   - Back to History link
   - Export/Print options

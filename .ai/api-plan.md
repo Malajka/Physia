@@ -57,7 +57,6 @@
 ### 2.5 Sessions
 
 - **GET** `/api/sessions`
-
   - Description: List all sessions for the authenticated user.
   - Query Parameters:
     - `page` (integer, optional, default=1)
@@ -68,14 +67,12 @@
   - Response: 200 OK, paginated list of Session summary objects
 
 - **GET** `/api/sessions/:session_id`
-
   - Description: Retrieve detailed information for a single session.
   - Path Parameters:
     - `session_id` (integer, required)
   - Response: 200 OK, detailed Session object including `training_plan`, `session_tests`, and `feedback_rating`
 
 - **POST** `/api/sessions`
-
   - Description: Create a new session and orchestrate the full training_plan generation via LLM.
   - Process Details:
     1. Verify user has accepted the disclaimer.
@@ -119,7 +116,6 @@
 ### 2.6 FeedbackRatings
 
 - **GET** `/api/sessions/:session_id/feedback`
-
   - Description: Retrieve the feedback record for a session, if any. Returns rating fields even if unfilled (null).
   - Path Parameters:
     - `session_id` (integer, required)

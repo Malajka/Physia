@@ -142,12 +142,10 @@ Take deep breaths
 The session page displays **three parallel cards**:
 
 1. **Warm-Up Card** (orange gradient background)
-
    - All `###warmup` sections from the training plan
    - Orange fields with warm-up instructions
 
 2. **Workout Card** (blue gradient background)
-
    - All `###workout` sections from the training plan
    - Blue fields with workout instructions
 

@@ -68,7 +68,6 @@ import { CreateSessionCommandDto, SessionDetailDto } from "../../types";
 ## 5. Types
 
 - **CreateSessionCommandDto** (from `src/types.ts`):
-
   - `body_part_id: number`
   - `tests: { muscle_test_id: number; pain_intensity: number }[]`
 

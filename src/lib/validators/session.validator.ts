@@ -10,4 +10,5 @@ export const CreateSessionSchema = z.object({
       })
     )
     .nonempty(),
+  userNote: z.string().optional(),
 });

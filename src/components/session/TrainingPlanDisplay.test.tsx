@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { TrainingPlanDisplay } from "./TrainingPlanDisplay";
+import type { TrainingPlan } from "@/lib/services/training-plan";
 
-const mockTrainingPlan = {
+const mockTrainingPlan: TrainingPlan = {
   title: "Upper Body Strength Training",
   description: "A comprehensive upper body workout focusing on muscle strengthening",
   warnings: ["Consult with a healthcare provider before starting", "Stop if you feel pain"],
@@ -14,7 +15,6 @@ const mockTrainingPlan = {
 ### Warmup
 Start with arm circles
 Light stretching
-
 
 ### Workout
 Standard push-ups
@@ -31,8 +31,8 @@ Stretch chest muscles
       section_notes: {
         warmup: "Take your time with warm-up movements. Focus on gentle, controlled motions.",
         workout: "Maintain proper form throughout the exercise. Breathe steadily.",
-        cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase."
-      }
+        cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase.",
+      },
     },
     {
       id: 2,
@@ -42,8 +42,8 @@ Stretch chest muscles
       reps: 8,
       rest_time_seconds: 90,
       section_notes: {
-        workout: "Focus on controlled movement. Don't swing your body."
-      }
+        workout: "Focus on controlled movement. Don't swing your body.",
+      },
     },
   ],
 };
@@ -79,16 +79,9 @@ describe("TrainingPlanDisplay", () => {
   it("displays section-specific notes when present", () => {
     render(<TrainingPlanDisplay trainingPlan={mockTrainingPlan} exerciseImagesMap={mockExerciseImagesMap} />);
 
-    // Check for warm-up section note
     expect(screen.getByText("💡 Take your time with warm-up movements. Focus on gentle, controlled motions.")).toBeInTheDocument();
-    
-    // Check for workout section note
     expect(screen.getByText("💡 Maintain proper form throughout the exercise. Breathe steadily.")).toBeInTheDocument();
-    
-    // Check for cool-down section note
     expect(screen.getByText("💡 Allow your muscles to relax completely. Don't rush the cool-down phase.")).toBeInTheDocument();
-    
-    // Check for pull-up workout note
     expect(screen.getByText("💡 Focus on controlled movement. Don't swing your body.")).toBeInTheDocument();
   });
 
@@ -105,30 +98,30 @@ describe("TrainingPlanDisplay", () => {
     });
   });
 
-  it("handles empty exercise descriptions", () => {
-    const planWithEmptyDesc = {
+  it("handles exercise with simple description (no sections)", () => {
+    const planWithSimpleDesc: TrainingPlan = {
       ...mockTrainingPlan,
       exercises: [
         {
           id: 3,
-          name: "Empty Exercise",
+          name: "Simple Exercise",
           description: "Simple description without sections",
           sets: 1,
           reps: 1,
           rest_time_seconds: 30,
-          notes: undefined,
         },
       ],
     };
 
-    render(<TrainingPlanDisplay trainingPlan={planWithEmptyDesc} exerciseImagesMap={{}} />);
+    render(<TrainingPlanDisplay trainingPlan={planWithSimpleDesc} exerciseImagesMap={{}} />);
 
-    expect(screen.getByText("Empty Exercise")).toBeInTheDocument();
-    expect(screen.getAllByText("Simple description without sections")).toHaveLength(2);
+    expect(screen.getByText("Simple Exercise")).toBeInTheDocument();
+    expect(screen.getByText("Simple description without sections")).toBeInTheDocument();
+    expect(screen.getAllByText("Simple description without sections")).toHaveLength(1);
   });
 
   it("handles training plan without warnings", () => {
-    const planWithoutWarnings = {
+    const planWithoutWarnings: TrainingPlan = {
       ...mockTrainingPlan,
       warnings: undefined,
     };
@@ -139,7 +132,7 @@ describe("TrainingPlanDisplay", () => {
   });
 
   it("handles empty warnings array", () => {
-    const planWithEmptyWarnings = {
+    const planWithEmptyWarnings: TrainingPlan = {
       ...mockTrainingPlan,
       warnings: [],
     };
@@ -150,12 +143,12 @@ describe("TrainingPlanDisplay", () => {
   });
 
   it("displays message when no exercises for a section", () => {
-    const planWithoutSections = {
+    const planWithoutExercises: TrainingPlan = {
       ...mockTrainingPlan,
       exercises: [],
     };
 
-    render(<TrainingPlanDisplay trainingPlan={planWithoutSections} exerciseImagesMap={{}} />);
+    render(<TrainingPlanDisplay trainingPlan={planWithoutExercises} exerciseImagesMap={{}} />);
 
     const noExercisesMessages = screen.getAllByText("No exercises for this section");
     expect(noExercisesMessages).toHaveLength(3);
