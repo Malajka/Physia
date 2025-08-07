@@ -7,6 +7,7 @@ export const prerender = false;
 const { searchParams } = new URL(Astro.request.url);
 const bodyPartIdParam = searchParams.get("bodyPartId");
 const testsParam = searchParams.get("tests");
+const userNoteParam = searchParams.get("userNote");
 
 let bodyPartId: number | undefined;
 let tests: { muscle_test_id: number; pain_intensity: number }[] = [];
@@ -39,5 +40,5 @@ const pageTitle = "Generating Training Plan";
 
 <Layout title={pageTitle}>
   <!-- @ts-ignore -->
-  <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} client:load />
+  <SessionGenerationLoading bodyPartId={bodyPartId || 0} tests={tests} userNote={userNoteParam || ""} client:load />
 </Layout>

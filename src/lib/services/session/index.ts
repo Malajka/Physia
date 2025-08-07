@@ -10,7 +10,7 @@ export async function createSession(
   userId: string,
   command: CreateSessionCommandDto
 ): Promise<{ session: SessionDetailDto | null; error: string | null }> {
-  const { body_part_id: bodyPartId, tests: selectedTests } = command;
+  const { body_part_id: bodyPartId, tests: selectedTests, userNote } = command;
   const disclaimerAcceptedTimestamp = new Date().toISOString();
 
   try {
@@ -45,7 +45,8 @@ export async function createSession(
       createdSessionRecord.id,
       bodyPartRecord.name,
       muscleTestsWithPain,
-      exerciseDtos
+      exerciseDtos,
+      userNote
     );
 
     const sessionDetailDto: SessionDetailDto = {
@@ -200,9 +201,10 @@ async function generateAndSaveTrainingPlan(
   sessionId: number,
   bodyPartName: string,
   muscleTests: (Tables<"muscle_tests"> & { pain_intensity: number })[],
-  exercises: ExerciseDto[]
+  exercises: ExerciseDto[],
+  userNote?: string
 ): Promise<SessionWithTests> {
-  const { trainingPlan, error } = await generateTrainingPlan(bodyPartName, muscleTests, exercises);
+  const { trainingPlan, error } = await generateTrainingPlan(bodyPartName, muscleTests, exercises, userNote);
   if (error) {
     await supabase.from("generation_error_logs").insert({
       error_code: "ai_generation_failed",

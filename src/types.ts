@@ -109,6 +109,8 @@ export interface CreateSessionCommandDto {
     muscle_test_id: number;
     pain_intensity: number;
   }[];
+
+  userNote?: string;
 }
 
 export interface SubmitFeedbackCommandDto {

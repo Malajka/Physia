@@ -9,13 +9,14 @@ export interface SessionGenerationResult {
 
 export async function startSessionGeneration(
   bodyPartId: number,
-  tests: { muscle_test_id: number; pain_intensity: number }[]
+  tests: { muscle_test_id: number; pain_intensity: number }[],
+  userNote?: string
 ): Promise<SessionGenerationResult> {
   const response = await fetch("/api/sessions", {
     method: "POST",
     credentials: "include",
     headers: JSON_HEADERS,
-    body: JSON.stringify({ body_part_id: bodyPartId, tests } as CreateSessionCommandDto),
+    body: JSON.stringify({ body_part_id: bodyPartId, tests, userNote } as CreateSessionCommandDto & { userNote?: string }),
   });
 
   if (response.status === 403) {

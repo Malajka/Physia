@@ -39,11 +39,13 @@ export const TrainingPlanSchema = z.object({
       sets: z.number().int().positive(),
       reps: z.number().int().positive(),
       rest_time_seconds: z.number().int().nonnegative(),
-      section_notes: z.object({
-        warmup: z.string().optional(),
-        workout: z.string().optional(),
-        cooldown: z.string().optional(),
-      }).optional(),
+      section_notes: z
+        .object({
+          warmup: z.string().optional(),
+          workout: z.string().optional(),
+          cooldown: z.string().optional(),
+        })
+        .optional(),
     })
   ),
 });
@@ -110,7 +112,7 @@ function generateMockTrainingPlan(
       const test = muscleTests.find((t) => t.id === ex.muscle_test_id);
       const pain = test?.pain_intensity ?? 5;
       const { sets, reps } = calculateSetsReps(pain);
-      
+
       // Create structured description with section markers
       const structuredDescription = `###warmup
 Sit comfortably in a stable position
@@ -136,11 +138,12 @@ Gently stretch the opposite direction`;
         rest_time_seconds: DEFAULT_REST_TIME_SECONDS,
         section_notes: {
           warmup: "Take your time with warm-up movements. Focus on gentle, controlled motions.",
-          workout: pain >= HIGH_PAIN_THRESHOLD 
-            ? "Perform with extra caution. Stop immediately if you feel sharp pain." 
-            : "Maintain proper form throughout the exercise. Breathe steadily.",
-          cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase."
-        }
+          workout:
+            pain >= HIGH_PAIN_THRESHOLD
+              ? "Perform with extra caution. Stop immediately if you feel sharp pain."
+              : "Maintain proper form throughout the exercise. Breathe steadily.",
+          cooldown: "Allow your muscles to relax completely. Don't rush the cool-down phase.",
+        },
       };
     }),
   };
@@ -152,7 +155,8 @@ Gently stretch the opposite direction`;
 export async function generateTrainingPlan(
   bodyPartName: string,
   muscleTests: (MuscleTestDto & { pain_intensity: number })[],
-  exercises: ExerciseDto[]
+  exercises: ExerciseDto[],
+  userNote?: string
 ): Promise<{ trainingPlan: TrainingPlan | null; error: string | null }> {
   // Ensure inputs
   if (muscleTests.length === 0 || exercises.length === 0) {
@@ -169,11 +173,15 @@ export async function generateTrainingPlan(
     return { trainingPlan: null, error: "OpenRouter API key not configured" };
   }
   // Build prompt
-  const aiPrompt = buildTrainingPlanPrompt(bodyPartName, muscleTests, exercises);
+  const aiPrompt = buildTrainingPlanPrompt(bodyPartName, muscleTests, exercises, userNote);
   const payload: OpenRouterRequest = {
     model: "openai/gpt-4o",
     messages: [
-      { role: "system", content: "You are an AI physiotherapy assistant specialized in creating personalized training plans for patients with overloaded muscles pain." },
+      {
+        role: "system",
+        content:
+          "You are an AI physiotherapy assistant specialized in creating personalized training plans for patients with overloaded muscles pain.",
+      },
       { role: "user", content: aiPrompt },
     ],
     max_tokens: 2000,

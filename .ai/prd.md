@@ -14,7 +14,6 @@ many visits and needs modifications depending on intensity.
 ## 3. Functional requirements
 
 1. Body area selection and session generation:
-
    - Mandatory medical disclaimer before first session.
    - After accepting the disclaimer, the user selects one of the four body areas affected by muscle strain pain (Neck and upper back, Lower back, Wrists and forearms, Hips and Knees).
    - The application displays up to three muscle tests associated with the selected body area.
@@ -23,24 +22,20 @@ many visits and needs modifications depending on intensity.
    - The LLM model generates a personalized training session plan based on: the user's input (selected body area and pain intensity for each muscle test), the physiotherapist-curated exercise database, and the LLM's own domain knowledge.
 
 2. Session history view:
-
    - A "My Sessions" list view showing all previously generated training sessions for the authenticated user.
    - Each session can be expanded to view detailed exercises and feedback.
 
 3. Basic authentication and user accounts system:
-
    - Registration and login.
    - Ability to delete the account and associated medical data upon request.
 
 4. Data storage and scalability:
-
    - The database will include:
      - Physiotherapist-curated entities: body_parts, muscle_tests, exercises (with exercise_images), medical_disclaimers.
      - User-generated data: sessions (selected body area and pain_intensities per test), generated_sessions (AI-enriched training plans), feedback_ratings.
    - All data stored securely and in a manner ensuring scalability and compliance with privacy regulations.
 
 5. Exercise Feedback Statistics:
-
    - Collecting information on how many exercises were rated positively (thumbs up/down feedback system after each session).
 
 6. Legal requirements and constraints:

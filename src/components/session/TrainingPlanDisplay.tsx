@@ -30,7 +30,7 @@ function formatExerciseDescription(description: string | null | undefined): Form
       .trim()
       .split("\n")
       .filter((line) => line.trim().length > 0);
-    
+
     if (lines.length === 0) return;
 
     const sectionType = lines[0].toLowerCase().trim();
@@ -47,7 +47,7 @@ function formatExerciseDescription(description: string | null | undefined): Form
         .replace(/^[-*•]\s*/, "")
         .replace(/^\d+\.\s*/, "")
         .trim();
-      
+
       if (processedLine.length > 0) {
         processedContent.push(processedLine);
       }
@@ -85,7 +85,7 @@ function formatExerciseDescription(description: string | null | undefined): Form
           .replace(/^[-*•]\s*/, "")
           .replace(/^\d+\.\s*/, "")
           .trim();
-        
+
         if (processedLine.length > 0) {
           general.push(processedLine);
         }
@@ -197,16 +197,20 @@ export function TrainingPlanDisplay({ trainingPlan, exerciseImagesMap }: Trainin
 
               {/* Section-specific notes */}
               {sectionNote && (
-                <div className={`mt-3 ${
-                  accentColor === "orange" ? "bg-orange-100 border-l-4 border-orange-500" 
-                  : accentColor === "blue" ? "bg-blue-100 border-l-4 border-blue-500" 
-                  : "bg-green-100 border-l-4 border-green-500"
-                } p-3 rounded-r`}>
-                  <p className={`text-sm ${
-                    accentColor === "orange" ? "text-orange-800" 
-                    : accentColor === "blue" ? "text-blue-800" 
-                    : "text-green-800"
-                  } italic font-medium`}>
+                <div
+                  className={`mt-3 ${
+                    accentColor === "orange"
+                      ? "bg-orange-100 border-l-4 border-orange-500"
+                      : accentColor === "blue"
+                        ? "bg-blue-100 border-l-4 border-blue-500"
+                        : "bg-green-100 border-l-4 border-green-500"
+                  } p-3 rounded-r`}
+                >
+                  <p
+                    className={`text-sm ${
+                      accentColor === "orange" ? "text-orange-800" : accentColor === "blue" ? "text-blue-800" : "text-green-800"
+                    } italic font-medium`}
+                  >
                     💡 {sectionNote}
                   </p>
                 </div>

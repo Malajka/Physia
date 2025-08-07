@@ -5,9 +5,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface UseSessionGenerationParams {
   bodyPartId: number;
   tests: { muscle_test_id: number; pain_intensity: number }[];
+  userNote?: string;
 }
 
-export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id: number; pain_intensity: number }[]) {
+export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id: number; pain_intensity: number }[], userNote?: string) {
   const [statusMessage, setStatusMessage] = useState("Preparing session data...");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +31,7 @@ export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       setStatusMessage("Sending data to the AI engine...");
-      const result = await startSessionGeneration(bodyPartId, tests);
+      const result = await startSessionGeneration(bodyPartId, tests, userNote);
 
       setStatusMessage("Finalizing your personalized training plan...");
 
@@ -51,7 +52,7 @@ export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id
     } finally {
       setIsLoading(false);
     }
-  }, [bodyPartId, tests]);
+  }, [bodyPartId, tests, userNote]);
 
   const retry = useCallback(async () => {
     generationInitiatedRef.current = false;
@@ -69,7 +70,7 @@ export function useSessionGeneration(bodyPartId: number, tests: { muscle_test_id
 
     generationInitiatedRef.current = true;
     startGeneration();
-  }, [bodyPartId, tests, startGeneration]);
+  }, [bodyPartId, tests, userNote, startGeneration]);
 
   return {
     statusMessage,

@@ -3,6 +3,7 @@ import type { MuscleTestDto } from "@/types";
 import { ChevronLeft } from "lucide-react";
 import { useCallback, useState } from "react";
 import { MuscleTestItem } from "./MuscleTestItem";
+import { USE_MOCK_DATA } from "@/lib/services/training-plan/constants";
 
 interface MuscleTestFormProps {
   bodyPartId: number;
@@ -24,6 +25,7 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [animatingId, setAnimatingId] = useState<number | null>(null);
+  const [userNote, setUserNote] = useState("");
 
   const handlePainChange = useCallback(
     (index: number, value: number) => {
@@ -52,9 +54,12 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
     setIsSubmitting(true);
     try {
       const testsToSubmit = selections.filter((selection) => selection.painIntensity > 0);
-      const redirectUrl = `/session/generate?bodyPartId=${bodyPartId}&tests=${encodeURIComponent(
+      let redirectUrl = `/session/generate?bodyPartId=${bodyPartId}&tests=${encodeURIComponent(
         JSON.stringify(testsToSubmit.map((s) => ({ muscle_test_id: s.muscleTestId, pain_intensity: s.painIntensity })))
       )}`;
+      if (!USE_MOCK_DATA && userNote.trim().length > 0) {
+        redirectUrl += `&userNote=${encodeURIComponent(userNote.trim())}`;
+      }
       window.location.href = redirectUrl;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -71,7 +76,7 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
         </div>
       )}
       <div className="p-4 border drop-shadow-md border-gray-200 rounded-lg bg-gray-50">
-        <h3 className="font-bold mb-2 text-base mb-4">Pain Scale</h3>
+        <h3 className="font-bold text-base mb-4">Pain Scale</h3>
         <div className="flex justify-between mb-4">
           <span className="text-sm text-emerald-500 font-bold">No pain</span>
           <span className="text-sm text-yellow-400 font-bold">Moderate</span>
@@ -80,12 +85,28 @@ export default function MuscleTestForm({ bodyPartId, muscleTests }: MuscleTestFo
         <div className="p-2 bg-white border border-dashed border-gray-300 rounded">
           <p className="mb-1 font-bold">How to use the slider:</p>
           <ol className="pl-5 text-sm list-decimal">
-            <li>Click and drag the white circle left or right</li>
+            <li>Click and drag the green circle left or right</li>
             <li>Select a value from 0 (no pain) to 10 (unbearable pain)</li>
             <li>Rate each muscle test according to your pain level</li>
           </ol>
         </div>
       </div>
+      {!USE_MOCK_DATA && (
+        <div className="p-4 border drop-shadow-md border-gray-200 rounded-lg bg-gray-50">
+          <label htmlFor="user-note" className="block font-bold mb-2 text-base">
+            Additional information for your AI physiotherapist (optional):
+          </label>
+          <textarea
+            id="user-note"
+            className="w-full p-2 border border-gray-300 rounded min-h-[60px]"
+            value={userNote}
+            onChange={(e) => setUserNote(e.target.value)}
+            placeholder="Describe your pain, limitations, or anything important..."
+            maxLength={500}
+            data-testid="user-note-input"
+          />
+        </div>
+      )}
       <div className="space-y-6">
         {muscleTests.map((test, index) => (
           <MuscleTestItem
