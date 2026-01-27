@@ -13,17 +13,18 @@ const isAuthenticated = !!session;
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charSet="UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/ico" href="/favicon.ico" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preload" as="image" href="/physia-logo.webp" fetchpriority="high" />
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
     <header class="bg-[var(--card)] shadow-md">
       <div class="container mx-auto px-2 sm:px-4 py-3 flex items-center">
         <a href="/" class="flex items-center gap-2">
-          <img src="/favicon.ico" alt="Physia logo" class="h-8 w-auto" />
+          <img src="/favicon.ico" alt="Physia logo" class="h-8 w-auto" width="32" height="32" decoding="async" />
           <span class="text-2xl font-bold text-[var(--primary)]">Physia</span>
         </a>
         <div class="flex-1 flex items-center">

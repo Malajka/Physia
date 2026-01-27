@@ -3,23 +3,32 @@ import { describe, expect, it } from "vitest";
 import { Spinner } from "./Spinner";
 
 describe("Spinner", () => {
-  it("renders a div with the correct classes", () => {
+  it("renders a pulsing medical icon", () => {
     const { container } = render(<Spinner />);
-    const div = container.querySelector("div");
-    expect(div).toBeInTheDocument();
-    expect(div).toHaveClass("animate-spin");
-    expect(div).toHaveClass("rounded-full");
-    expect(div).toHaveClass("border-4");
-    expect(div).toHaveClass("border-primary");
-    expect(div).toHaveClass("h-8");
-    expect(div).toHaveClass("w-8");
+    const spinnerContainer = container.querySelector("div");
+    const svg = container.querySelector("svg");
+
+    expect(spinnerContainer).toBeInTheDocument();
+    expect(spinnerContainer).toHaveClass("physio-spinner-container");
+    expect(svg).toBeInTheDocument();
+    expect(svg).toHaveClass("physio-pulse-icon");
   });
 
   it("applies additional className and props", () => {
-    const { container } = render(<Spinner className="w-12 h-12" data-testid="spinner" />);
+    const { container } = render(<Spinner className="extra-class" data-testid="spinner" />);
     const div = container.querySelector("div");
-    expect(div).toHaveClass("w-12");
-    expect(div).toHaveClass("h-12");
+
+    expect(div).toHaveClass("physio-spinner-container");
+    expect(div).toHaveClass("extra-class");
     expect(div).toHaveAttribute("data-testid", "spinner");
+  });
+
+  it("contains two pulsing circles", () => {
+    const { container } = render(<Spinner />);
+    const circles = container.querySelectorAll("circle");
+
+    expect(circles).toHaveLength(2);
+    expect(circles[0]).toHaveAttribute("r", "30");
+    expect(circles[1]).toHaveAttribute("r", "24");
   });
 });

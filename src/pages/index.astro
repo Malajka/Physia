@@ -11,7 +11,15 @@ const {
     <div class="container mx-auto px-4 py-12">
       <section class="text-center max-w-3xl mx-auto mb-16" id="about">
         <div class="flex flex-col items-center mb-6">
-          <img src="/physia-logo.png" alt="Physia illustration" class="h-24 mb-4 md:h-32 w-auto" />
+          <img
+            src="/physia-logo.webp"
+            alt="Physia illustration"
+            class="h-24 mb-4 md:h-32 w-auto"
+            fetchpriority="high"
+            decoding="async"
+            width="256"
+            height="256"
+          />
           <h1 class="text-4xl md:text-5xl font-bold text-[var(--primary)] text-center">
             Personalized Exercise Plans for Overload-Related Muscle Pain
           </h1>
@@ -55,7 +63,7 @@ const {
               1
             </div>
             <h2 class="text-xl font-bold text-gray-800">Select Body Area</h2>
-            <img src="/man-body.png" alt="Body Areas" class="ml-8 w-12 h-18" />
+            <img src="/man-body.webp" alt="Body Areas" class="ml-8 w-12 h-18" loading="lazy" decoding="async" width="96" height="189" />
           </div>
           <p class="text-gray-600 text-base leading-relaxed">
             Choose from four key areas: Neck & Upper Back, Lower Back, Wrists & Forearms, or Hips & Knees.
@@ -72,7 +80,7 @@ const {
               2
             </div>
             <h2 class="text-xl font-bold text-gray-800">Rate Your Pain</h2>
-            <img src="/score.png" alt="Body Areas" class="ml-2 w-19 h-10" />
+            <img src="/score.webp" alt="Body Areas" class="ml-2 w-19 h-10" loading="lazy" decoding="async" width="152" height="50" />
           </div>
           <p class="text-gray-600 text-base leading-relaxed">
             Use our simple sliding scale to indicate your pain level for specific muscle tests. Add additional information for your AI physiotherapist
@@ -94,7 +102,16 @@ const {
           <p class="text-gray-600 text-base leading-relaxed">
             Our AI generates a personalized exercise plan based on your inputs and expert physiotherapy data.
           </p>
-          <img src="/ai.png" alt="Body Areas" class="mr-0 ml-auto mt-3 w-[50%] max-w-full h-auto" />
+          <img
+            src="/ai.webp"
+            alt="Body Areas"
+            class="mr-0 ml-auto mt-3 w-[50%] max-w-full h-auto"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            width="512"
+            height="368"
+          />
         </div>
       </section>
 
