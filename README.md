@@ -87,7 +87,7 @@ The application will be available at `http://localhost:3000`
 
 ### Core Features
 
-- Body part selection (6 areas)
+- Body part selection (4 areas)
 - Pain intensity assessment (1-10 scale)
 - Personalized exercise plans
 - User feedback system
