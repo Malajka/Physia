@@ -112,6 +112,6 @@ The project is currently in active development. Future plans include:
 
 ## License
 
-This project is proprietary and not open-source. All rights are reserved by the author. Unauthorized copying, distribution, modification, or use of any part of this repository is strictly prohibited without explicit written permission from the author.
+This project is proprietary and not Open-Source. All rights are reserved by the author. Unauthorized copying, distribution, modification, or use of any part of this repository is strictly prohibited without explicit written permission from the author.
 
 For inquiries regarding licensing or permissions, please contact the repository owner directly.
