@@ -1,5 +1,5 @@
 import { DisclaimerModal } from "@/components/common/DisclaimerModal";
-import { InfoBar } from "@/components/ui";
+import { InfoBar, Spinner } from "@/components/ui";
 import { useBodyParts } from "@/hooks/useBodyParts";
 import { useDisclaimer } from "@/hooks/useDisclaimer";
 import { useSingleSelection } from "@/hooks/useSingleSelection";
@@ -7,10 +7,10 @@ import { useCallback } from "react";
 import { BodyPartButton } from "./BodyPartButton";
 import { NavigationNextButton } from "./NavigationNextButton";
 
-function StatusMessage({ text, error = false, children }: { text: string; error?: boolean; children?: React.ReactNode }) {
+function StatusMessage({ text, error = false, children }: { text?: string; error?: boolean; children?: React.ReactNode }) {
   return (
     <div className={`text-center py-8 ${error ? "text-red-600" : ""}`}>
-      <p>{text}</p>
+      {text ? <p>{text}</p> : null}
       {children}
     </div>
   );
@@ -22,13 +22,23 @@ export default function BodyPartSelector() {
   const { selected: selectedBodyPartId, toggle } = useSingleSelection<number>();
   const handleSelect = useCallback((id: number) => toggle(id), [toggle]);
 
-  if (discLoading) return <StatusMessage text="Loading disclaimer..." />;
+  if (discLoading)
+    return (
+      <StatusMessage>
+        <Spinner />
+      </StatusMessage>
+    );
   if (discError) return <StatusMessage text={`Disclaimer Error: ${discError}`} error />;
   if (!acceptedAt) {
     return <DisclaimerModal open onAccept={accept} text={disclaimerText || "Loading disclaimer text..."} />;
   }
 
-  if (bpLoading) return <StatusMessage text="Loading body areas..." />;
+  if (bpLoading)
+    return (
+      <StatusMessage>
+        <Spinner />
+      </StatusMessage>
+    );
   if (bpError) {
     return (
       <StatusMessage text={`Error loading body parts: ${bpError}`} error>

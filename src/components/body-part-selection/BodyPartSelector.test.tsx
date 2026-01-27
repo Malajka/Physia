@@ -36,6 +36,7 @@ vi.mock("@/components/common/DisclaimerModal", () => ({
 }));
 vi.mock("@/components/ui", () => ({
   InfoBar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Spinner: () => <div data-testid="spinner" />,
 }));
 
 const mockedUseDisclaimer = useDisclaimer as Mock;
@@ -86,7 +87,7 @@ describe("BodyPartSelector", () => {
     it("should render disclaimer loading state", () => {
       setupMocks({ disclaimer: { loading: true } });
       render(<BodyPartSelector />);
-      expect(screen.getByText("Loading disclaimer...")).toBeInTheDocument();
+      expect(screen.getByTestId("spinner")).toBeInTheDocument();
     });
 
     it("should render disclaimer error state", () => {
@@ -104,7 +105,7 @@ describe("BodyPartSelector", () => {
     it("should render body parts loading state when disclaimer is accepted", () => {
       setupMocks({ bodyParts: { loading: true } });
       render(<BodyPartSelector />);
-      expect(screen.getByText("Loading body areas...")).toBeInTheDocument();
+      expect(screen.getByTestId("spinner")).toBeInTheDocument();
     });
 
     it("should render body parts error state and a retry button", async () => {
