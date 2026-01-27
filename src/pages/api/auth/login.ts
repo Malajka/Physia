@@ -25,7 +25,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     if (error) {
-      return jsonResponse({ error: "Invalid login credentials", debug: error.message }, 401);
+      return jsonResponse({ error: "Invalid login credentials" }, 401);
     }
 
     return jsonResponse({ user: authData.user, session: authData.session }, 200);

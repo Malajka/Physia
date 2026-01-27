@@ -11,9 +11,9 @@ function createFakeEvent() {
 
 describe("useAuthForm", () => {
   it("returns initial state", () => {
-    const { result } = renderHook(() => useAuthForm(vi.fn(), ["err1"]));
+    const { result } = renderHook(() => useAuthForm(vi.fn(), "err1"));
     expect(result.current.loading).toBe(false);
-    expect(result.current.errors).toEqual(["err1"]);
+    expect(result.current.errors).toEqual("err1");
   });
 
   it("handles successful submit", async () => {

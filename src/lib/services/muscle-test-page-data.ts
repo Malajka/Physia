@@ -1,11 +1,11 @@
-import { supabaseClient } from "@/db/supabase.client";
+import type { SupabaseClient } from "@/db/supabase.client";
 
 function capitalizeFirst(str: string) {
   return str.replace(/\b\w/g, (char: string) => char.toUpperCase());
 }
 
-export async function getMuscleTestsPageData(bodyPartId: number) {
-  const { data: muscleTests, error } = await supabaseClient
+export async function getMuscleTestsPageData(supabase: SupabaseClient, bodyPartId: number) {
+  const { data: muscleTests, error } = await supabase
     .from("muscle_tests")
     .select(
       `
@@ -26,7 +26,7 @@ export async function getMuscleTestsPageData(bodyPartId: number) {
     )
     .eq("body_part_id", bodyPartId);
 
-  const { data: bodyPartData } = await supabaseClient.from("body_parts").select("name").eq("id", bodyPartId).single();
+  const { data: bodyPartData } = await supabase.from("body_parts").select("name").eq("id", bodyPartId).single();
 
   return {
     muscleTests,

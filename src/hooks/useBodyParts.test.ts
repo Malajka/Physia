@@ -16,12 +16,12 @@ describe("useBodyParts", () => {
   });
 
   it("should call useFetch with disabled=true when disclaimer is not accepted", () => {
-    renderHook(() => useBodyParts({ disclaimerAccepted: null }));
+    renderHook(() => useBodyParts({ disclaimerAccepted: false }));
     expect(mockedUseFetch).toHaveBeenCalledWith(expect.any(Function), true);
   });
 
   it("should call useFetch with disabled=false when disclaimer is accepted", () => {
-    renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01" }));
+    renderHook(() => useBodyParts({ disclaimerAccepted: true }));
     expect(mockedUseFetch).toHaveBeenCalledWith(expect.any(Function), false);
   });
 
@@ -34,7 +34,7 @@ describe("useBodyParts", () => {
       refetch: vi.fn(),
     });
 
-    const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01" }));
+    const { result } = renderHook(() => useBodyParts({ disclaimerAccepted: true }));
 
     expect(result.current.data).toEqual(mockData);
     expect(result.current.loading).toBe(false);
@@ -45,7 +45,7 @@ describe("useBodyParts", () => {
     let fetcher: (signal: AbortSignal) => Promise<BodyPartDto[]>;
 
     beforeEach(() => {
-      renderHook(() => useBodyParts({ disclaimerAccepted: "2024-01-01" }));
+      renderHook(() => useBodyParts({ disclaimerAccepted: true }));
 
       fetcher = mockedUseFetch.mock.calls[0][0] as (signal: AbortSignal) => Promise<BodyPartDto[]>;
     });

@@ -111,6 +111,27 @@ export class SessionsPage extends BasePage {
     await detailsLink.click();
   }
 
+  /**
+   * Wait for session element to appear.
+   * Takes screenshot on timeout for debugging.
+   */
+  private async waitForSessionElement(testId: string, timeout = 60000) {
+    try {
+      await this.page.waitForURL("**/sessions/**", { timeout });
+      await this.page.waitForSelector(`[data-testid="${testId}"]`, {
+        state: "visible",
+        timeout,
+      });
+      return this.getByTestId(testId);
+    } catch (error) {
+      await this.page.screenshot({
+        path: `debug-${testId}-timeout-${Date.now()}.png`,
+        fullPage: true,
+      });
+      throw new Error(`Element with testId "${testId}" not found within ${timeout}ms. ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
   async expectSessionDetailsVisible() {
     await this.waitForSessionElement("session-title", 60000);
 

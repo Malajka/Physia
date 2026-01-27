@@ -1,6 +1,4 @@
-// src/middleware/index.ts
-
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { createServerClient } from "@supabase/ssr";
 import type { User } from "@supabase/supabase-js";
 import type { APIContext } from "astro";
 import { defineMiddleware } from "astro:middleware";
@@ -22,12 +20,26 @@ function createRedirect(location: string): Response {
   return new Response(null, { status: 302, headers: { Location: location } });
 }
 
+/**
+ * Parse cookies from Cookie header string
+ */
+function parseCookieHeader(cookieHeader: string | null): { name: string; value: string }[] {
+  if (!cookieHeader) return [];
+
+  return cookieHeader
+    .split(";")
+    .map((cookie) => {
+      const [name, ...rest] = cookie.trim().split("=");
+      return {
+        name: name.trim(),
+        value: rest.join("=").trim(),
+      };
+    })
+    .filter(({ name }) => name.length > 0);
+}
+
 // --- Logic Handlers ---
 
-/**
- * Handles redirects for already authenticated users away from login/register pages.
- * @returns A Response object for redirection, or null to continue.
- */
 export function handleAuthRedirects(pathname: string, isAuthenticated: boolean): Response | null {
   if (isAuthenticated && (pathname === LOGIN_PATH || pathname === REGISTER_PATH)) {
     return createRedirect(DEFAULT_AUTHENTICATED_PATH);
@@ -35,34 +47,36 @@ export function handleAuthRedirects(pathname: string, isAuthenticated: boolean):
   return null;
 }
 
-/**
- * Protects routes that require authentication.
- * @returns A Response object for redirection or error, or null to continue.
- */
 export function handleProtectedRoute(pathname: string, isAuthenticated: boolean): Response | null {
-  const isPathProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+  const isPathProtected = PROTECTED_PATHS.some((protectedPath) => pathname === protectedPath || pathname.startsWith(`${protectedPath}/`));
+
   if (!isAuthenticated && isPathProtected) {
     if (pathname.startsWith("/api/")) {
-      return new Response(JSON.stringify({ error: "Authentication required" }), { status: 401 });
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
     }
     return createRedirect(LOGIN_PATH);
   }
   return null;
 }
 
-/**
- * Enforces disclaimer acceptance for relevant paths.
- * @returns A Response object for redirection or error, or null to continue.
- */
 export function handleDisclaimerCheck(pathname: string, user: User | null): Response | null {
-  if (!user) return null; // Logic only applies to logged-in users
+  if (!user) return null;
 
-  const needsDisclaimer = PATHS_REQUIRING_DISCLAIMER.some((p) => pathname.startsWith(p));
+  const needsDisclaimer = PATHS_REQUIRING_DISCLAIMER.some(
+    (disclaimerPath) => pathname === disclaimerPath || pathname.startsWith(`${disclaimerPath}/`)
+  );
+
   if (needsDisclaimer) {
     const isDisclaimerAccepted = Boolean(user.user_metadata.disclaimer_accepted_at);
     if (!isDisclaimerAccepted) {
       if (pathname.startsWith("/api/")) {
-        return new Response(JSON.stringify({ error: "Disclaimer not accepted" }), { status: 403 });
+        return new Response(JSON.stringify({ error: "Disclaimer not accepted" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        });
       }
       return createRedirect(DISCLAIMER_ACCEPTANCE_PATH);
     }
@@ -70,10 +84,6 @@ export function handleDisclaimerCheck(pathname: string, user: User | null): Resp
   return null;
 }
 
-/**
- * Verifies that the user owns the session they are trying to access.
- * @returns A Response object for redirection, or null to continue.
- */
 export async function handleSessionOwnership(context: APIContext): Promise<Response | null> {
   const { locals, request } = context;
   const { user, supabase } = locals;
@@ -81,10 +91,10 @@ export async function handleSessionOwnership(context: APIContext): Promise<Respo
 
   if (!user || !pathname.startsWith("/sessions/")) return null;
 
-  const seg = pathname.split("/");
-  if (seg.length < 3 || Number.isNaN(Number(seg[2]))) return null;
+  const segments = pathname.split("/");
+  if (segments.length < 3 || Number.isNaN(Number(segments[2]))) return null;
 
-  const sessionId = Number(seg[2]);
+  const sessionId = Number(segments[2]);
   const { data, error } = await supabase.from("sessions").select("user_id").eq("id", sessionId).single();
 
   if (error || !data || data.user_id !== user.id) {
@@ -95,41 +105,28 @@ export async function handleSessionOwnership(context: APIContext): Promise<Respo
 
 // --- Main Middleware Entry Point ---
 export const onRequest = defineMiddleware(async (context: APIContext, next: () => Promise<Response>) => {
+  // ✅ Astro-Compatible Adapter
   const supabase = createServerClient(import.meta.env.SUPABASE_URL, import.meta.env.SUPABASE_PUBLIC_KEY, {
     cookies: {
-      get: (key) => context.cookies.get(key)?.value,
-      set: (key, value, options: CookieOptions) => {
-        // FIXED: The options object now includes all required properties by Astro.
-        context.cookies.set(key, value, {
-          domain: options.domain,
-          expires: options.expires,
-          httpOnly: options.httpOnly,
-          maxAge: options.maxAge,
-          path: options.path ?? "/",
-          sameSite: options.sameSite,
-          secure: options.secure,
-          // Added to satisfy Astro's type definition.
-          encode: (val: string) => val,
-        });
+      getAll() {
+        // Parse cookies from request headers
+        const cookieHeader = context.request.headers.get("cookie");
+        return parseCookieHeader(cookieHeader);
       },
-      remove: (key, options: CookieOptions) => {
-        // FIXED: The options object for deletion now also includes security flags.
-        context.cookies.delete(key, {
-          domain: options.domain,
-          path: options.path ?? "/",
-          // Added to ensure the cookie can be properly deleted.
-          httpOnly: options.httpOnly,
-          secure: options.secure,
-          sameSite: options.sameSite,
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          context.cookies.set(name, value, options);
         });
       },
     },
   });
 
   context.locals.supabase = supabase;
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   context.locals.user = user;
 
   const pathname = getPathname(context.request);

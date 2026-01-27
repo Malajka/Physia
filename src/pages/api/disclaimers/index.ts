@@ -1,5 +1,3 @@
-// src/pages/api/disclaimers.ts (OSTATECZNA WERSJA)
-
 import { withAuth } from "@/lib/middleware/withAuth";
 import { jsonResponse } from "@/lib/utils/response";
 import type { AcceptDisclaimerResponseDto, DisclaimersContentDto } from "@/types";

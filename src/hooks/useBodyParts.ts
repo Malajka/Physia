@@ -3,7 +3,7 @@ import type { BodyPartDto } from "@/types";
 import { useCallback } from "react";
 
 interface UseBodyPartsOptions {
-  disclaimerAccepted: string | null;
+  disclaimerAccepted: boolean;
 }
 
 export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
@@ -27,5 +27,6 @@ export function useBodyParts({ disclaimerAccepted }: UseBodyPartsOptions) {
     return [];
   }, []);
 
-  return useFetch<BodyPartDto[]>(fetcher, !disclaimerAccepted);
+  const skipInitialFetch = !disclaimerAccepted;
+  return useFetch<BodyPartDto[]>(fetcher, skipInitialFetch);
 }
