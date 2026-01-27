@@ -48,6 +48,14 @@ const createMockContext = (body: any | null, throwsOnJson = false): APIContext =
   currentLocale: "en",
   getActionResult: vi.fn(),
   callAction: vi.fn(),
+  routePattern: "/api/auth/login",
+  originPathname: "/api/auth/login",
+  isPrerendered: false,
+  insertDirective: vi.fn(),
+  insertStyleResource: vi.fn(),
+  insertStyleHash: vi.fn(),
+  insertScriptResource: vi.fn(),
+  insertScriptHash: vi.fn(),
 });
 
 describe("POST /api/login", () => {
