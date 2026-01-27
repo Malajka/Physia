@@ -1,5 +1,6 @@
 ---
 import Nav from "@/components/nav/Nav.astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 import "../styles/global.css";
 
 const { title = "Physia - Exercise Plans" } = Astro.props;
@@ -42,6 +43,7 @@ const isAuthenticated = !!session;
         <p>&copy; {new Date().getFullYear()} Physia. All rights reserved.</p>
       </div>
     </footer>
+    <SpeedInsights />
   </body>
 </html>
 
