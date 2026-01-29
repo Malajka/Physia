@@ -8,7 +8,10 @@ import { getMuscleTestsPageData } from "@/lib/services/muscle-test-page-data";
 
 export const prerender = false;
 
-const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(Astro.locals.supabase, Number(Astro.params.body_part_id));
+const { muscleTests, fetchError, pageTitle, bodyPartId, backLink } = await getMuscleTestsPageData(
+  Astro.locals.supabase,
+  Number(Astro.params.body_part_id)
+);
 ---
 
 <Layout title={pageTitle}>
